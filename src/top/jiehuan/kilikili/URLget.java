@@ -81,6 +81,7 @@ public class URLget {
 	                    while ((bytesRead = dis.read(buffer)) != -1) {
 	                        if (totalBytesRead + bytesRead > maxBytes) {
 	                            bytesRead = maxBytes - totalBytesRead; // 只读取剩余的字节
+	                            System.out.println("reading...");
 	                        }
 	                        jsonPart.append(new String(buffer, 0, bytesRead,"UTF-8"));
 	                        //System.out.print(new String(buffer, 0, bytesRead,"UTF-8"));
@@ -128,9 +129,9 @@ public class URLget {
 	        		}catch(Exception e){
 	        			return new String[]{"error",e.getMessage()};
 	        		}
-	        	}if(connection!=null){
+	        	}if(dis!=null){
 	        		try{
-	        			connection.close();
+	        			dis.close();
 	        		}catch(Exception e){
 	        			return new String[]{"error"+e.getMessage()};
 	        		}
@@ -167,6 +168,99 @@ public class URLget {
 	            }
 	        }*/
 	    }
+	public static String BackVideoLink(String bvid,String cid){
+		HttpConnection connection = null;
+        DataInputStream dis =null;
+        
+        InputStream inputStream = null;
+        StringBuffer response = new StringBuffer();
+        
+        int num=0;
+
+        try {
+            // 打开连接
+            connection = (HttpConnection) Connector.open("http://192.168.1.2:2121/api/playurl?bvid=BV"+bvid+"&cid="+cid);
+            connection.setRequestMethod(HttpConnection.GET);
+            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            //connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 7.1.1; OPPO R9sk) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.111 Mobile Safari/537.36");
+            
+            // 连接
+            num = connection.getResponseCode();
+            
+            System.out.println("get now");
+            System.out.println(connection.getResponseCode());
+            
+            if(num==200){
+            	
+            	//inputStream=connection.openInputStream();
+            	dis=connection.openDataInputStream();
+            	int length = (int)connection.getLength();
+            	String str=null;
+            	
+            	if(length!=-1){
+            		/*int bufferSize = 1024; // 例如 1KB
+            		byte[] buffer = new byte[bufferSize];
+            		StringBuffer sb = new StringBuffer();
+            		int bytesRead;
+
+            		while ((bytesRead = inputStream.read(buffer)) != -1) {
+            		    sb.append(new String(buffer, 0, bytesRead, "UTF-8"));
+            		}
+
+            		str = sb.toString();*/
+            		System.out.println("length!=-1");
+            		byte[] incomingData = new byte[length];
+            		dis.read(incomingData);
+            		Runtime rt = Runtime.getRuntime(); 
+            		System.out.println("read over");
+            		System.out.println("length: " + length);
+            		System.out.println(rt.freeMemory());
+            		System.gc();
+            		str=new String(incomingData,"UTF-8");
+            		System.out.println("Test OK");
+            		//String jsonPart = reader.readJsonPart("file:///path/to/your/large.json", 10240);
+            		System.out.println(str);
+            	}else{
+            		System.out.println("length==-1");
+            		ByteArrayOutputStream bs=new ByteArrayOutputStream();
+            		int ch = 0;
+            		while((ch=dis.read())!=-1){
+            			bs.write(ch);
+            		}
+            		str=new String(bs.toByteArray(),"UTF-8");
+            		bs.close();
+            	}
+            	return findValue(str,"url");
+            }
+        }catch(Exception e){
+        	e.printStackTrace();
+        	return "error";
+        }finally{
+        	try {
+				connection.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				return "connection close error";
+			}
+        	if(inputStream!=null){
+        		try{
+        			inputStream.close();
+        		}catch(Exception e){
+        			return "inputStream close error";
+        		}
+        	}if(dis!=null){
+        		try{
+        			dis.close();
+        		}catch(Exception e){
+        			return "DataInputStream close error";
+        		}
+        	}
+        	
+        }
+        return "back"+num;
+            
+    
+	}
 	public static String findValue(String jsonString, String findText) {
 	    // 找到指定字段的索引
 	    int titleIndex = jsonString.indexOf("\"" + findText + "\"");
