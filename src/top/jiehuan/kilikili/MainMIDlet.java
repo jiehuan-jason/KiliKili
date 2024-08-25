@@ -15,7 +15,8 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	TextField tf;
 	Command go;
 	Command exit;
-    /*public MainMIDlet(){
+	
+	/*public MainMIDlet(){
         display = Display.getDisplay(this);
         form = new Form("JSON Response");
         exitCommand = new Command("Exit", Command.EXIT, 1);
@@ -50,14 +51,19 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	
 	public void commandAction(Command c, Displayable d) {
         if (c == go) {
-        	
+        	if(tf.getString().length()==10){
+        		new Thread(new Runnable() {
+                    public void run() {
+                    	String text = tf.getString();
+                        new GetVideoInfoPage(MainMIDlet.this, text);
+                    }
+                }).start();
+        	}else{
+        		Alert alert = new Alert("Error", "invalid bvid", null, AlertType.ERROR);
+                alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+                display.setCurrent(alert, form);
+        	}
            
-            new Thread(new Runnable() {
-                public void run() {
-                	String text = tf.getString();
-                    new GetVideoInfoPage(MainMIDlet.this, text);
-                }
-            }).start();
             //GetVideoInfoPage secondMIDlet = new GetVideoInfoPage(text);
             //display.setCurrent(secondMIDlet.getForm());
             //notifyPaused();

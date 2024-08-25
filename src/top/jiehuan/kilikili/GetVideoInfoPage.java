@@ -19,6 +19,11 @@ public class GetVideoInfoPage implements CommandListener{
 	public Form form;
 	public StringItem string;
 	public StringItem up_name=null;
+	StringItem view;
+	StringItem reply;
+	StringItem coin;
+	StringItem share;
+	StringItem like;
 	public String bvid;
 	Image image;
 	Command back;
@@ -47,6 +52,11 @@ public class GetVideoInfoPage implements CommandListener{
 			title=URLget.findValue(s_info[1],"title");
 			string=new StringItem(null, title);
 			up_name=new StringItem(null,"up主："+URLget.findValue(s_info[1], "name"));
+			view = new StringItem(null,"看"+URLget.findValueInt(s_info[1],"view")+"次");
+			reply = new StringItem(null,"回"+URLget.findValueInt(s_info[1],"reply")+"条");
+			coin = new StringItem(null,"币"+URLget.findValueInt(s_info[1],"coin")+"个");
+			share = new StringItem(null,"转"+URLget.findValueInt(s_info[1],"share")+"次");
+			like = new StringItem(null,"赞"+URLget.findValueInt(s_info[1],"like")+"次");
 		}
 		
 		back=new Command("Back",Command.BACK,1);
@@ -55,6 +65,11 @@ public class GetVideoInfoPage implements CommandListener{
 		form=new Form("视频界面");
 		form.append(string);
 		form.append(up_name);
+		form.append(view);
+		form.append(like);
+		form.append(coin);
+		form.append(share);
+		form.append(reply);
 		form.addCommand(back);
 		form.addCommand(exit);
 		form.setCommandListener(this);

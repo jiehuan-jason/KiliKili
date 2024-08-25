@@ -9,6 +9,8 @@
 * [ ] 视频数据
 * [ ] 视频评论
 * [ ] 视频观看（流媒体 or 下载）
+
+感谢[SocialSisterYi/bilibili-API-collect: 哔哩哔哩-API收集整理【不断更新中....】](https://github.com/SocialSisterYi/bilibili-API-collect)
   
   希望各位给出建议，可以在dospy论坛上找到我：[jiehuan的个人资料 - DOSPY论坛 诺亚方舟号 - 塞班论坛|固件下载|hmd诺基亚安卓|智能手机|数码科技 -](https://www.dospy.wang/space-uid-45511.html)
   或者给我发邮件：jiehuan233[AT]outlook.com
@@ -23,5 +25,7 @@
 * [ ] Video comments
 * [ ] Video viewing (streaming or downloading)
 
-I hope you can give me some suggestions. You can find me on the dospy forum: [jiehuan's profile - DOSPY Forum Noah's Ark - Saipan Forum | Firmware Download | HMD Nokia Android | Smartphone | Digital Technology -](https://www.dospy.wang/space-uid-45511.html)
+Thanks[SocialSisterYi/bilibili-API-collect: 哔哩哔哩-API收集整理【不断更新中....】](https://github.com/SocialSisterYi/bilibili-API-collect)
+
+I hope you can give me some suggestions. You can find me on the dospy forum: [jiehuan's profile - DOSPY Forum Noah's Ark - Symbian Forum | Firmware Download | HMD Nokia Android | Smartphone | Digital Technology -](https://www.dospy.wang/space-uid-45511.html)
 Or send me an email: jiehuan233[AT]outlook.com

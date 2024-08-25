@@ -8,10 +8,6 @@ import java.security.Security;
 
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
-import javax.microedition.io.HttpsConnection;
-import javax.microedition.io.file.FileConnection;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class URLget {
 	/*static {
@@ -196,6 +192,34 @@ public class URLget {
 	    // 提取并返回指定字段的值
 	    return jsonString.substring(firstQuoteIndex + 1, secondQuoteIndex);
 	}
+	
+	
+	public static String findValueInt(String jsonString, String findText){
+		int titleIndex = jsonString.indexOf("\"" + findText + "\"");
+	    if (titleIndex == -1) {
+	        System.out.println("No Find Text");
+	        return null; // 如果没有找到指定字段，返回 null
+	    }
 
+	    // 找到第一个双引号的位置
+	    int firstQuoteIndex = jsonString.indexOf(":", titleIndex + findText.length() + 2); // +2 是为了跳过字段名和后面的引号
+	    if (firstQuoteIndex == -1) {
+	        System.out.println("No Find first");
+	        return null; // 如果没有找到下一个双引号，返回 null
+	    }
+
+	    // 找到第二个双引号的位置
+	    int secondQuoteIndex = jsonString.indexOf(",", firstQuoteIndex + 1);
+	    if (secondQuoteIndex == -1) {
+	    	secondQuoteIndex = jsonString.indexOf("}", firstQuoteIndex + 1);
+	    	if(secondQuoteIndex==-1){
+	    		System.out.println("No Find Second");
+	    		return null; // 如果没有找到第二个双引号，返回 null
+	    	}
+	    }
+
+	    // 提取并返回指定字段的值
+	    return jsonString.substring(firstQuoteIndex + 1, secondQuoteIndex);
+	}
 }
 
