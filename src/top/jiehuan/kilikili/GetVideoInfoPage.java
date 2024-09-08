@@ -59,7 +59,7 @@ public class GetVideoInfoPage implements CommandListener{
 		this.bvid=bvid;
 		ml=midlet;
 		display = Display.getDisplay(midlet);
-		URLget video_info = new URLget("http://localhost:3000/view?bvid="+bvid);
+		URLget video_info = new URLget("http://lo:3000/view?bvid="+bvid);
 		String[] s_info= video_info.sendGetRequest();
 		String title = null;
 		if(s_info[0].equals("error")){
@@ -174,14 +174,15 @@ public class GetVideoInfoPage implements CommandListener{
                     	try {
                     		//video_url=URLget.BackVideoLink(bvid, cid);
                     		System.out.println("video_url is:"+video_url);
-							ml.platformRequest(new String(video_url.getBytes("UTF-8"),"UTF-8"));
+							ml.platformRequest(video_url);
+                    		//ml.platformRequest("https://upos-sz-mirrorcos.bilivideo.com/upgcxcode/06/20/25713772006/25713772006-1-16.mp4?e=ig8euxZM2rNcNbRVhwdVhwdlhWdVhwdVhoNvNC8BqJIzNbfq9rVEuxTEnE8L5F6VnEsSTx0vkX8fqJeYTj_lta53NCM=&uipk=5&nbs=1&deadline=1725792100&gen=playurlv2&os=cosbv&oi=0&trid=c10c84668d634510942836e973834cdah&mid=0&platform=html5&og=cos&upsig=9a152d6fb408ded68e653656e73f3404&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform,og&bvc=vod&nettype=0&f=h_0_0&bw=39783&logo=80000000");
 						} catch (ConnectionNotFoundException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
-						} catch (UnsupportedEncodingException e) {
+						} /*catch (UnsupportedEncodingException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
-						}
+						}*/
                     	
                     }
 	            }).start();
@@ -240,4 +241,6 @@ public class GetVideoInfoPage implements CommandListener{
 	        //return result;
 
 	 }
+	 
+
 }
