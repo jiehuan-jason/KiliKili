@@ -15,7 +15,7 @@ public class URLget {
     }*/
 	
 	String url;
-	int maxBytes = 8192;
+	int maxBytes = 10240;
 	
 	public URLget(String url){
 		this.url=url;
@@ -72,7 +72,7 @@ public class URLget {
 	            		str=new String(incomingData,"UTF-8");
 	            		System.out.println("Test OK");*/
 	            		//String jsonPart = reader.readJsonPart("file:///path/to/your/large.json", 10240);
-	            		byte[] buffer = new byte[1024]; // 1KB 缓冲区
+	            		byte[] buffer = new byte[2048]; // 1KB 缓冲区
 	                    int bytesRead = 0;
 	                    int totalBytesRead = 0;
 	                    StringBuffer jsonPart = new StringBuffer();
