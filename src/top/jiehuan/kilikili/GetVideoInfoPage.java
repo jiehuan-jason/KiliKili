@@ -33,6 +33,9 @@ public class GetVideoInfoPage implements CommandListener{
 	StringItem coin;
 	StringItem share;
 	StringItem like;
+	String desc;
+	StringItem info;
+	StringItem ln;
 	//StringItem link;
 	public String bvid;
 	Image image;
@@ -65,11 +68,13 @@ public class GetVideoInfoPage implements CommandListener{
 			title=URLget.findValue(s_info[1],"title");
 			string=new StringItem(null, title);
 			up_name=new StringItem(null,"\nup主："+URLget.findValue(s_info[1], "name"));
-			view = new StringItem(null,"\n看"+URLget.findValueInt(s_info[1],"view")+"次");
+			desc = "\n简介:"+URLget.findValueInt(s_info[1],"desc").substring(1, URLget.findValueInt(s_info[1],"desc").length() - 1);
+			/*view = new StringItem(null,"\n看"+URLget.findValueInt(s_info[1],"view")+"次");
 			reply = new StringItem(null,"\n回"+URLget.findValueInt(s_info[1],"reply")+"条");
 			coin = new StringItem(null,"\n币"+URLget.findValueInt(s_info[1],"coin")+"个  ");
 			share = new StringItem(null,"转"+URLget.findValueInt(s_info[1],"share")+"次  ");
-			like = new StringItem(null,"赞"+URLget.findValueInt(s_info[1],"like")+"次");
+			like = new StringItem(null,"赞"+URLget.findValueInt(s_info[1],"like")+"次");*/
+			info = new StringItem(null,"\n看"+URLget.findValueInt(s_info[1],"view")+"次  "+"回"+URLget.findValueInt(s_info[1],"reply")+"条  "+"币"+URLget.findValueInt(s_info[1],"coin")+"个  "+"转"+URLget.findValueInt(s_info[1],"share")+"次  "+"赞"+URLget.findValueInt(s_info[1],"like")+"次");
 			cid=URLget.findValueInt(s_info[1], "cid");
 			System.out.println(cid);
 			video_url=URLget.BackVideoLink(bvid, cid);
@@ -82,12 +87,22 @@ public class GetVideoInfoPage implements CommandListener{
 		//loadImage(URLget.findValue(s_info[1], "name"));
 		form=new Form("视频界面");
 		form.append(string);
+		//form.append(new StringItem(null,""));
 		form.append(up_name);
-		form.append(view);
+		//form.append(new StringItem(null,""));
+		if(!desc.equals("\n简介:")){
+			Display_Desc(desc);
+			form.append(new StringItem(null,""));
+		}
+		
+		
+		//form.append(desc);
+		/*form.append(view);
 		form.append(like);
 		form.append(coin);
 		form.append(share);
-		form.append(reply);
+		form.append(reply);*/
+		form.append(info);
 		//form.append(link);
 		form.addCommand(back);
 		form.addCommand(exit);
@@ -239,4 +254,37 @@ public class GetVideoInfoPage implements CommandListener{
 	        }
 	    }*/
 	 
+	 private void Display_Desc(String str){
+		 int count = 0;
+	        int start = 0;
+	        int end = 0;
+
+	        String delimiter="\\n";
+			// 计算分割后的字符串数量
+	        while ((end = str.indexOf(delimiter, start)) != -1) {
+	            count++;
+	            start = end + 2;
+	        }
+	        count++; // 最后一个元素
+	        System.out.println(count);
+	        String[] result = new String[count];
+	        start = 0;
+	        int index = 0;
+
+	        // 进行分割
+	        while ((end = str.indexOf(delimiter, start)) != -1) {
+	            result[index++] = str.substring(start, end);
+	            start = end + 2;
+	        }
+	        result[index] = str.substring(start); // 添加最后一个元素
+	        
+	        
+	        for (int i = 0; i < result.length; i++) {
+	        	StringItem d=new StringItem(null,result[i]);
+	        	form.append(d);
+	            System.out.println(result[i]);
+	        }
+	        //return result;
+
+	 }
 }
