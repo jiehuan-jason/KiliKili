@@ -36,12 +36,15 @@ public class GetVideoInfoPage implements CommandListener{
 	String desc;
 	StringItem info;
 	StringItem ln;
+	String pic;
+	
 	//StringItem link;
 	public String bvid;
 	Image image;
 	Command back;
 	Command exit;
 	Command download;
+	Command view_cover;
 	private MainMIDlet ml;
 	String video_url;
 	String cid;
@@ -76,6 +79,7 @@ public class GetVideoInfoPage implements CommandListener{
 			like = new StringItem(null,"赞"+URLget.findValueInt(s_info[1],"like")+"次");*/
 			info = new StringItem(null,"\n看"+URLget.findValueInt(s_info[1],"view")+"次  "+"回"+URLget.findValueInt(s_info[1],"reply")+"条  "+"币"+URLget.findValueInt(s_info[1],"coin")+"个  "+"转"+URLget.findValueInt(s_info[1],"share")+"次  "+"赞"+URLget.findValueInt(s_info[1],"like")+"次");
 			cid=URLget.findValueInt(s_info[1], "cid");
+			pic=URLget.findValue(s_info[1], "pic");
 			System.out.println(cid);
 			video_url=URLget.BackVideoLink(bvid, cid);
 			System.out.println("Get Already");
@@ -84,6 +88,7 @@ public class GetVideoInfoPage implements CommandListener{
 		download=new Command("Download",Command.ITEM,1);
 		back=new Command("Back",Command.BACK,1);
 		exit=new Command("Exit",Command.EXIT,0);
+		view_cover=new Command("View the Cover",Command.ITEM,2);
 		//loadImage(URLget.findValue(s_info[1], "name"));
 		form=new Form("视频界面");
 		form.append(string);
@@ -107,6 +112,7 @@ public class GetVideoInfoPage implements CommandListener{
 		form.addCommand(back);
 		form.addCommand(exit);
 		form.addCommand(download);
+		form.addCommand(view_cover);
 		form.setCommandListener(this);
 		//loadImage(URLget.findValue(s_info[1], "pic"));
 		display.setCurrent(form);
@@ -177,82 +183,29 @@ public class GetVideoInfoPage implements CommandListener{
 							e.printStackTrace();
 						}
                     	
-                    	//downloadVideo("https://cn-xj-cm-02-05.bilivideo.com/upgcxcode/78/11/500001649511178/500001649511178-1-16.mp4?e=ig8euxZM2rNcNbRVhwdVhwdlhWdVhwdVhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1724553124&gen=playurlv2&os=bcache&oi=666712603&trid=00007d2be73e205948c4893fc65f0fbcd0c3u&mid=1798113850&platform=pc&og=cos&upsig=456cfd9c8fb03583bb6fecc534dead5e&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform,og&cdnid=61905&bvc=vod&nettype=0&orderid=0,3&buvid=6FB31018-8CDA-5F30-8740-45E9AFA32F3E38170infoc&build=0&f=u_0_0&agrr=1&bw=52434&logo=80000000","/root1/kilikili","test.mp4");
                     }
 	            }).start();
-	       }
+	        }
+	        if(c==view_cover){
+	        	new Thread(new Runnable() {
+                    public void run() {
+                    	try {
+                    		//video_url=URLget.BackVideoLink(bvid, cid);
+                    		System.out.println("cover_url is:"+pic);
+							ml.platformRequest(new String(pic.getBytes("UTF-8"),"UTF-8"));
+						} catch (ConnectionNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (UnsupportedEncodingException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+                    	
+                    }
+	            }).start();
+	        }
 	    }
 	 
-	 /*private void downloadVideo(String url, String folderPath, String newFileName) {
-	        HttpConnection connection = null;
-	        InputStream inputStream = null;
-	        OutputStream outputStream = null;
-
-	        try {
-	            // 创建目标文件夹
-	            FileConnection folder = (FileConnection) Connector.open("file://" + folderPath);
-	            if (!folder.exists()) {
-	                folder.mkdir(); // 创建文件夹
-	            }
-	            folder.close();
-
-	            // 设置 HTTPS 连接
-	            try{
-	            	connection = (HttpConnection) Connector.open(url);
-	            	connection.setRequestMethod(HttpConnection.GET);
-	            	connection.setRequestProperty("Referer", "https://www.bilibili.com"); // 设置 Referer
-	            }catch(javax.microedition.pki.CertificateException e){
-	            	System.out.println(e.getMessage());
-	            	System.out.println(e.getCertificate().toString());
-	            	e.printStackTrace();
-	            }
-	            
-
-	            // 检查响应
-	            int responseCode = connection.getResponseCode();
-	            if (responseCode == HttpConnection.HTTP_OK) {
-	                inputStream = connection.openInputStream();
-	                
-	                // 创建文件输出流
-	                FileConnection fileConnection = (FileConnection) Connector.open("file://" + folderPath + "/" + newFileName);
-	                if (!fileConnection.exists()) {
-	                    fileConnection.create(); // 创建文件
-	                }
-	                outputStream = fileConnection.openOutputStream();
-
-	                // 下载文件
-	                byte[] buffer = new byte[1024];
-	                int bytesRead;
-	                while ((bytesRead = inputStream.read(buffer)) != -1) {
-	                    outputStream.write(buffer, 0, bytesRead);
-	                }
-
-	                // 完成下载
-	                outputStream.close();
-	                inputStream.close();
-	                fileConnection.close();
-
-	                Alert alert = new Alert("Success", "Video downloaded successfully!", null, AlertType.INFO);
-	                display.setCurrent(alert, form);
-	            } else {
-	                Alert alert = new Alert("Error", "Failed to download video. Response code: " + responseCode, null, AlertType.ERROR);
-	                display.setCurrent(alert, form);
-	            }
-	        } catch (Exception e) {
-	            Alert alert = new Alert("Error", "IOException: " + e.getMessage(), null, AlertType.ERROR);
-	            display.setCurrent(alert, form);
-	            e.printStackTrace();
-	            System.out.println(e.getMessage());
-	        } finally {
-	            try {
-	                if (inputStream != null) inputStream.close();
-	                if (outputStream != null) outputStream.close();
-	                if (connection != null) connection.close();
-	            } catch (IOException e) {
-	                // 处理关闭流时的异常
-	            }
-	        }
-	    }*/
 	 
 	 private void Display_Desc(String str){
 		 int count = 0;

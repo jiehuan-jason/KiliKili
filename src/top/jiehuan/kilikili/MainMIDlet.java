@@ -1,10 +1,17 @@
 package top.jiehuan.kilikili;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Locale;
+
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
 
+import javax.microedition.io.Connector;
+import javax.microedition.io.HttpConnection;
+import javax.microedition.io.HttpsConnection;
 import javax.microedition.lcdui.*;
 
 public class MainMIDlet extends MIDlet implements CommandListener{
@@ -16,6 +23,14 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	Command go;
 	Command exit;
 	
+	
+	private String goString;
+	private String exitString;
+	private String main_pageString;
+	private String inputString;
+	private String invalid_bvidStirng;
+	
+	public String lang;
 	/*public MainMIDlet(){
         display = Display.getDisplay(this);
         form = new Form("JSON Response");
@@ -35,18 +50,20 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	}
 
 	protected void startApp() throws MIDletStateChangeException {
+		lang = System.getProperty("microedition.locale");
+
+		loadMessages();
 		
 		display = Display.getDisplay(this);
-		go = new Command("Go",Command.OK,1);
-		exit = new Command("Exit",Command.EXIT,0);
-		form = new Form("首页");
-		tf = new TextField("输入bvid:","",20,TextField.ANY);
+		go = new Command(goString,Command.OK,1);
+		exit = new Command(exitString,Command.EXIT,0);
+		form = new Form(main_pageString);
+		tf = new TextField(inputString,"",20,TextField.ANY);
 		form.append(tf);
 		form.addCommand(go);
 		form.addCommand(exit);
 		form.setCommandListener(this);
 		display.setCurrent(form);
-		
 	}
 	
 	public void commandAction(Command c, Displayable d) {
@@ -59,7 +76,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
                     }
                 }).start();
         	}else{
-        		Alert alert = new Alert("Error", "invalid bvid", null, AlertType.ERROR);
+        		Alert alert = new Alert("Error", invalid_bvidStirng, null, AlertType.ERROR);
                 alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
                 display.setCurrent(alert, form);
         	}
@@ -79,6 +96,23 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 			e.printStackTrace();
 		} // 销毁应用
         notifyDestroyed(); // 通知 MIDP 退出
+    }
+	private void loadMessages() {
+        // 根据系统语言加载相应的资源文件
+        
+        if (lang.equals("zh-CN")) {
+        	goString="前往";
+        	exitString="退出";
+        	main_pageString="首页";
+        	inputString="输入bvid：";
+        	invalid_bvidStirng="无效的bvid号";
+        } else {
+        	goString="go";
+        	exitString="exit";
+        	main_pageString="Main Page";
+        	inputString="input bvid: ";
+        	invalid_bvidStirng="invalid bvid";
+        }
     }
 
 }
