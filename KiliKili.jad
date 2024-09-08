@@ -1,8 +1,8 @@
-MIDlet-Version: 0.0.1
+MIDlet-Version: 0.1.2
+MIDlet-Icon: icon.png
 MIDlet-Vendor: jiehuan
 MIDlet-Jar-URL: KiliKili.jar
 MicroEdition-Configuration: CLDC-1.1
 MicroEdition-Profile: MIDP-2.0
 MIDlet-1: KiliKili,icon.png,top.jiehuan.kilikili.MainMIDlet
 MIDlet-Name: KiliKili
-MIDlet-Icon: icon.png
