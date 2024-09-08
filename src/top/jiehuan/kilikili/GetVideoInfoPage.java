@@ -59,7 +59,7 @@ public class GetVideoInfoPage implements CommandListener{
 		this.bvid=bvid;
 		ml=midlet;
 		display = Display.getDisplay(midlet);
-		URLget video_info = new URLget("http://lo:3000/view?bvid="+bvid);
+		URLget video_info = new URLget("http://localhost:3000/view?bvid="+bvid);
 		String[] s_info= video_info.sendGetRequest();
 		String title = null;
 		if(s_info[0].equals("error")){
