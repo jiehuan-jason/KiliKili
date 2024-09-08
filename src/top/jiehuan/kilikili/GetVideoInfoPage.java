@@ -53,7 +53,7 @@ public class GetVideoInfoPage implements CommandListener{
 		this.bvid=bvid;
 		ml=midlet;
 		display = Display.getDisplay(midlet);
-		URLget video_info = new URLget("http://192.168.1.2:3000/view?bvid="+bvid);
+		URLget video_info = new URLget("http://localhost:3000/view?bvid="+bvid);
 		String[] s_info= video_info.sendGetRequest();
 		String title = null;
 		if(s_info[0].equals("error")){
@@ -64,21 +64,23 @@ public class GetVideoInfoPage implements CommandListener{
 			//title=get_Title(s_info[1]);
 			title=URLget.findValue(s_info[1],"title");
 			string=new StringItem(null, title);
-			up_name=new StringItem(null,"\nupÖ÷£º"+URLget.findValue(s_info[1], "name"));
-			view = new StringItem(null,"\n¿´"+URLget.findValueInt(s_info[1],"view")+"´Î");
-			reply = new StringItem(null,"\n»Ø"+URLget.findValueInt(s_info[1],"reply")+"Ìõ");
-			coin = new StringItem(null,"\n±Ò"+URLget.findValueInt(s_info[1],"coin")+"¸ö  ");
-			share = new StringItem(null,"×ª"+URLget.findValueInt(s_info[1],"share")+"´Î  ");
-			like = new StringItem(null,"ÔŞ"+URLget.findValueInt(s_info[1],"like")+"´Î");
+			up_name=new StringItem(null,"\nupä¸»ï¼š"+URLget.findValue(s_info[1], "name"));
+			view = new StringItem(null,"\nçœ‹"+URLget.findValueInt(s_info[1],"view")+"æ¬¡");
+			reply = new StringItem(null,"\nå›"+URLget.findValueInt(s_info[1],"reply")+"æ¡");
+			coin = new StringItem(null,"\nå¸"+URLget.findValueInt(s_info[1],"coin")+"ä¸ª  ");
+			share = new StringItem(null,"è½¬"+URLget.findValueInt(s_info[1],"share")+"æ¬¡  ");
+			like = new StringItem(null,"èµ"+URLget.findValueInt(s_info[1],"like")+"æ¬¡");
 			cid=URLget.findValueInt(s_info[1], "cid");
+			System.out.println(cid);
 			video_url=URLget.BackVideoLink(bvid, cid);
+			System.out.println("Get Already");
 			//link=new StringItem(null,URLget.BackVideoLink(bvid, cid));
 		}
 		download=new Command("Download",Command.ITEM,1);
 		back=new Command("Back",Command.BACK,1);
 		exit=new Command("Exit",Command.EXIT,0);
 		//loadImage(URLget.findValue(s_info[1], "name"));
-		form=new Form("ÊÓÆµ½çÃæ");
+		form=new Form("è§†é¢‘ç•Œé¢");
 		form.append(string);
 		form.append(up_name);
 		form.append(view);
@@ -99,10 +101,10 @@ public class GetVideoInfoPage implements CommandListener{
 	            public void run() {
 	                try {
 	                    image = Image.createImage(url);
-	                    // ´´½¨ ImageItem ²¢Ìí¼Óµ½±íµ¥
+	                    // åˆ›å»º ImageItem å¹¶æ·»åŠ åˆ°è¡¨å•
 	                    ImageItem imageItem = new ImageItem(null, image, ImageItem.LAYOUT_CENTER, null);
 	                    form.append(imageItem);
-	                    display.setCurrent(form); // ÏÔÊ¾±íµ¥
+	                    display.setCurrent(form); // æ˜¾ç¤ºè¡¨å•
 	                } catch (IOException e) {
 	                	System.out.println(e.getMessage());
 	                    e.printStackTrace();
@@ -119,7 +121,7 @@ public class GetVideoInfoPage implements CommandListener{
 			// TODO Auto-generated catch block
 			try {
 				if(new JSONObject(j_info).getString("data").toString().equals("-400")){
-					return "ÕÒ²»µ½¶ÔÓ¦µÄÊÓÆµ";
+					return "æ‰¾ä¸åˆ°å¯¹åº”çš„è§†é¢‘";
 				}
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
@@ -149,6 +151,8 @@ public class GetVideoInfoPage implements CommandListener{
 	        	new Thread(new Runnable() {
                     public void run() {
                     	try {
+                    		//video_url=URLget.BackVideoLink(bvid, cid);
+                    		System.out.println("video_url is:"+video_url);
 							ml.platformRequest(new String(video_url.getBytes("UTF-8"),"UTF-8"));
 						} catch (ConnectionNotFoundException e) {
 							// TODO Auto-generated catch block
@@ -170,18 +174,18 @@ public class GetVideoInfoPage implements CommandListener{
 	        OutputStream outputStream = null;
 
 	        try {
-	            // ´´½¨Ä¿±êÎÄ¼ş¼Ğ
+	            // åˆ›å»ºç›®æ ‡æ–‡ä»¶å¤¹
 	            FileConnection folder = (FileConnection) Connector.open("file://" + folderPath);
 	            if (!folder.exists()) {
-	                folder.mkdir(); // ´´½¨ÎÄ¼ş¼Ğ
+	                folder.mkdir(); // åˆ›å»ºæ–‡ä»¶å¤¹
 	            }
 	            folder.close();
 
-	            // ÉèÖÃ HTTPS Á¬½Ó
+	            // è®¾ç½® HTTPS è¿æ¥
 	            try{
 	            	connection = (HttpConnection) Connector.open(url);
 	            	connection.setRequestMethod(HttpConnection.GET);
-	            	connection.setRequestProperty("Referer", "https://www.bilibili.com"); // ÉèÖÃ Referer
+	            	connection.setRequestProperty("Referer", "https://www.bilibili.com"); // è®¾ç½® Referer
 	            }catch(javax.microedition.pki.CertificateException e){
 	            	System.out.println(e.getMessage());
 	            	System.out.println(e.getCertificate().toString());
@@ -189,26 +193,26 @@ public class GetVideoInfoPage implements CommandListener{
 	            }
 	            
 
-	            // ¼ì²éÏìÓ¦
+	            // æ£€æŸ¥å“åº”
 	            int responseCode = connection.getResponseCode();
 	            if (responseCode == HttpConnection.HTTP_OK) {
 	                inputStream = connection.openInputStream();
 	                
-	                // ´´½¨ÎÄ¼şÊä³öÁ÷
+	                // åˆ›å»ºæ–‡ä»¶è¾“å‡ºæµ
 	                FileConnection fileConnection = (FileConnection) Connector.open("file://" + folderPath + "/" + newFileName);
 	                if (!fileConnection.exists()) {
-	                    fileConnection.create(); // ´´½¨ÎÄ¼ş
+	                    fileConnection.create(); // åˆ›å»ºæ–‡ä»¶
 	                }
 	                outputStream = fileConnection.openOutputStream();
 
-	                // ÏÂÔØÎÄ¼ş
+	                // ä¸‹è½½æ–‡ä»¶
 	                byte[] buffer = new byte[1024];
 	                int bytesRead;
 	                while ((bytesRead = inputStream.read(buffer)) != -1) {
 	                    outputStream.write(buffer, 0, bytesRead);
 	                }
 
-	                // Íê³ÉÏÂÔØ
+	                // å®Œæˆä¸‹è½½
 	                outputStream.close();
 	                inputStream.close();
 	                fileConnection.close();
@@ -230,7 +234,7 @@ public class GetVideoInfoPage implements CommandListener{
 	                if (outputStream != null) outputStream.close();
 	                if (connection != null) connection.close();
 	            } catch (IOException e) {
-	                // ´¦Àí¹Ø±ÕÁ÷Ê±µÄÒì³£
+	                // å¤„ç†å…³é—­æµæ—¶çš„å¼‚å¸¸
 	            }
 	        }
 	    }*/

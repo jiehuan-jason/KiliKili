@@ -39,8 +39,8 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 		display = Display.getDisplay(this);
 		go = new Command("Go",Command.OK,1);
 		exit = new Command("Exit",Command.EXIT,0);
-		form = new Form("Ê×Ò³");
-		tf = new TextField("ÊäÈëbvid:","",20,TextField.ANY);
+		form = new Form("é¦–é¡µ");
+		tf = new TextField("è¾“å…¥bvid:","",20,TextField.ANY);
 		form.append(tf);
 		form.addCommand(go);
 		form.addCommand(exit);
@@ -60,7 +60,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
                 }).start();
         	}else{
         		Alert alert = new Alert("Error", "invalid bvid", null, AlertType.ERROR);
-                alert.setTimeout(Alert.FOREVER); // ÉèÖÃÎªÓÀÔ¶ÏÔÊ¾£¬Ö±µ½ÓÃ»§²Ù×÷
+                alert.setTimeout(Alert.FOREVER); // è®¾ç½®ä¸ºæ°¸è¿œæ˜¾ç¤ºï¼Œç›´åˆ°ç”¨æˆ·æ“ä½œ
                 display.setCurrent(alert, form);
         	}
            
@@ -77,8 +77,8 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 		} catch (MIDletStateChangeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} // Ïú»ÙÓ¦ÓÃ
-        notifyDestroyed(); // Í¨Öª MIDP ÍË³ö
+		} // é”€æ¯åº”ç”¨
+        notifyDestroyed(); // é€šçŸ¥ MIDP é€€å‡º
     }
 
 }

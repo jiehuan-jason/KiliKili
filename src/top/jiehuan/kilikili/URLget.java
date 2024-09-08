@@ -31,13 +31,13 @@ public class URLget {
 	        int num=0;
 
 	        try {
-	            // ´ò¿ªÁ¬½Ó
+	            // æ‰“å¼€è¿æ¥
 	            connection = (HttpConnection) Connector.open(url);
 	            connection.setRequestMethod(HttpConnection.GET);
 	            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 	            //connection.setRequestProperty("User-Agent", "Profile/MIDP-2.0 Configuration/CLDC-1.0");
 	            
-	            // Á¬½Ó
+	            // è¿æ¥
 	            num = connection.getResponseCode();
 	            
 	            System.out.println("get now");
@@ -51,7 +51,7 @@ public class URLget {
 	            	String str=null;
 	            	
 	            	if(length!=-1){
-	            		/*int bufferSize = 1024; // ÀıÈç 1KB
+	            		/*int bufferSize = 1024; // ä¾‹å¦‚ 1KB
 	            		byte[] buffer = new byte[bufferSize];
 	            		StringBuffer sb = new StringBuffer();
 	            		int bytesRead;
@@ -72,15 +72,15 @@ public class URLget {
 	            		str=new String(incomingData,"UTF-8");
 	            		System.out.println("Test OK");*/
 	            		//String jsonPart = reader.readJsonPart("file:///path/to/your/large.json", 10240);
-	            		byte[] buffer = new byte[1024]; // 1KB »º³åÇø
+	            		byte[] buffer = new byte[1024]; // 1KB ç¼“å†²åŒº
 	                    int bytesRead = 0;
 	                    int totalBytesRead = 0;
 	                    StringBuffer jsonPart = new StringBuffer();
 
-	                    // Öğ¿é¶ÁÈ¡Êı¾İ
+	                    // é€å—è¯»å–æ•°æ®
 	                    while ((bytesRead = dis.read(buffer)) != -1) {
 	                        if (totalBytesRead + bytesRead > maxBytes) {
-	                            bytesRead = maxBytes - totalBytesRead; // Ö»¶ÁÈ¡Ê£ÓàµÄ×Ö½Ú
+	                            bytesRead = maxBytes - totalBytesRead; // åªè¯»å–å‰©ä½™çš„å­—èŠ‚
 	                            System.out.println("reading...");
 	                        }
 	                        jsonPart.append(new String(buffer, 0, bytesRead,"UTF-8"));
@@ -88,12 +88,12 @@ public class URLget {
 	                        totalBytesRead += bytesRead;
 	                        
 	                        if (totalBytesRead >= maxBytes) {
-	                            break; // ´ïµ½×î´ó×Ö½ÚÊı£¬Í£Ö¹¶ÁÈ¡
+	                            break; // è¾¾åˆ°æœ€å¤§å­—èŠ‚æ•°ï¼Œåœæ­¢è¯»å–
 	                        }
 	                    }
 	                    System.out.println(jsonPart.toString());
 	                    str=jsonPart.toString();
-	                
+	                    //return new String[]{"OK",str};
 	            		//System.out.println(str);
 	            	}else{
 	            		System.out.println("length==-1");
@@ -105,13 +105,26 @@ public class URLget {
 	            		str=new String(bs.toByteArray(),"UTF-8");
 	            		bs.close();
 	            	}
+	            	try {
+						connection.close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						return new String[]{"error",e1.getMessage()};
+					}
+		        	if(dis!=null){
+		        		try{
+		        			dis.close();
+		        		}catch(Exception e){
+		        			return new String[]{"error"+e.getMessage()};
+		        		}
+		        	}
 	            	return new String[]{"ok",str};
 	            }else if (connection.getResponseCode() == 307||connection.getResponseCode() == 302) {
 	            	System.out.println("307 or 302 now");
-	                String newUrl = connection.getHeaderField("Location"); // »ñÈ¡ĞÂµÄ URL
+	                String newUrl = connection.getHeaderField("Location"); // è·å–æ–°çš„ URL
 	                URLget newu = new URLget(url+'/'+newUrl);
 	                System.out.println(url+'/'+newUrl);
-	                return newu.sendGetRequest(); // µİ¹é´¦ÀíÖØ¶¨Ïò
+	                return newu.sendGetRequest(); // é€’å½’å¤„ç†é‡å®šå‘
 	            }
 	        }catch(Exception e){
 	        	e.printStackTrace();
@@ -139,7 +152,7 @@ public class URLget {
 	        	
 	        }
 	        return new String[]{"error","back "+num};
-	            // ¼ì²éÏìÓ¦Âë
+	            // æ£€æŸ¥å“åº”ç 
 	            /*int responseCode = connection.getResponseCode();
 	            if (responseCode == HttpConnection.HTTP_OK) {
 	                inputStream = connection.openInputStream();
@@ -155,7 +168,7 @@ public class URLget {
 	        } catch (IOException e) {
 	            return "IOException: " + e.getMessage();
 	        } finally {
-	            // ¹Ø±ÕÁ¬½Ó
+	            // å…³é—­è¿æ¥
 	            try {
 	                if (inputStream != null) {
 	                    inputStream.close();
@@ -178,13 +191,13 @@ public class URLget {
         int num=0;
 
         try {
-            // ´ò¿ªÁ¬½Ó
-            connection = (HttpConnection) Connector.open("http://192.168.1.2:2121/api/playurl?bvid=BV"+bvid+"&cid="+cid);
+            // æ‰“å¼€è¿æ¥
+            connection = (HttpConnection) Connector.open("http://localhost:2121/api/playurl?bvid=BV"+bvid+"&cid="+cid);
             connection.setRequestMethod(HttpConnection.GET);
             connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             //connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 7.1.1; OPPO R9sk) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.111 Mobile Safari/537.36");
             
-            // Á¬½Ó
+            // è¿æ¥
             num = connection.getResponseCode();
             
             System.out.println("get now");
@@ -198,7 +211,7 @@ public class URLget {
             	String str=null;
             	
             	if(length!=-1){
-            		/*int bufferSize = 1024; // ÀıÈç 1KB
+            		/*int bufferSize = 1024; // ä¾‹å¦‚ 1KB
             		byte[] buffer = new byte[bufferSize];
             		StringBuffer sb = new StringBuffer();
             		int bytesRead;
@@ -262,28 +275,28 @@ public class URLget {
     
 	}
 	public static String findValue(String jsonString, String findText) {
-	    // ÕÒµ½Ö¸¶¨×Ö¶ÎµÄË÷Òı
+	    // æ‰¾åˆ°æŒ‡å®šå­—æ®µçš„ç´¢å¼•
 	    int titleIndex = jsonString.indexOf("\"" + findText + "\"");
 	    if (titleIndex == -1) {
 	        System.out.println("No Find Text");
-	        return null; // Èç¹ûÃ»ÓĞÕÒµ½Ö¸¶¨×Ö¶Î£¬·µ»Ø null
+	        return null; // å¦‚æœæ²¡æœ‰æ‰¾åˆ°æŒ‡å®šå­—æ®µï¼Œè¿”å› null
 	    }
 
-	    // ÕÒµ½µÚÒ»¸öË«ÒıºÅµÄÎ»ÖÃ
-	    int firstQuoteIndex = jsonString.indexOf("\"", titleIndex + findText.length() + 2); // +2 ÊÇÎªÁËÌø¹ı×Ö¶ÎÃûºÍºóÃæµÄÒıºÅ
+	    // æ‰¾åˆ°ç¬¬ä¸€ä¸ªåŒå¼•å·çš„ä½ç½®
+	    int firstQuoteIndex = jsonString.indexOf("\"", titleIndex + findText.length() + 2); // +2 æ˜¯ä¸ºäº†è·³è¿‡å­—æ®µåå’Œåé¢çš„å¼•å·
 	    if (firstQuoteIndex == -1) {
 	        System.out.println("No Find first");
-	        return null; // Èç¹ûÃ»ÓĞÕÒµ½ÏÂÒ»¸öË«ÒıºÅ£¬·µ»Ø null
+	        return null; // å¦‚æœæ²¡æœ‰æ‰¾åˆ°ä¸‹ä¸€ä¸ªåŒå¼•å·ï¼Œè¿”å› null
 	    }
 
-	    // ÕÒµ½µÚ¶ş¸öË«ÒıºÅµÄÎ»ÖÃ
+	    // æ‰¾åˆ°ç¬¬äºŒä¸ªåŒå¼•å·çš„ä½ç½®
 	    int secondQuoteIndex = jsonString.indexOf("\"", firstQuoteIndex + 1);
 	    if (secondQuoteIndex == -1) {
 	        System.out.println("No Find Second");
-	        return null; // Èç¹ûÃ»ÓĞÕÒµ½µÚ¶ş¸öË«ÒıºÅ£¬·µ»Ø null
+	        return null; // å¦‚æœæ²¡æœ‰æ‰¾åˆ°ç¬¬äºŒä¸ªåŒå¼•å·ï¼Œè¿”å› null
 	    }
 
-	    // ÌáÈ¡²¢·µ»ØÖ¸¶¨×Ö¶ÎµÄÖµ
+	    // æå–å¹¶è¿”å›æŒ‡å®šå­—æ®µçš„å€¼
 	    return jsonString.substring(firstQuoteIndex + 1, secondQuoteIndex);
 	}
 	
@@ -292,28 +305,27 @@ public class URLget {
 		int titleIndex = jsonString.indexOf("\"" + findText + "\"");
 	    if (titleIndex == -1) {
 	        System.out.println("No Find Text");
-	        return null; // Èç¹ûÃ»ÓĞÕÒµ½Ö¸¶¨×Ö¶Î£¬·µ»Ø null
+	        return null; // å¦‚æœæ²¡æœ‰æ‰¾åˆ°æŒ‡å®šå­—æ®µï¼Œè¿”å› null
 	    }
 
-	    // ÕÒµ½µÚÒ»¸öË«ÒıºÅµÄÎ»ÖÃ
-	    int firstQuoteIndex = jsonString.indexOf(":", titleIndex + findText.length() + 2); // +2 ÊÇÎªÁËÌø¹ı×Ö¶ÎÃûºÍºóÃæµÄÒıºÅ
+	    // æ‰¾åˆ°ç¬¬ä¸€ä¸ªåŒå¼•å·çš„ä½ç½®
+	    int firstQuoteIndex = jsonString.indexOf(":", titleIndex + findText.length() + 2); // +2 æ˜¯ä¸ºäº†è·³è¿‡å­—æ®µåå’Œåé¢çš„å¼•å·
 	    if (firstQuoteIndex == -1) {
 	        System.out.println("No Find first");
-	        return null; // Èç¹ûÃ»ÓĞÕÒµ½ÏÂÒ»¸öË«ÒıºÅ£¬·µ»Ø null
+	        return null; // å¦‚æœæ²¡æœ‰æ‰¾åˆ°ä¸‹ä¸€ä¸ªåŒå¼•å·ï¼Œè¿”å› null
 	    }
 
-	    // ÕÒµ½µÚ¶ş¸öË«ÒıºÅµÄÎ»ÖÃ
+	    // æ‰¾åˆ°ç¬¬äºŒä¸ªåŒå¼•å·çš„ä½ç½®
 	    int secondQuoteIndex = jsonString.indexOf(",", firstQuoteIndex + 1);
 	    if (secondQuoteIndex == -1) {
 	    	secondQuoteIndex = jsonString.indexOf("}", firstQuoteIndex + 1);
 	    	if(secondQuoteIndex==-1){
 	    		System.out.println("No Find Second");
-	    		return null; // Èç¹ûÃ»ÓĞÕÒµ½µÚ¶ş¸öË«ÒıºÅ£¬·µ»Ø null
+	    		return null; // å¦‚æœæ²¡æœ‰æ‰¾åˆ°ç¬¬äºŒä¸ªåŒå¼•å·ï¼Œè¿”å› null
 	    	}
 	    }
 
-	    // ÌáÈ¡²¢·µ»ØÖ¸¶¨×Ö¶ÎµÄÖµ
+	    // æå–å¹¶è¿”å›æŒ‡å®šå­—æ®µçš„å€¼
 	    return jsonString.substring(firstQuoteIndex + 1, secondQuoteIndex);
 	}
 }
-
