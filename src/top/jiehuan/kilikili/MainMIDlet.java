@@ -22,6 +22,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	TextField tf;
 	Command go;
 	Command exit;
+	Command about;
 	
 	
 	private String goString;
@@ -29,6 +30,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	private String main_pageString;
 	private String inputString;
 	private String invalid_bvidStirng;
+	private String aboutString;
 	
 	public String lang;
 	/*public MainMIDlet(){
@@ -55,13 +57,15 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 		loadMessages();
 		
 		display = Display.getDisplay(this);
-		go = new Command(goString,Command.OK,1);
-		exit = new Command(exitString,Command.EXIT,0);
+		go = new Command(goString,Command.OK,0);
+		exit = new Command(exitString,Command.EXIT,1);
+		about = new Command(aboutString,Command.OK,1);
 		form = new Form(main_pageString);
-		tf = new TextField(inputString,"",20,TextField.ANY);
+		tf = new TextField(inputString,"",10,TextField.ANY);
 		form.append(tf);
 		form.addCommand(go);
 		form.addCommand(exit);
+		form.addCommand(about);
 		form.setCommandListener(this);
 		display.setCurrent(form);
 	}
@@ -87,6 +91,12 @@ public class MainMIDlet extends MIDlet implements CommandListener{
             //notifyPaused();
         }else if(c==exit){
         	exitApp();
+        }else if(c==about){
+        	new Thread(new Runnable() {
+                public void run() {
+                    new AboutPage(MainMIDlet.this);
+                }
+            }).start();
         }
     }
 	void exitApp() {
@@ -107,12 +117,14 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         	main_pageString="首页";
         	inputString="输入bvid：";
         	invalid_bvidStirng="无效的bvid号";
+        	aboutString="关于";
         } else {
-        	goString="go";
-        	exitString="exit";
+        	goString="Go";
+        	exitString="Exit";
         	main_pageString="Main Page";
         	inputString="input bvid: ";
         	invalid_bvidStirng="invalid bvid";
+        	aboutString="About";
         }
     }
 
