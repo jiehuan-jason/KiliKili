@@ -38,8 +38,6 @@
 
 Developed using JDK1.8+Eclipse2.2, tested on Nokia E72, still in development
 
-* [x] 
-
 ### Thanks
 
 * [SocialSisterYi/bilibili-API-collect: 哔哩哔哩-API收集整理【不断更新中....】](https://github.com/SocialSisterYi/bilibili-API-collect)

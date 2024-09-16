@@ -115,8 +115,12 @@ public class URLget {
 		        		try{
 		        			dis.close();
 		        		}catch(Exception e){
-		        			return new String[]{"error"+e.getMessage()};
+		        			return new String[]{"error",e.getMessage()};
 		        		}
+		        	}
+		        	System.out.println("code:"+findValueInt(str,"code"));
+		        	if(findValueInt(str,"code").equals("-400")){
+		        		return new String[]{"error","No This BVID."};
 		        	}
 	            	return new String[]{"ok",str};
 	            }else if (connection.getResponseCode() == 307||connection.getResponseCode() == 302) {

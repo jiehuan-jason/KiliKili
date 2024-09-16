@@ -62,10 +62,19 @@ public class GetVideoInfoPage implements CommandListener{
 		URLget video_info = new URLget("http://localhost:3000/view?bvid="+bvid);
 		String[] s_info= video_info.sendGetRequest();
 		String title = null;
+		System.out.println("status:"+s_info[0]);
 		if(s_info[0].equals("error")){
-			title="error";
-			string=new StringItem(null, s_info[1]);
-			up_name=new StringItem(null,"null");
+			form=new Form("未找到该视频");
+			back=new Command("Back",Command.BACK,1);
+			exit=new Command("Exit",Command.EXIT,0);
+			form.addCommand(back);
+			form.addCommand(exit);
+			form.setCommandListener(this);
+			Alert alert = new Alert("Error", s_info[1], null, AlertType.ERROR);
+            alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+            display.setCurrent(alert, form);
+            ml.display.setCurrent(ml.form);
+            
 		}else{
 			//title=get_Title(s_info[1]);
 			title=URLget.findValue(s_info[1],"title");
@@ -84,38 +93,39 @@ public class GetVideoInfoPage implements CommandListener{
 			video_url=URLget.BackVideoLink(bvid, cid);
 			System.out.println("Get Already");
 			//link=new StringItem(null,URLget.BackVideoLink(bvid, cid));
-		}
-		download=new Command("Download",Command.ITEM,1);
-		back=new Command("Back",Command.BACK,1);
-		exit=new Command("Exit",Command.EXIT,0);
-		view_cover=new Command("View the Cover",Command.ITEM,2);
-		//loadImage(URLget.findValue(s_info[1], "name"));
-		form=new Form("视频界面");
-		form.append(string);
-		//form.append(new StringItem(null,""));
-		form.append(up_name);
-		//form.append(new StringItem(null,""));
-		if(!desc.equals("\n简介:")){
-			Display_Desc(desc);
-			form.append(new StringItem(null,""));
+			download=new Command("Download",Command.ITEM,1);
+			back=new Command("Back",Command.BACK,1);
+			exit=new Command("Exit",Command.EXIT,0);
+			view_cover=new Command("View the Cover",Command.ITEM,2);
+			//loadImage(URLget.findValue(s_info[1], "name"));
+			form=new Form("视频界面");
+			form.append(string);
+			//form.append(new StringItem(null,""));
+			form.append(up_name);
+			//form.append(new StringItem(null,""));
+			if(!desc.equals("\n简介:")){
+				Display_Desc(desc);
+				form.append(new StringItem(null,""));
+			}
+			
+			
+			//form.append(desc);
+			/*form.append(view);
+			form.append(like);
+			form.append(coin);
+			form.append(share);
+			form.append(reply);*/
+			form.append(info);
+			//form.append(link);
+			form.addCommand(back);
+			form.addCommand(exit);
+			form.addCommand(download);
+			form.addCommand(view_cover);
+			form.setCommandListener(this);
+			//loadImage(URLget.findValue(s_info[1], "pic"));
+			display.setCurrent(form);
 		}
 		
-		
-		//form.append(desc);
-		/*form.append(view);
-		form.append(like);
-		form.append(coin);
-		form.append(share);
-		form.append(reply);*/
-		form.append(info);
-		//form.append(link);
-		form.addCommand(back);
-		form.addCommand(exit);
-		form.addCommand(download);
-		form.addCommand(view_cover);
-		form.setCommandListener(this);
-		//loadImage(URLget.findValue(s_info[1], "pic"));
-		display.setCurrent(form);
 	}
 	 /*private void loadImage(final String url) {
 	        new Thread(new Runnable() {

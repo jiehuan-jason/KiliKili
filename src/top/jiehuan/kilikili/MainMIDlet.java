@@ -68,11 +68,12 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	
 	public void commandAction(Command c, Displayable d) {
         if (c == go) {
+        	
         	if(tf.getString().length()==10){
         		new Thread(new Runnable() {
                     public void run() {
-                    	String text = tf.getString();
-                        new GetVideoInfoPage(MainMIDlet.this, text);
+                    	String bvid = tf.getString();
+                        new GetVideoInfoPage(MainMIDlet.this, bvid);
                     }
                 }).start();
         	}else{
