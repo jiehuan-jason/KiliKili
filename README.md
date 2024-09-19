@@ -4,8 +4,6 @@
 
 使用JDK1.8+Eclipse2.2开发，实机为Nokia E72测试，目前仍处于开发阶段
 
-* [x] 
-
 ### 感谢
 
 * [SocialSisterYi/bilibili-API-collect: 哔哩哔哩-API收集整理【不断更新中....】](https://github.com/SocialSisterYi/bilibili-API-collect)
@@ -33,6 +31,22 @@
 - [ ] 多p视频获取
 
 - [ ] up主个人空间视频获取
+
+## 测试
+
+#### 模拟器
+
+WTK2.2 获取信息和封面正常 视频下载链接解析错误
+
+KEmulator-v1.0.5 功能完全正常
+
+#### 真机
+
+Nokia E72 功能完全正常
+
+Nokia N95 下载视频异常 感谢dospy@家养的大白鹅
+
+Nokia N86 功能异常 感谢dospy@黄金闪闪发光
 
 ## English version
 
