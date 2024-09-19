@@ -1,9 +1,12 @@
 package top.jiehuan.kilikili;
 
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
+import java.util.Vector;
 
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
@@ -23,7 +26,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	Command go;
 	Command exit;
 	Command about;
-	
+	Command rcmd;
 	
 	private String goString;
 	private String exitString;
@@ -31,6 +34,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	private String inputString;
 	private String invalid_bvidStirng;
 	private String aboutString;
+	private String rcmd_listString;
 	
 	public String lang;
 	/*public MainMIDlet(){
@@ -56,15 +60,22 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 
 		loadMessages();
 		
+		System.out.println("Start init the display moudle");
+		
 		display = Display.getDisplay(this);
 		go = new Command(goString,Command.OK,0);
 		exit = new Command(exitString,Command.EXIT,1);
 		about = new Command(aboutString,Command.OK,1);
+		rcmd = new Command(rcmd_listString,Command.OK,1);
 		form = new Form(main_pageString);
 		tf = new TextField(inputString,"",10,TextField.ANY);
+		
+		System.out.println("Finish init the display moudle");
+		
 		form.append(tf);
 		form.addCommand(go);
 		form.addCommand(exit);
+		form.addCommand(rcmd);
 		form.addCommand(about);
 		form.setCommandListener(this);
 		display.setCurrent(form);
@@ -97,6 +108,12 @@ public class MainMIDlet extends MIDlet implements CommandListener{
                     new AboutPage(MainMIDlet.this);
                 }
             }).start();
+        }else if(c==rcmd){
+        	new Thread(new Runnable() {
+                public void run() {
+                    new RecommendPage(MainMIDlet.this);
+                }
+            }).start();
         }
     }
 	void exitApp() {
@@ -118,6 +135,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         	inputString="输入bvid：";
         	invalid_bvidStirng="无效的bvid号";
         	aboutString="关于";
+        	rcmd_listString="推荐列表";
         } else {
         	goString="Go";
         	exitString="Exit";
@@ -125,7 +143,9 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         	inputString="input bvid: ";
         	invalid_bvidStirng="invalid bvid";
         	aboutString="About";
+        	rcmd_listString="Recommend List";
         }
     }
+	
 
 }
