@@ -1,20 +1,8 @@
 package top.jiehuan.kilikili;
 
-
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Locale;
-import java.util.Vector;
-
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
-
-import javax.microedition.io.Connector;
-import javax.microedition.io.HttpConnection;
-import javax.microedition.io.HttpsConnection;
 import javax.microedition.lcdui.*;
 
 public class MainMIDlet extends MIDlet implements CommandListener{
@@ -37,13 +25,6 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	private String rcmd_listString;
 	
 	public String lang;
-	/*public MainMIDlet(){
-        display = Display.getDisplay(this);
-        form = new Form("JSON Response");
-        exitCommand = new Command("Exit", Command.EXIT, 1);
-        form.addCommand(exitCommand);
-        form.setCommandListener((CommandListener) this);
-    }*/
 
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
 		// TODO Auto-generated method stub
@@ -55,6 +36,12 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 
 	}
 
+	
+	/*
+	 * startApp()
+	 * 初始化程序，初始化控件和命令，显示首页
+	 * 
+	 * */
 	protected void startApp() throws MIDletStateChangeException {
 		lang = System.getProperty("microedition.locale");
 
@@ -80,38 +67,38 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 		form.setCommandListener(this);
 		display.setCurrent(form);
 	}
-	
+	/*
+	 * commandAction()
+	 * 命令处理
+	 * */
 	public void commandAction(Command c, Displayable d) {
-        if (c == go) {
-        	
+        if (c == go) //前往视频信息页面
+        {
         	if(tf.getString().length()==10){
         		new Thread(new Runnable() {
                     public void run() {
                     	String bvid = tf.getString();
-                        new GetVideoInfoPage(MainMIDlet.this, bvid);
+                        new GetVideoInfoPage(MainMIDlet.this, "BV"+bvid);
                     }
                 }).start();
         	}else{
+        		//处理输入错误
         		Alert alert = new Alert("Error", invalid_bvidStirng, null, AlertType.ERROR);
                 alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
                 display.setCurrent(alert, form);
         	}
-           
-            //GetVideoInfoPage secondMIDlet = new GetVideoInfoPage(text);
-            //display.setCurrent(secondMIDlet.getForm());
-            //notifyPaused();
         }else if(c==exit){
-        	exitApp();
+        	exitApp();//退出app
         }else if(c==about){
         	new Thread(new Runnable() {
                 public void run() {
-                    new AboutPage(MainMIDlet.this);
+                    new AboutPage(MainMIDlet.this); //打开关于界面
                 }
             }).start();
         }else if(c==rcmd){
         	new Thread(new Runnable() {
                 public void run() {
-                    new RecommendPage(MainMIDlet.this);
+                    new RecommendPage(MainMIDlet.this); //打开推荐界面
                 }
             }).start();
         }
@@ -120,7 +107,6 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         try {
 			destroyApp(false);
 		} catch (MIDletStateChangeException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} // 销毁应用
         notifyDestroyed(); // 通知 MIDP 退出
