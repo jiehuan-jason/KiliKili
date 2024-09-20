@@ -11,7 +11,7 @@ import javax.microedition.io.HttpConnection;
 public class URLget {
 	static int maxBytes = 10240;
 	
-	public static String[] sendGetRequest(String url) {
+	public static String[] sendGetRequest(String bvid) {
 	        HttpConnection connection = null;
 	        DataInputStream dis =null;
 	        
@@ -21,7 +21,7 @@ public class URLget {
 
 	        try {
 	            // 打开连接 设置请求方式和请求类型
-	            connection = (HttpConnection) Connector.open(url);
+	            connection = (HttpConnection) Connector.open("http://localhost:3000/view?bvid="+bvid);
 	            connection.setRequestMethod(HttpConnection.GET);
 	            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
 	            
@@ -89,12 +89,6 @@ public class URLget {
 		        		return new String[]{"error","No This BVID."};
 		        	}
 	            	return new String[]{"ok",str};
-	            }else if (connection.getResponseCode() == 307||connection.getResponseCode() == 302) {
-	            	System.out.println("307 or 302 now");
-	                String newUrl = connection.getHeaderField("Location"); // 获取新的 URL
-	                //URLget newu = new URLget(url+'/'+newUrl);
-	                System.out.println(url+'/'+newUrl);
-	                return URLget.sendGetRequest(url+'/'+newUrl); // 递归处理重定向
 	            }
 	        }catch(Exception e){
 	        	e.printStackTrace();
@@ -235,10 +229,8 @@ public class URLget {
 	            		System.out.println("length!=-1");
 	            		byte[] incomingData = new byte[length];
 	            		dis.read(incomingData);
-	            		Runtime rt = Runtime.getRuntime(); 
 	            		System.out.println("read over");
 	            		System.out.println("length: " + length);
-	            		System.out.println(rt.freeMemory());
 	            		System.gc();
 	            		str=new String(incomingData,"UTF-8");
 	            		System.out.println("Test OK");

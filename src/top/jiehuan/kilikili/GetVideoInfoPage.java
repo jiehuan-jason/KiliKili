@@ -15,6 +15,22 @@ import javax.microedition.lcdui.StringItem;
 
 
 public class GetVideoInfoPage implements CommandListener{
+	
+	String findErrorString;
+	String backString;
+	String exitString;
+	String likeString;
+	String viewString;
+	String replyString;
+	String coinString;
+	String shareString;
+	String introductionString;
+	String authorString;
+	String videoDisplayString;
+	String downloadString;
+	String coverString;
+	String ci;
+	String ge;
 
 	Display display;
 	Form form;
@@ -46,16 +62,18 @@ public class GetVideoInfoPage implements CommandListener{
 		ml=midlet;
 		display = Display.getDisplay(midlet);
 		
+		loadMessages();
+		
 		//获取视频信息
-		String[] s_info= URLget.sendGetRequest("http://localhost:3000/view?bvid="+bvid);
+		String[] s_info= URLget.sendGetRequest(bvid);
 		String title = null;
 		System.out.println("status:"+s_info[0]);
 		
 		//若返回代码为错误代码，则显示未找到视频
 		if(s_info[0].equals("error")){
-			form=new Form("未找到该视频");
-			back=new Command("Back",Command.BACK,1);
-			exit=new Command("Exit",Command.EXIT,0);
+			form=new Form(findErrorString);
+			back=new Command(backString,Command.BACK,1);
+			exit=new Command(exitString,Command.EXIT,0);
 			form.addCommand(back);
 			form.addCommand(exit);
 			form.setCommandListener(this);
@@ -68,22 +86,22 @@ public class GetVideoInfoPage implements CommandListener{
 			// 初始化视频信息界面
 			title=FindString.findValue(s_info[1],"title");
 			string=new StringItem(null, title);
-			up_name=new StringItem(null,"\nup主："+FindString.findValue(s_info[1], "name"));
-			desc = "\n简介:"+FindString.findValueInt(s_info[1],"desc").substring(1, FindString.findValueInt(s_info[1],"desc").length() - 1);
-			info = new StringItem(null,"\n看"+FindString.findValueInt(s_info[1],"view")+"次  "+"回"+FindString.findValueInt(s_info[1],"reply")+"条  "+"币"+FindString.findValueInt(s_info[1],"coin")+"个  "+"转"+FindString.findValueInt(s_info[1],"share")+"次  "+"赞"+FindString.findValueInt(s_info[1],"like")+"次");
+			up_name=new StringItem(null,"\n"+authorString+FindString.findValue(s_info[1], "name"));
+			desc = "\n"+introductionString+FindString.findValueInt(s_info[1],"desc").substring(1, FindString.findValueInt(s_info[1],"desc").length() - 1);
+			info = new StringItem(null,"\n"+viewString+FindString.findValueInt(s_info[1],"view")+ci+"  "+replyString+FindString.findValueInt(s_info[1],"reply")+ci+"  "+coinString+FindString.findValueInt(s_info[1],"coin")+ge+"  "+shareString+FindString.findValueInt(s_info[1],"share")+ci+"  "+likeString+FindString.findValueInt(s_info[1],"like")+ci);
 			cid=FindString.findValueInt(s_info[1], "cid");
 			pic=FindString.findValue(s_info[1], "pic");
 			System.out.println(cid);
 			video_url=URLget.BackVideoLink(bvid, cid);
 			System.out.println("Get Already");
-			download=new Command("Download",Command.ITEM,1);
-			back=new Command("Back",Command.BACK,1);
-			exit=new Command("Exit",Command.EXIT,0);
-			view_cover=new Command("View the Cover",Command.ITEM,2);
-			form=new Form("视频界面");
+			download=new Command(downloadString,Command.ITEM,1);
+			back=new Command(backString,Command.BACK,1);
+			exit=new Command(exitString,Command.EXIT,0);
+			view_cover=new Command(coverString,Command.ITEM,2);
+			form=new Form(videoDisplayString);
 			form.append(string);
 			form.append(up_name);
-			if(!desc.equals("\n简介:")){
+			if(!desc.equals("\n"+introductionString)){
 				String[] items=FindString.Display_Desc(desc);
 				for(int i=0;i<items.length;i++){
 					form.append(new StringItem(null,items[i]));
@@ -146,7 +164,43 @@ public class GetVideoInfoPage implements CommandListener{
 	        }
 	    }
 	 
-	 
+	 private void loadMessages() {
+	        // 根据系统语言加载相应的资源文件
+	        
+	        if (System.getProperty("microedition.locale").equals("zh-CN")) {
+	        	exitString="退出";
+	        	findErrorString="找不到该BVID对应的视频";
+	        	backString="返回";
+	        	likeString="赞";
+	        	viewString="看";
+	        	replyString="回";
+	        	coinString="币";
+	        	shareString="转";
+	        	introductionString="简介:";
+	        	authorString="作者:";
+	        	videoDisplayString="视频界面";
+	        	downloadString="下载视频";
+	        	coverString="显示封面";
+	        	ci="次";
+	        	ge="个";
+	        } else {
+	        	exitString="Exit";
+	        	findErrorString="No this video";
+	        	backString="Back";
+	        	likeString="Likes";
+	        	viewString="Views";
+	        	replyString="Replys";
+	        	coinString="Coins";
+	        	shareString="Shares";
+	        	introductionString="Introduction:";
+	        	authorString="Author:";
+	        	videoDisplayString="Video Screen";
+	        	downloadString="Download";
+	        	coverString="View the cover";
+	        	ci="";
+	        	ge="";
+	        }
+	    }
 	 
 
 }
