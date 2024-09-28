@@ -58,9 +58,9 @@ public class FindString {
 		            // 提取双引号内的内容
 		            String content = input.substring(startQuote + 1, endQuote);
 		            if(!content.equals("\"\"")){
-		            	if (content.indexOf("<em class=\\\"keyword\\\"") != -1) {
+		            	if (content.indexOf("<em class=\\\"keyword\\\">") != -1) {
 		                    // 替换子串
-		                    content = replace(content,"<em class=\\\"keyword\\\"", "");
+		                    content = replace(content,"<em class=\\\"keyword\\\">", "");
 		                    
 		                }
 		            	if (content.indexOf("</em>") != -1) {
@@ -102,18 +102,8 @@ public class FindString {
 		            }
 
 		            // 提取双引号内的内容
-		            String content = input.substring(startQuote + 1, endQuote);
+		            String content = input.substring(startQuote + 1, endQuote+1);
 		            if(!content.equals("\"\"")){
-		            	if (content.indexOf("<em class=\\\"keyword\\\"") != -1) {
-		                    // 替换子串
-		                    content = replace(content,"<em class=\\\"keyword\\\"", "");
-		                    
-		                }
-		            	if (content.indexOf("</em>") != -1) {
-		                    // 替换子串
-		                    content = replace(content,"</em>", "");
-		                    
-		                }
 		            	resultArray[num]=content.substring(1, content.length()-2);// 将内容存入数组
 		            	num++;
 		            }
@@ -124,8 +114,7 @@ public class FindString {
 		            currentIndex = endQuote + 1;
 		        }
 		        return resultArray;
-		    }
-		//分割字符串 \n
+		    }		//分割字符串 \n
 		 public static String[] Display_Desc(String str){
 			 
 			 	int count = 0;

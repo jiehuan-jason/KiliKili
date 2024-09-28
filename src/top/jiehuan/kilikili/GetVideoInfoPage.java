@@ -170,6 +170,7 @@ public class GetVideoInfoPage implements CommandListener{
 	        }if (c == author_info) {
 	            new Thread(new Runnable() {
 	                public void run() {
+	                	System.out.println(bvid);
 	                	new UserInfoPage(ml,mid,bvid);
 	                }
 	            }).start();

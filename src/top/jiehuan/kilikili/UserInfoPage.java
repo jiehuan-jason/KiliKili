@@ -59,7 +59,7 @@ public class UserInfoPage implements CommandListener {
         if (c == back) {
             new Thread(new Runnable() {
                 public void run() {
-                	new GetVideoInfoPage(ml, "BV"+bvid);
+                	new GetVideoInfoPage(ml, bvid);
                 }
             }).start();
         }

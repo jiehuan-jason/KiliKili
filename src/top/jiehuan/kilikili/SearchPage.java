@@ -42,7 +42,7 @@ public class SearchPage implements CommandListener{
 		
 		for(int i=0;i<maxVideosNum;i++){	//在列表内添加搜索到的视频的标题
 			System.out.println(list_str[i]);
-			//System.out.println(bvids[i]);
+			System.out.println(list_bvid[i]);
 			search_list.append(list_str[i], null);
 		}
 		
@@ -71,6 +71,7 @@ public class SearchPage implements CommandListener{
 	        	new Thread(new Runnable() {
 	                public void run() {
 	                	String bvid = list_bvid[search_list.getSelectedIndex()];
+	                	System.out.println(bvid);
 	                    new GetVideoInfoPage(ml, bvid);
 	                }
 	            }).start();
