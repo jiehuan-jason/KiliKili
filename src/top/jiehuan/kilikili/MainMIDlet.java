@@ -130,7 +130,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         	goString="前往";
         	exitString="退出";
         	main_pageString="首页";
-        	inputString="输入bvid：";
+        	inputString="输入bvid或搜索内容：";
         	invalid_bvidStirng="无效的bvid号";
         	aboutString="关于";
         	rcmd_listString="推荐列表";
@@ -139,7 +139,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         	goString="Go";
         	exitString="Exit";
         	main_pageString="Main Page";
-        	inputString="input bvid: ";
+        	inputString="input BVID or search words: ";
         	invalid_bvidStirng="invalid bvid";
         	aboutString="About";
         	rcmd_listString="Recommend List";
