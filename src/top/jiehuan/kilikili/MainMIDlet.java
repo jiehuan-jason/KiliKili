@@ -15,6 +15,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	Command exit;
 	Command about;
 	Command rcmd;
+	Command search;
 	
 	private String goString;
 	private String exitString;
@@ -23,6 +24,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	private String invalid_bvidStirng;
 	private String aboutString;
 	private String rcmd_listString;
+	private String searchString;
 	
 	public String lang;
 
@@ -54,6 +56,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 		exit = new Command(exitString,Command.EXIT,1);
 		about = new Command(aboutString,Command.OK,1);
 		rcmd = new Command(rcmd_listString,Command.OK,1);
+		search = new Command(searchString,Command.OK,1);
 		form = new Form(main_pageString);
 		tf = new TextField(inputString,"",10,TextField.ANY);
 		
@@ -62,6 +65,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 		form.append(tf);
 		form.addCommand(go);
 		form.addCommand(exit);
+		form.addCommand(search);
 		form.addCommand(rcmd);
 		form.addCommand(about);
 		form.setCommandListener(this);
@@ -101,6 +105,14 @@ public class MainMIDlet extends MIDlet implements CommandListener{
                     new RecommendPage(MainMIDlet.this); //打开推荐界面
                 }
             }).start();
+        }else if(c==search){
+        	new Thread(new Runnable() {
+                public void run() {
+                	System.out.println("search button");
+                	System.out.println("keyword:"+tf.getString());
+                    new SearchPage(MainMIDlet.this,tf.getString()); //打开搜索界面
+                }
+            }).start();
         }
     }
 	void exitApp() {
@@ -122,6 +134,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         	invalid_bvidStirng="无效的bvid号";
         	aboutString="关于";
         	rcmd_listString="推荐列表";
+        	searchString="搜索";
         } else {
         	goString="Go";
         	exitString="Exit";
@@ -130,6 +143,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         	invalid_bvidStirng="invalid bvid";
         	aboutString="About";
         	rcmd_listString="Recommend List";
+        	searchString="Search";
         }
     }
 	

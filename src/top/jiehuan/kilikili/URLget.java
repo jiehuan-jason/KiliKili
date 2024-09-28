@@ -10,6 +10,10 @@ import javax.microedition.io.HttpConnection;
 
 public class URLget {
 	static int maxBytes = 10240;
+	public static String IP_ADDRESS="localhost";
+	public static String SEARCH_URL="http://"+IP_ADDRESS+":3000/search?keyword=";
+	public static String USER_INFO_URL="http://"+IP_ADDRESS+":3000/user?mid=";
+	public static String RCMD_URL="http://"+IP_ADDRESS+":3232";
 	
 	public static String[] sendGetRequest(String bvid) {
 	        HttpConnection connection = null;
@@ -21,7 +25,7 @@ public class URLget {
 
 	        try {
 	            // 打开连接 设置请求方式和请求类型
-	            connection = (HttpConnection) Connector.open("http://localhost:3000/view?bvid="+bvid);
+	            connection = (HttpConnection) Connector.open("http://"+IP_ADDRESS+":3000/view?bvid="+bvid);
 	            connection.setRequestMethod(HttpConnection.GET);
 	            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
 	            
@@ -131,7 +135,7 @@ public class URLget {
 
         try {
         	// 打开连接 设置请求方式和请求类型
-            connection = (HttpConnection) Connector.open("http://localhost:2121/api/playurl?bvid="+bvid+"&cid="+cid);
+            connection = (HttpConnection) Connector.open("http://"+IP_ADDRESS+":2121/api/playurl?bvid="+bvid+"&cid="+cid);
             connection.setRequestMethod(HttpConnection.GET);
             connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                         
@@ -200,7 +204,7 @@ public class URLget {
             
     
 	}
-	 public static String BackRCMDVideos(){
+	 public static String BackWeb(String url){
 			HttpConnection connection = null;
 	        DataInputStream dis =null;
 	        
@@ -210,7 +214,8 @@ public class URLget {
 
 	        try {
 	            // 打开连接
-	            connection = (HttpConnection) Connector.open("http://localhost:3232");
+	        	
+	            connection = (HttpConnection) Connector.open(url);
 	            connection.setRequestMethod(HttpConnection.GET);
 	            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 	           

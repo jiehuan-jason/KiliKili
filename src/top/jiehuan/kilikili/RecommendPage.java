@@ -21,10 +21,10 @@ public class RecommendPage implements CommandListener {
 		// 初始化变量和界面
 		ml=midlet;
 		display = Display.getDisplay(midlet);
-		String rcmd_data=URLget.BackRCMDVideos();
+		String rcmd_data=URLget.BackWeb(URLget.RCMD_URL);
 		
-		titles=FindString.extractContents(rcmd_data,"title");
-		bvids=FindString.extractContents(rcmd_data,"bvid");
+		titles=FindString.extractContents(rcmd_data,"\"title\"");
+		bvids=FindString.extractContents(rcmd_data,"\"bvid\"");
 		
 		
 		rcmd_list=new List("推荐列表",List.IMPLICIT);
