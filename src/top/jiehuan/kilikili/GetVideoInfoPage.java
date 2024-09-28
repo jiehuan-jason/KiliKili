@@ -29,6 +29,7 @@ public class GetVideoInfoPage implements CommandListener{
 	String videoDisplayString;
 	String downloadString;
 	String coverString;
+	String authorInfoString;
 	String ci;
 	String ge;
 
@@ -45,6 +46,7 @@ public class GetVideoInfoPage implements CommandListener{
 	StringItem info;
 	StringItem ln;
 	String pic;
+	String mid;
 	
 	public String bvid;
 	Image image;
@@ -52,6 +54,7 @@ public class GetVideoInfoPage implements CommandListener{
 	Command exit;
 	Command download;
 	Command view_cover;
+	Command author_info;
 	private MainMIDlet ml;
 	String video_url;
 	String cid;
@@ -91,6 +94,7 @@ public class GetVideoInfoPage implements CommandListener{
 			info = new StringItem(null,"\n"+viewString+FindString.findValueInt(s_info[1],"view")+ci+"  "+replyString+FindString.findValueInt(s_info[1],"reply")+ci+"  "+coinString+FindString.findValueInt(s_info[1],"coin")+ge+"  "+shareString+FindString.findValueInt(s_info[1],"share")+ci+"  "+likeString+FindString.findValueInt(s_info[1],"like")+ci);
 			cid=FindString.findValueInt(s_info[1], "cid");
 			pic=FindString.findValue(s_info[1], "pic");
+			mid=FindString.findValueInt(s_info[1], "mid");
 			System.out.println(cid);
 			video_url=URLget.BackVideoLink(bvid, cid);
 			System.out.println("Get Already");
@@ -98,6 +102,7 @@ public class GetVideoInfoPage implements CommandListener{
 			back=new Command(backString,Command.BACK,1);
 			exit=new Command(exitString,Command.EXIT,0);
 			view_cover=new Command(coverString,Command.ITEM,2);
+			author_info=new Command(authorInfoString,Command.ITEM,2);
 			form=new Form(videoDisplayString);
 			form.append(string);
 			form.append(up_name);
@@ -111,9 +116,10 @@ public class GetVideoInfoPage implements CommandListener{
 			
 			form.append(info);
 			form.addCommand(back);
-			form.addCommand(exit);
+			form.addCommand(author_info);
 			form.addCommand(download);
 			form.addCommand(view_cover);
+			form.addCommand(exit);
 			form.setCommandListener(this);
 			display.setCurrent(form);
 		}
@@ -161,6 +167,12 @@ public class GetVideoInfoPage implements CommandListener{
                     	
                     }
 	            }).start();
+	        }if (c == author_info) {
+	            new Thread(new Runnable() {
+	                public void run() {
+	                	new UserInfoPage(ml,mid,bvid);
+	                }
+	            }).start();
 	        }
 	    }
 	 
@@ -181,6 +193,7 @@ public class GetVideoInfoPage implements CommandListener{
 	        	videoDisplayString="视频界面";
 	        	downloadString="下载视频";
 	        	coverString="显示封面";
+	        	authorInfoString="作者空间";
 	        	ci="次";
 	        	ge="个";
 	        } else {
@@ -197,6 +210,7 @@ public class GetVideoInfoPage implements CommandListener{
 	        	videoDisplayString="Video Screen";
 	        	downloadString="Download";
 	        	coverString="View the cover";
+	        	authorInfoString="Author Space";
 	        	ci="";
 	        	ge="";
 	        }
