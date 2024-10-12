@@ -1,5 +1,7 @@
 package top.jiehuan.kilikili;
 
+import java.io.UnsupportedEncodingException;
+
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
@@ -9,7 +11,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	
 	public Display display;
 	public Form form;
-	StringItem string;
+	StringItem tips;
 	TextField tf;
 	Command go;
 	Command exit;
@@ -25,6 +27,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	private String aboutString;
 	private String rcmd_listString;
 	private String searchString;
+	private String tipsString;
 	
 	public String lang;
 
@@ -58,11 +61,13 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 		rcmd = new Command(rcmd_listString,Command.OK,1);
 		search = new Command(searchString,Command.OK,1);
 		form = new Form(main_pageString);
-		tf = new TextField(inputString,"",10,TextField.ANY);
+		tf = new TextField(inputString,"",20,TextField.ANY);
+		tips = new StringItem("","\n"+tipsString);
 		
 		System.out.println("Finish init the display moudle");
 		
 		form.append(tf);
+		form.append(tips);
 		form.addCommand(go);
 		form.addCommand(exit);
 		form.addCommand(search);
@@ -78,11 +83,11 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	public void commandAction(Command c, Displayable d) {
         if (c == go) //前往视频信息页面
         {
-        	if(tf.getString().length()==10){
+        	if(tf.getString().length()==12&&tf.getString().charAt(0) == 'B' && tf.getString().charAt(1) == 'V'){
         		new Thread(new Runnable() {
                     public void run() {
                     	String bvid = tf.getString();
-                        new GetVideoInfoPage(MainMIDlet.this, "BV"+bvid);
+                        new GetVideoInfoPage(MainMIDlet.this, bvid);
                     }
                 }).start();
         	}else{
@@ -109,8 +114,16 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         	new Thread(new Runnable() {
                 public void run() {
                 	System.out.println("search button");
-                	System.out.println("keyword:"+tf.getString());
-                    new SearchPage(MainMIDlet.this,tf.getString()); //打开搜索界面
+                	String search_text;
+					try {
+						search_text = new String( tf.getString().getBytes( "utf8" ), "utf8" );
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						search_text = tf.getString();
+					}
+                	System.out.println("keyword:"+search_text);
+                    new SearchPage(MainMIDlet.this,search_text); //打开搜索界面
                 }
             }).start();
         }
@@ -135,6 +148,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         	aboutString="关于";
         	rcmd_listString="推荐列表";
         	searchString="搜索";
+        	tipsString="Tips:输入BVID请在最前面加入BV二字";
         } else {
         	goString="Go";
         	exitString="Exit";
@@ -144,6 +158,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         	aboutString="About";
         	rcmd_listString="Recommend List";
         	searchString="Search";
+        	tipsString="Tips:Please add 'BV' behind the BVID when you input it.";
         }
     }
 	

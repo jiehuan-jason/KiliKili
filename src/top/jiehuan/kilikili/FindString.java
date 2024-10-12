@@ -68,7 +68,7 @@ public class FindString {
 		                    content = replace(content,"</em>", "");
 		                    
 		                }
-		            	resultArray[num]=content.substring(1, content.length()-2);// 将内容存入数组
+		            	resultArray[num]=content.substring(1, content.length()-1);// 将内容存入数组
 		            	num++;
 		            }
 		            
