@@ -122,9 +122,9 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 						e.printStackTrace();
 						search_text = tf.getString();
 					}*/
-                    Alert alert = new Alert("Keyword", tf.getString(), null, AlertType.INFO);
+                    /*Alert alert = new Alert("Keyword", tf.getString(), null, AlertType.INFO);
                     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-                    display.setCurrent(alert); // 显示 Alert
+                    display.setCurrent(alert); // 显示 Alert*/
                 	System.out.println("keyword:"+tf.getString());
                     new SearchPage(MainMIDlet.this,tf.getString()); //打开搜索界面
                 }
