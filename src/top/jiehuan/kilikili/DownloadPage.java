@@ -7,6 +7,7 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.StringItem;
+import javax.microedition.lcdui.TextField;
 
 public class DownloadPage implements CommandListener{
 	private MainMIDlet ml;
@@ -15,7 +16,7 @@ public class DownloadPage implements CommandListener{
 	Command back;
 	Command exit;
 	Command download;
-	StringItem videoURL;
+	TextField videoURL;
 	StringItem tips;
 	
 	String video_url;
@@ -24,8 +25,8 @@ public class DownloadPage implements CommandListener{
 		ml=midlet;
 		display = Display.getDisplay(midlet);
 		this.video_url=video_url;
-		videoURL = new StringItem("","视频链接:"+video_url);
-		tips = new StringItem("","\n"+"tips:如果下载按钮无法下载，请把光标移到上方的链接处并复制到浏览器打开下载");
+		videoURL = new TextField("",video_url,10000,TextField.ANY);
+		tips = new StringItem("","tips:如果下载按钮无法下载，请把光标移到下方的链接处并复制到浏览器打开下载");
 		download=new Command("下载视频",Command.ITEM,1);
 		
 		form=new Form("下载");
@@ -34,8 +35,8 @@ public class DownloadPage implements CommandListener{
 		form.addCommand(back);
 		form.addCommand(exit);
 		form.addCommand(download);
-		form.append(videoURL);
 		form.append(tips);
+		form.append(videoURL);
 		form.setCommandListener(this);
 		display.setCurrent(form);
 
