@@ -276,11 +276,6 @@ public class URLget {
 		        		}
 		        	}
 		        	// 打印获取到的bilibili返回代码，并检查是否返回错误代码
-		        	String code = FindString.findValueInt(str,"code");
-		        	System.out.println("code:"+code);
-		        	if(code.equals("-400")){
-		        		return "No This BVID.";
-		        	}
 	            	return str;
 	            }
 	        }catch(Exception e){
