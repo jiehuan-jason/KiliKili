@@ -1,6 +1,6 @@
 package top.jiehuan.kilikili;
 
-import java.io.UnsupportedEncodingException;
+
 
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
@@ -114,16 +114,19 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         	new Thread(new Runnable() {
                 public void run() {
                 	System.out.println("search button");
-                	String search_text;
+                	/*String search_text;
 					try {
 						search_text = new String( tf.getString().getBytes( "utf8" ), "utf8" );
 					} catch (UnsupportedEncodingException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 						search_text = tf.getString();
-					}
-                	System.out.println("keyword:"+search_text);
-                    new SearchPage(MainMIDlet.this,search_text); //打开搜索界面
+					}*/
+                    Alert alert = new Alert("Keyword", tf.getString(), null, AlertType.INFO);
+                    alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+                    display.setCurrent(alert); // 显示 Alert
+                	System.out.println("keyword:"+tf.getString());
+                    new SearchPage(MainMIDlet.this,tf.getString()); //打开搜索界面
                 }
             }).start();
         }

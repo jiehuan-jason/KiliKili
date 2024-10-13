@@ -25,6 +25,7 @@ public class SearchPage implements CommandListener{
 	
 	public SearchPage(MainMIDlet midlet,String keyword){
 		//this.keyword=keyword;
+		keyword = URLget.urlEncode(keyword);
 		System.out.println("keyword:"+keyword);
 		//初始化变量和界面
 		ml=midlet;

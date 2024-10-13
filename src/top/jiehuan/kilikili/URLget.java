@@ -315,4 +315,28 @@ public class URLget {
 	            
 	    
 		}
+	    static public String urlEncode(String text) {
+	        StringBuffer encoded = new StringBuffer();
+	        try {
+	            byte[] bytes = text.getBytes("UTF-8"); // 获取 UTF-8 编码的字节数组
+	            for (int i = 0; i < bytes.length; i++) {
+	                int b = bytes[i] & 0xFF; // 将字节转换为无符号整数
+	                if (b == 32) { // 空格转换为 "+"
+	                    encoded.append("+");
+	                } else if (b < 128) { // ASCII 字符直接添加
+	                    encoded.append((char) b);
+	                } else { // 其他字符转换为 URL 编码格式
+	                    encoded.append("%");
+	                    String hex = Integer.toHexString(b);
+	                    if (hex.length() == 1) {
+	                        encoded.append("0"); // 确保两位十六进制
+	                    }
+	                    encoded.append(hex.toUpperCase()); // 转换为大写
+	                }
+	            }
+	        } catch (java.io.UnsupportedEncodingException e) {
+	            e.printStackTrace();
+	        }
+	        return encoded.toString();
+	    }
 }
