@@ -1,10 +1,14 @@
 package top.jiehuan.kilikili;
 
+import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.List;
+import javax.microedition.lcdui.StringItem;
 
 public class SearchPage implements CommandListener{
 	private MainMIDlet ml;
@@ -13,6 +17,7 @@ public class SearchPage implements CommandListener{
 	Command back;
 	Command exit;
 	Command go;
+	Form form;
 	String[] list_bvid;
 	
 	static int maxVideosNum = 10;
@@ -38,6 +43,19 @@ public class SearchPage implements CommandListener{
 		System.out.println("start get web");
 		search_list=new List(searchTitleString,List.IMPLICIT);
 		String web=URLget.BackWeb(URLget.SEARCH_URL+keyword);
+		if(web.startsWith("error")){
+			form=new Form("Error");
+			back=new Command("back",Command.BACK,1);
+			exit=new Command("exit",Command.EXIT,0);
+			form.append(new StringItem("","获取错误"));
+			form.addCommand(back);
+			form.addCommand(exit);
+			form.setCommandListener(this);
+			Alert alert = new Alert("Error", "获取错误", null, AlertType.ERROR);
+            alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+            display.setCurrent(alert, form);
+            ml.display.setCurrent(ml.form);
+		}else{
 		String[] list_str=FindString.FindTitle(web);
 	    list_bvid=FindString.FindBVID(web);
 		
@@ -55,6 +73,7 @@ public class SearchPage implements CommandListener{
 		search_list.addCommand(exit);
 		search_list.setCommandListener(this);
 		display.setCurrent(search_list);
+		}
 	}
 	 public void commandAction(Command c, Displayable d) {
 		 	// 返回主界面

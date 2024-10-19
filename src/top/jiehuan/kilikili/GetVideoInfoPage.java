@@ -76,6 +76,7 @@ public class GetVideoInfoPage implements CommandListener{
 		String[] s_info= URLget.sendGetRequest(bvid);
 		String title = null;
 		System.out.println("status:"+s_info[0]);
+		System.out.println("info:"+s_info[1]);
 		
 		//若返回代码为错误代码，则显示未找到视频
 		if(s_info[0].equals("error")){
@@ -92,17 +93,21 @@ public class GetVideoInfoPage implements CommandListener{
             
 		}else{
 			// 初始化视频信息界面
+			System.out.println("init video info form");
 			title=FindString.findValue(s_info[1],"title");
 			string=new StringItem(null, title);
 			up_name=new StringItem(null,"\n"+authorString+FindString.findValue(s_info[1], "name"));
 			desc = "\n"+introductionString+FindString.findValueInt(s_info[1],"desc").substring(1, FindString.findValueInt(s_info[1],"desc").length() - 1);
+			System.out.println("finish init string item");
 			info = new StringItem(null,"\n"+viewString+FindString.findValueInt(s_info[1],"view")+ci+"  "+replyString+FindString.findValueInt(s_info[1],"reply")+ci+"  "+coinString+FindString.findValueInt(s_info[1],"coin")+ge+"  "+shareString+FindString.findValueInt(s_info[1],"share")+ci+"  "+likeString+FindString.findValueInt(s_info[1],"like")+ci);
 			cid=FindString.findValueInt(s_info[1], "cid");
 			pic=FindString.findValue(s_info[1], "pic");
 			mid=FindString.findValueInt(s_info[1], "mid");
 			ctime=FindString.findValueInt(s_info[1], "pubdate");
+			System.out.println("finish findValue");
 			//System.out.println(cid);
 			video_url=URLget.BackVideoLink(bvid, cid);
+			System.out.println("finish backlink");
 			Date date = new Date(Long.parseLong(ctime)*1000);
 			time = new StringItem(null,"\n"+timeString+":"+formatDate(date,8));//UTC+8
 			System.out.println("Get Already");

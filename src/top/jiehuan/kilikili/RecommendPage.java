@@ -13,6 +13,7 @@ public class RecommendPage implements CommandListener {
 	Command back;
 	Command exit;
 	Command go;
+	Form form;
 	
 	String[] titles;
 	String[] bvids;
@@ -22,6 +23,19 @@ public class RecommendPage implements CommandListener {
 		ml=midlet;
 		display = Display.getDisplay(midlet);
 		String rcmd_data=URLget.BackWeb(URLget.RCMD_URL);
+		if(rcmd_data.startsWith("error")){
+			form=new Form("Error");
+			back=new Command("back",Command.BACK,1);
+			exit=new Command("exit",Command.EXIT,0);
+			form.append(new StringItem("","获取错误"));
+			form.addCommand(back);
+			form.addCommand(exit);
+			form.setCommandListener(this);
+			Alert alert = new Alert("Error", "获取错误", null, AlertType.ERROR);
+            alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+            display.setCurrent(alert, form);
+            ml.display.setCurrent(ml.form);
+		}else{
 		
 		titles=FindString.extractContents(rcmd_data,"\"title\"");
 		bvids=FindString.extractContents(rcmd_data,"\"bvid\"");
@@ -42,6 +56,7 @@ public class RecommendPage implements CommandListener {
 		rcmd_list.setSelectCommand(go);
 		rcmd_list.setCommandListener(this);
 		display.setCurrent(rcmd_list);
+		}
 	}
 	
 	//命令的执行函数 详细内容请参考MainMIDlet文件

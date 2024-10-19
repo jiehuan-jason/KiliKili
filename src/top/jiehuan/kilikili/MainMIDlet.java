@@ -83,7 +83,14 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	public void commandAction(Command c, Displayable d) {
         if (c == go) //前往视频信息页面
         {
-        	if(tf.getString().length()==12&&tf.getString().charAt(0) == 'B' && tf.getString().charAt(1) == 'V'){
+        	if(tf.getString().length()==12&&tf.getString().startsWith("BV")){
+        		new Thread(new Runnable() {
+                    public void run() {
+                    	String bvid = tf.getString();
+                        new GetVideoInfoPage(MainMIDlet.this, bvid);
+                    }
+                }).start();
+        	}else if(tf.getString().length()==10){
         		new Thread(new Runnable() {
                     public void run() {
                     	String bvid = tf.getString();
@@ -151,7 +158,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         	aboutString="关于";
         	rcmd_listString="推荐列表";
         	searchString="搜索";
-        	tipsString="Tips:输入BVID请在最前面加入BV二字";
+        	tipsString="Tips:在上面的框里输入bvid或者搜索内容，然后在menu菜单中选择自己需要的命令吧";
         } else {
         	goString="Go";
         	exitString="Exit";
