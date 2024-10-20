@@ -13,10 +13,9 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.StringItem;
 
-import java.util.Calendar;
-import java.util.Date;
-
 public class GetVideoInfoPage implements CommandListener{
+	
+	public static String PageID = "1";
 	
 	String findErrorString;
 	String backString;
@@ -33,12 +32,13 @@ public class GetVideoInfoPage implements CommandListener{
 	String coverString;
 	String authorInfoString;
 	String timeString;
+	String favoriteString;
 	String ci;
 	String ge;
 
 	Display display;
 	Form form;
-	StringItem string;
+	StringItem title;
 	StringItem up_name=null;
 	StringItem view;
 	StringItem reply;
@@ -63,30 +63,32 @@ public class GetVideoInfoPage implements CommandListener{
 	private MainMIDlet ml;
 	String video_url;
 	String cid;
+	
+	VideoInfo video_info;
 
-	public GetVideoInfoPage(MainMIDlet midlet,String bvid){
+	public GetVideoInfoPage(MainMIDlet midlet,VideoInfo video_info){
+		//video_info.setPageNum(video_info.getPageNum()+1);
+		this.video_info = video_info;
 		//初始化需要用到的变量 输入的bvid要求前面带上BV两个字母
-		this.bvid=bvid;
+		this.bvid=video_info.getBVID();
 		ml=midlet;
 		display = Display.getDisplay(midlet);
 		
 		loadMessages();
 		
-		//获取视频信息
-		String[] s_info= URLget.sendGetRequest(bvid);
-		String title = null;
-		System.out.println("status:"+s_info[0]);
-		System.out.println("info:"+s_info[1]);
+		this.video_info.setPageNum(MainMIDlet.addPageNum(PageID,video_info));
+		//video_info = new VideoInfo(bvid);
+		boolean status = video_info.getStatus();
 		
 		//若返回代码为错误代码，则显示未找到视频
-		if(s_info[0].equals("error")){
+		if(!status){
 			form=new Form(findErrorString);
 			back=new Command(backString,Command.BACK,1);
 			exit=new Command(exitString,Command.EXIT,0);
 			form.addCommand(back);
 			form.addCommand(exit);
 			form.setCommandListener(this);
-			Alert alert = new Alert("Error", s_info[1], null, AlertType.ERROR);
+			Alert alert = new Alert("Error", video_info.getVideoContent(), null, AlertType.ERROR);
             alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
             display.setCurrent(alert, form);
             ml.display.setCurrent(ml.form);
@@ -94,22 +96,20 @@ public class GetVideoInfoPage implements CommandListener{
 		}else{
 			// 初始化视频信息界面
 			System.out.println("init video info form");
-			title=FindString.findValue(s_info[1],"title");
-			string=new StringItem(null, title);
-			up_name=new StringItem(null,"\n"+authorString+FindString.findValue(s_info[1], "name"));
-			desc = "\n"+introductionString+FindString.findValueInt(s_info[1],"desc").substring(1, FindString.findValueInt(s_info[1],"desc").length() - 1);
+			
+			
+			//title=FindString.findValue(s_info[1],"title");
+			title=new StringItem(null, video_info.getTitle());
+			up_name=new StringItem(null,"\n"+authorString+video_info.getUserName());
+			info = new StringItem(null,"\n"+viewString+video_info.getView()+ci+"  "+replyString+video_info.getReply()+ci+"  "+coinString+video_info.getCoin()+ge+"  "+shareString+video_info.getShare()+ci+"  "+likeString+video_info.getLike()+ci+"  "+favoriteString+video_info.getFavorite()+ci);
+			time = new StringItem(null,"\n"+timeString+":"+video_info.getFormatPubTime());
 			System.out.println("finish init string item");
-			info = new StringItem(null,"\n"+viewString+FindString.findValueInt(s_info[1],"view")+ci+"  "+replyString+FindString.findValueInt(s_info[1],"reply")+ci+"  "+coinString+FindString.findValueInt(s_info[1],"coin")+ge+"  "+shareString+FindString.findValueInt(s_info[1],"share")+ci+"  "+likeString+FindString.findValueInt(s_info[1],"like")+ci);
-			cid=FindString.findValueInt(s_info[1], "cid");
-			pic=FindString.findValue(s_info[1], "pic");
-			mid=FindString.findValueInt(s_info[1], "mid");
-			ctime=FindString.findValueInt(s_info[1], "pubdate");
+			desc = "\n"+introductionString+video_info.getDescription();
+			cid = Long.toString(video_info.getCID());
+			pic = video_info.getCoverURL();
+			mid = Long.toString(video_info.getUserMID());
 			System.out.println("finish findValue");
-			//System.out.println(cid);
 			video_url=URLget.BackVideoLink(bvid, cid);
-			System.out.println("finish backlink");
-			Date date = new Date(Long.parseLong(ctime)*1000);
-			time = new StringItem(null,"\n"+timeString+":"+formatDate(date,8));//UTC+8
 			System.out.println("Get Already");
 			
 			
@@ -118,10 +118,12 @@ public class GetVideoInfoPage implements CommandListener{
 			exit=new Command(exitString,Command.EXIT,0);
 			view_cover=new Command(coverString,Command.ITEM,2);
 			author_info=new Command(authorInfoString,Command.ITEM,2);
+			
+			
 			form=new Form(videoDisplayString);
 			
 			
-			form.append(string);
+			form.append(title);
 			form.append(up_name);
 			form.append(time);
 			if(!desc.equals("\n"+introductionString)){
@@ -146,11 +148,7 @@ public class GetVideoInfoPage implements CommandListener{
 	 public void commandAction(Command c, Displayable d) {
 		 //返回主界面
 	        if (c == back) {
-	            new Thread(new Runnable() {
-	                public void run() {
-	                	ml.display.setCurrent(ml.form);
-	                }
-	            }).start();
+	        	goLastPage();
 	        }
 	        //退出app
 	        if(c==exit){
@@ -161,7 +159,7 @@ public class GetVideoInfoPage implements CommandListener{
 	        	new Thread(new Runnable() {
                     public void run() {
                     	System.out.println("video_url is:"+video_url);
-						new DownloadPage(ml,video_url);
+						new DownloadPage(ml,video_info);
                     	
                     }
 	            }).start();
@@ -184,8 +182,8 @@ public class GetVideoInfoPage implements CommandListener{
 	        }if (c == author_info) {
 	            new Thread(new Runnable() {
 	                public void run() {
-	                	System.out.println(bvid);
-	                	new UserInfoPage(ml,mid,bvid);
+	                	System.out.println("page "+PageID+" search_word:"+video_info.getSearchKeyword());
+	                	new UserInfoPage(ml,video_info);
 	                }
 	            }).start();
 	        }
@@ -210,6 +208,7 @@ public class GetVideoInfoPage implements CommandListener{
 	        	coverString="显示封面";
 	        	authorInfoString="作者空间";
 	        	timeString="发布时间";
+	        	favoriteString="收藏";
 	        	ci="次";
 	        	ge="个";
 	        } else {
@@ -228,33 +227,37 @@ public class GetVideoInfoPage implements CommandListener{
 	        	coverString="View the cover";
 	        	authorInfoString="Author Space";
 	        	timeString="Time";
+	        	favoriteString="Favorites";
 	        	ci="";
 	        	ge="";
 	        }
 	    }
-	 private String formatDate(Date date, long utcOffset) {
-	        // 获取 UTC 时间
-	        long utcTime = date.getTime() + (utcOffset * 3600 * 1000);
-
-	        // 创建一个新的 Date 对象，表示 UTC+8 的时间
-	        Date localDate = new Date(utcTime);
-	        
-	        Calendar calendar = Calendar.getInstance();
-	        calendar.setTime(localDate);
-
-	        int year = calendar.get(Calendar.YEAR);
-	        int month = calendar.get(Calendar.MONTH)+1;
-	        int day = calendar.get(Calendar.DAY_OF_MONTH);
-	        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-	        int min = calendar.get(Calendar.MINUTE);
-	        //int sec = calendar.get(Calendar.SECOND);
-	        
-	        if(min<10){
-		        return year+"-"+month+"-"+day+" "+hour+":0"+min;
-	        }
-
-	        // 格式化为字符串
-	        return year+"-"+month+"-"+day+" "+hour+":"+min;
-	    }
+		private void goLastPage(){
+			System.out.println("call goLastPage.Page now is:"+video_info.getPageNum());
+			
+			 String page = (String) video_info.getPageList()[video_info.getPageNum()-1];
+			 if(page.equals(MainMIDlet.PageID)){
+				 new Thread(new Runnable() {
+		                public void run() {
+		                	//MainMIDlet.pagelist=new String[100];
+		                	//MainMIDlet.pagelist[0]="0";
+		                	//MainMIDlet.page_list_num=0;
+		                	ml.display.setCurrent(ml.form);
+		                }
+		            }).start();
+			 }else if(page.equals(RecommendPage.PageID)){
+				 new Thread(new Runnable() {
+		                public void run() {
+		                	new RecommendPage(ml,video_info);
+		                }
+		            }).start();
+			 }else if(page.equals(SearchPage.PageID)){
+				 new Thread(new Runnable() {
+		                public void run() {
+		                	new SearchPage(ml,video_info);
+		                }
+		            }).start();
+			 }
+		 }
 
 }

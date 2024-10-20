@@ -23,11 +23,11 @@ public class URLget {
 	public static String SEARCH_URL="http://"+IP_ADDRESS+":3000/search?keyword=";
 	public static String USER_INFO_URL="http://"+IP_ADDRESS+":3000/user?mid=";
 	public static String RCMD_URL="http://"+IP_ADDRESS+":3232";
-	public static String GET_INFO_URL="http://"+IP_ADDRESS+":3000/view?bvid=";
+	public static String GET_INFO_URL="http://"+IP_ADDRESS+":3000/view?";
 	public static String GET_VIDEO_DOWNLOAD_LINK_URL="http://"+IP_ADDRESS+":2121/api/playurl?";
 	
 	public static String[] sendGetRequest(String bvid) {
-	        String content = BackWeb(GET_INFO_URL+bvid);
+	        String content = BackWeb(GET_INFO_URL+"bvid="+bvid+"&version="+AboutPage.version);
 	        if(content.startsWith("error")){
 	        	return new String[]{"error",content};
 	        }

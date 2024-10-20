@@ -14,6 +14,9 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.StringItem;
 
 public class UserInfoPage implements CommandListener {
+	
+	public static String PageID = "4";
+	
 	private MainMIDlet ml;
 	Display display;
 	Command back;
@@ -31,11 +34,16 @@ public class UserInfoPage implements CommandListener {
 	String bvid;
 	String face_url;
 	
-	public UserInfoPage(MainMIDlet ml,String mid,String bvid){
+	VideoInfo video_info;
+	
+	public UserInfoPage(MainMIDlet ml,VideoInfo video_info){
 		this.ml=ml;
-		this.bvid=bvid;
+		this.bvid=video_info.getBVID();
+		this.video_info = video_info;
 		
-		String text = URLget.BackWeb(URLget.USER_INFO_URL+mid);
+		this.video_info.setPageNum(MainMIDlet.addPageNum(PageID,video_info));
+		
+		String text = URLget.BackWeb(URLget.USER_INFO_URL+video_info.getUserMID());
 		if(text.startsWith("error")){
 			form=new Form("Error");
 			back=new Command("back",Command.BACK,1);
@@ -96,7 +104,9 @@ public class UserInfoPage implements CommandListener {
         if (c == back) {
             new Thread(new Runnable() {
                 public void run() {
-                	new GetVideoInfoPage(ml, bvid);
+                	System.out.println("page "+PageID+" search_word:"+video_info.getSearchKeyword());
+                	video_info.setPageNum(video_info.getPageNum()-1);
+                	new GetVideoInfoPage(ml, video_info);
                 }
             }).start();
         }

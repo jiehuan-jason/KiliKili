@@ -9,6 +9,8 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.StringItem;
 
 public class AboutPage implements CommandListener{
+	
+	public static String PageID = "6";
 	// 定义所需要的变量
 	private MainMIDlet ml;
 	Display display;
@@ -18,8 +20,11 @@ public class AboutPage implements CommandListener{
 	StringItem author;
 	StringItem text;
 	
-	public AboutPage(MainMIDlet midlet){
+	public static String version = "0.2.4";
+	
+	public AboutPage(MainMIDlet midlet,VideoInfo video_info){
 		//初始化变量和界面
+		video_info.setPageNum(MainMIDlet.addPageNum(PageID,video_info));
 		ml=midlet;
 		display = Display.getDisplay(midlet);
 		author = new StringItem("","软件作者：jiehuan\n" +
@@ -27,9 +32,9 @@ public class AboutPage implements CommandListener{
 				"dospy.wang:@jiehuan\n" +
 				"github:@jiehuan-jason\n" +
 				"网盘:jiehuan233.ysepan.com\n");
-		text = new StringItem("","软件版本：V0.2beta2\n" +
-				"更新日期：2024.10.12\n" +
-				"更新内容：改进了搜索功能，修复了一些bug\n");
+		text = new StringItem("","软件版本：V0.2beta3\n" +
+				"更新日期：2024.10.20\n" +
+				"更新内容：对部分代码进行重构，改进了个人主页，修复了一些bug\n");
 		form=new Form("关于");
 		back=new Command("Back",Command.BACK,1);
 		exit=new Command("Exit",Command.EXIT,0);

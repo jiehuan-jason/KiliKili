@@ -1,13 +1,15 @@
 package top.jiehuan.kilikili;
 
-
-
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
 import javax.microedition.lcdui.*;
 
 public class MainMIDlet extends MIDlet implements CommandListener{
+	
+	public static String pagelist[] = new String[100];
+	public static int page_list_num;
+	static String PageID = "0";
 	
 	public Display display;
 	public Form form;
@@ -52,6 +54,10 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 
 		loadMessages();
 		
+		page_list_num = 0;
+		pagelist[0]=PageID;
+		//page_list_num++;
+		
 		System.out.println("Start init the display moudle");
 		
 		display = Display.getDisplay(this);
@@ -87,14 +93,14 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         		new Thread(new Runnable() {
                     public void run() {
                     	String bvid = tf.getString();
-                        new GetVideoInfoPage(MainMIDlet.this, bvid);
+                        new GetVideoInfoPage(MainMIDlet.this, new VideoInfo(bvid,0,pagelist));
                     }
                 }).start();
         	}else if(tf.getString().length()==10){
         		new Thread(new Runnable() {
                     public void run() {
                     	String bvid = tf.getString();
-                        new GetVideoInfoPage(MainMIDlet.this, bvid);
+                        new GetVideoInfoPage(MainMIDlet.this, new VideoInfo(bvid,0,pagelist));
                     }
                 }).start();
         	}else{
@@ -108,13 +114,13 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         }else if(c==about){
         	new Thread(new Runnable() {
                 public void run() {
-                    new AboutPage(MainMIDlet.this); //打开关于界面
+                    new AboutPage(MainMIDlet.this,new VideoInfo(0,pagelist)); //打开关于界面
                 }
             }).start();
         }else if(c==rcmd){
         	new Thread(new Runnable() {
                 public void run() {
-                    new RecommendPage(MainMIDlet.this); //打开推荐界面
+                    new RecommendPage(MainMIDlet.this,new VideoInfo(0,pagelist)); //打开推荐界面
                 }
             }).start();
         }else if(c==search){
@@ -133,7 +139,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
                     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
                     display.setCurrent(alert); // 显示 Alert*/
                 	System.out.println("keyword:"+tf.getString());
-                    new SearchPage(MainMIDlet.this,tf.getString()); //打开搜索界面
+                    new SearchPage(MainMIDlet.this,new VideoInfo(0,pagelist,tf.getString())); //打开搜索界面
                 }
             }).start();
         }
@@ -171,6 +177,20 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         	tipsString="Tips:Please add 'BV' behind the BVID when you input it.";
         }
     }
-	
+	static public int addPageNum(String PageID,VideoInfo video_info)
+	{
+		int index = video_info.getPageNum();
+		String[] pagelist = video_info.getPageList();
+		index+=1;
+		System.out.println("call addPage Num.Page is "+PageID+" list num is "+index);
+		//System.out.println(pagelist);
+		if(!pagelist[index-1].equals(PageID)){
+			pagelist[index]=PageID;
+			
+		}else{
+			index--;
+		}
+		return index;
+	}
 
 }

@@ -10,6 +10,9 @@ import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 
 public class DownloadPage implements CommandListener{
+	
+	public static String PageID = "5";
+	
 	private MainMIDlet ml;
 	Display display;
 	Form form;
@@ -20,12 +23,18 @@ public class DownloadPage implements CommandListener{
 	StringItem tips;
 	
 	String video_url;
+	String bvid;
 	
-	public DownloadPage(MainMIDlet midlet,String video_url){
+	VideoInfo video_info;
+	
+	public DownloadPage(MainMIDlet midlet,VideoInfo video_info){
+		this.video_info=video_info;
 		ml=midlet;
+		bvid = video_info.getBVID();
 		display = Display.getDisplay(midlet);
-		this.video_url=video_url;
-		videoURL = new TextField("",video_url,10000,TextField.ANY);
+		video_info.setPageNum(MainMIDlet.addPageNum(PageID,video_info));
+		this.video_url=video_info.getVideoURL();
+		videoURL = new TextField("",this.video_url,10000,TextField.ANY);
 		tips = new StringItem("","tips:如果下载按钮无法下载，请把光标移到下方的链接处并复制到浏览器打开下载");
 		download=new Command("下载视频",Command.ITEM,1);
 		
@@ -43,11 +52,14 @@ public class DownloadPage implements CommandListener{
 	}
 	
 	 public void commandAction(Command c, Displayable d) {
-		 	// 返回主界面
+		 	// 返回上一级
 	        if (c == back) {
 	            new Thread(new Runnable() {
 	                public void run() {
-	                	ml.display.setCurrent(ml.form);
+	                	System.out.println("page "+PageID+" search_word:"+video_info.getSearchKeyword());
+	                	System.out.println("now "+video_info.getPageNum());
+	                	video_info.setPageNum(video_info.getPageNum()-1);
+	                	new GetVideoInfoPage(ml, video_info);
 	                }
 	            }).start();
 	        }
