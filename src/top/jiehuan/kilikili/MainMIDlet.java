@@ -100,7 +100,7 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         		new Thread(new Runnable() {
                     public void run() {
                     	String bvid = tf.getString();
-                        new GetVideoInfoPage(MainMIDlet.this, new VideoInfo(bvid,0,pagelist));
+                        new GetVideoInfoPage(MainMIDlet.this, new VideoInfo("BV"+bvid,0,pagelist));
                     }
                 }).start();
         	}else{

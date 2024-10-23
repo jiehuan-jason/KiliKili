@@ -48,6 +48,8 @@ Nokia N95 下载视频异常 感谢dospy@家养的大白鹅
 
 Nokia N86 功能异常 感谢dospy@黄金闪闪发光
 
+索尼爱立信 M1i（WM6.5）功能正常 v0.2beta2 感谢DCMS@8192Bit
+
 ## English version
 
 Developed using JDK1.8+Eclipse2.2, tested on Nokia E72, still in development
