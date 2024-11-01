@@ -20,7 +20,7 @@ public class AboutPage implements CommandListener{
 	StringItem author;
 	StringItem text;
 	
-	public static String version = "0.2.4";
+	public static String version = "0.2.5";
 	
 	public AboutPage(MainMIDlet midlet,VideoInfo video_info){
 		//初始化变量和界面
@@ -32,9 +32,9 @@ public class AboutPage implements CommandListener{
 				"dospy.wang:@jiehuan\n" +
 				"github:@jiehuan-jason\n" +
 				"网盘:jiehuan233.ysepan.com\n");
-		text = new StringItem("","软件版本：V0.2beta3\n" +
-				"更新日期：2024.10.20\n" +
-				"更新内容：对部分代码进行重构，改进了个人主页，修复了一些bug\n");
+		text = new StringItem("","软件版本：V0.2正式版\n" +
+				"更新日期：2024.11.2\n" +
+				"更新内容：修复了一些bug\n");
 		form=new Form("关于");
 		back=new Command("Back",Command.BACK,1);
 		exit=new Command("Exit",Command.EXIT,0);
