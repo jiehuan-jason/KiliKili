@@ -1,17 +1,17 @@
 package top.jiehuan.kilikili;
 
-import java.io.UnsupportedEncodingException;
 
-import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.StringItem;
-import javax.microedition.lcdui.TextField;
 
 public class AboutPage implements CommandListener{
+	
+	public static String PageID = "6";
+	// 定义所需要的变量
 	private MainMIDlet ml;
 	Display display;
 	Form form;
@@ -19,7 +19,12 @@ public class AboutPage implements CommandListener{
 	Command exit;
 	StringItem author;
 	StringItem text;
-	public AboutPage(MainMIDlet midlet){
+	
+	public static String version = "0.2.4";
+	
+	public AboutPage(MainMIDlet midlet,VideoInfo video_info){
+		//初始化变量和界面
+		video_info.setPageNum(MainMIDlet.addPageNum(PageID,video_info));
 		ml=midlet;
 		display = Display.getDisplay(midlet);
 		author = new StringItem("","软件作者：jiehuan\n" +
@@ -27,9 +32,9 @@ public class AboutPage implements CommandListener{
 				"dospy.wang:@jiehuan\n" +
 				"github:@jiehuan-jason\n" +
 				"网盘:jiehuan233.ysepan.com\n");
-		text = new StringItem("","软件版本：V0.1beta2\n" +
-				"更新日期：2024.9.16\n" +
-				"祝各位中秋佳节快乐！\n");
+		text = new StringItem("","软件版本：V0.2beta3\n" +
+				"更新日期：2024.10.20\n" +
+				"更新内容：对部分代码进行重构，改进了个人主页，修复了一些bug\n");
 		form=new Form("关于");
 		back=new Command("Back",Command.BACK,1);
 		exit=new Command("Exit",Command.EXIT,0);
@@ -41,18 +46,15 @@ public class AboutPage implements CommandListener{
 		display.setCurrent(form);
 	}
 	 public void commandAction(Command c, Displayable d) {
+		 	// 返回主界面
 	        if (c == back) {
-	        	
-	           
 	            new Thread(new Runnable() {
 	                public void run() {
 	                	ml.display.setCurrent(ml.form);
 	                }
 	            }).start();
-	            //GetVideoInfoPage secondMIDlet = new GetVideoInfoPage(text);
-	            //display.setCurrent(secondMIDlet.getForm());
-	            //notifyPaused();
 	        }
+	        // 退出app
 	        if(c==exit){
 	        	ml.exitApp();
 	        }

@@ -1,29 +1,25 @@
 package top.jiehuan.kilikili;
 
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Locale;
-
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
-
-import javax.microedition.io.Connector;
-import javax.microedition.io.HttpConnection;
-import javax.microedition.io.HttpsConnection;
 import javax.microedition.lcdui.*;
 
 public class MainMIDlet extends MIDlet implements CommandListener{
 	
+	public static String pagelist[] = new String[100];
+	public static int page_list_num;
+	static String PageID = "0";
+	
 	public Display display;
 	public Form form;
-	StringItem string;
+	StringItem tips;
 	TextField tf;
 	Command go;
 	Command exit;
 	Command about;
-	
+	Command rcmd;
+	Command search;
 	
 	private String goString;
 	private String exitString;
@@ -31,15 +27,11 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 	private String inputString;
 	private String invalid_bvidStirng;
 	private String aboutString;
+	private String rcmd_listString;
+	private String searchString;
+	private String tipsString;
 	
 	public String lang;
-	/*public MainMIDlet(){
-        display = Display.getDisplay(this);
-        form = new Form("JSON Response");
-        exitCommand = new Command("Exit", Command.EXIT, 1);
-        form.addCommand(exitCommand);
-        form.setCommandListener((CommandListener) this);
-    }*/
 
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
 		// TODO Auto-generated method stub
@@ -51,50 +43,103 @@ public class MainMIDlet extends MIDlet implements CommandListener{
 
 	}
 
+	
+	/*
+	 * startApp()
+	 * 初始化程序，初始化控件和命令，显示首页
+	 * 
+	 * */
 	protected void startApp() throws MIDletStateChangeException {
 		lang = System.getProperty("microedition.locale");
 
 		loadMessages();
 		
+		page_list_num = 0;
+		pagelist[0]=PageID;
+		//page_list_num++;
+		
+		System.out.println("Start init the display moudle");
+		
 		display = Display.getDisplay(this);
 		go = new Command(goString,Command.OK,0);
 		exit = new Command(exitString,Command.EXIT,1);
 		about = new Command(aboutString,Command.OK,1);
+		rcmd = new Command(rcmd_listString,Command.OK,1);
+		search = new Command(searchString,Command.OK,1);
 		form = new Form(main_pageString);
-		tf = new TextField(inputString,"",10,TextField.ANY);
+		tf = new TextField(inputString,"",20,TextField.ANY);
+		tips = new StringItem("","\n"+tipsString);
+		
+		System.out.println("Finish init the display moudle");
+		
 		form.append(tf);
+		form.append(tips);
 		form.addCommand(go);
 		form.addCommand(exit);
+		form.addCommand(search);
+		form.addCommand(rcmd);
 		form.addCommand(about);
 		form.setCommandListener(this);
 		display.setCurrent(form);
 	}
-	
+	/*
+	 * commandAction()
+	 * 命令处理
+	 * */
 	public void commandAction(Command c, Displayable d) {
-        if (c == go) {
-        	
-        	if(tf.getString().length()==10){
+        if (c == go) //前往视频信息页面
+        {
+        	if(tf.getString().length()==12&&tf.getString().startsWith("BV")){
         		new Thread(new Runnable() {
                     public void run() {
                     	String bvid = tf.getString();
-                        new GetVideoInfoPage(MainMIDlet.this, bvid);
+                        new GetVideoInfoPage(MainMIDlet.this, new VideoInfo(bvid,0,pagelist));
+                    }
+                }).start();
+        	}else if(tf.getString().length()==10){
+        		new Thread(new Runnable() {
+                    public void run() {
+                    	String bvid = tf.getString();
+                        new GetVideoInfoPage(MainMIDlet.this, new VideoInfo("BV"+bvid,0,pagelist));
                     }
                 }).start();
         	}else{
+        		//处理输入错误
         		Alert alert = new Alert("Error", invalid_bvidStirng, null, AlertType.ERROR);
                 alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
                 display.setCurrent(alert, form);
         	}
-           
-            //GetVideoInfoPage secondMIDlet = new GetVideoInfoPage(text);
-            //display.setCurrent(secondMIDlet.getForm());
-            //notifyPaused();
         }else if(c==exit){
-        	exitApp();
+        	exitApp();//退出app
         }else if(c==about){
         	new Thread(new Runnable() {
                 public void run() {
-                    new AboutPage(MainMIDlet.this);
+                    new AboutPage(MainMIDlet.this,new VideoInfo(0,pagelist)); //打开关于界面
+                }
+            }).start();
+        }else if(c==rcmd){
+        	new Thread(new Runnable() {
+                public void run() {
+                    new RecommendPage(MainMIDlet.this,new VideoInfo(0,pagelist)); //打开推荐界面
+                }
+            }).start();
+        }else if(c==search){
+        	new Thread(new Runnable() {
+                public void run() {
+                	System.out.println("search button");
+                	/*String search_text;
+					try {
+						search_text = new String( tf.getString().getBytes( "utf8" ), "utf8" );
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						search_text = tf.getString();
+					}*/
+                    /*Alert alert = new Alert("Keyword", tf.getString(), null, AlertType.INFO);
+                    alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+                    display.setCurrent(alert); // 显示 Alert*/
+                	System.out.println("keyword:"+tf.getString());
+                    new SearchPage(MainMIDlet.this,new VideoInfo(0,pagelist,tf.getString())); //打开搜索界面
                 }
             }).start();
         }
@@ -103,7 +148,6 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         try {
 			destroyApp(false);
 		} catch (MIDletStateChangeException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} // 销毁应用
         notifyDestroyed(); // 通知 MIDP 退出
@@ -115,17 +159,38 @@ public class MainMIDlet extends MIDlet implements CommandListener{
         	goString="前往";
         	exitString="退出";
         	main_pageString="首页";
-        	inputString="输入bvid：";
+        	inputString="输入bvid或搜索内容：";
         	invalid_bvidStirng="无效的bvid号";
         	aboutString="关于";
+        	rcmd_listString="推荐列表";
+        	searchString="搜索";
+        	tipsString="Tips:在上面的框里输入bvid或者搜索内容，然后在menu菜单中选择自己需要的命令吧";
         } else {
         	goString="Go";
         	exitString="Exit";
         	main_pageString="Main Page";
-        	inputString="input bvid: ";
+        	inputString="input BVID or search words: ";
         	invalid_bvidStirng="invalid bvid";
         	aboutString="About";
+        	rcmd_listString="Recommend List";
+        	searchString="Search";
+        	tipsString="Tips:Please add 'BV' behind the BVID when you input it.";
         }
     }
+	static public int addPageNum(String PageID,VideoInfo video_info)
+	{
+		int index = video_info.getPageNum();
+		String[] pagelist = video_info.getPageList();
+		index+=1;
+		System.out.println("call addPage Num.Page is "+PageID+" list num is "+index);
+		//System.out.println(pagelist);
+		if(!pagelist[index-1].equals(PageID)){
+			pagelist[index]=PageID;
+			
+		}else{
+			index--;
+		}
+		return index;
+	}
 
 }
