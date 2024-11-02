@@ -31,7 +31,7 @@ public class RecommendPage implements CommandListener {
 		this.video_info = video_info;
 		ml=midlet;
 		display = Display.getDisplay(midlet);
-		this.video_info.setPageNum(MainMIDlet.addPageNum(PageID,video_info));
+		this.video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
 		String rcmd_data=URLget.BackWeb(URLget.RCMD_URL);
 		if(rcmd_data.startsWith("error")){
 			form=new Form("Error");
@@ -45,7 +45,7 @@ public class RecommendPage implements CommandListener {
 			Alert alert = new Alert("Error", "获取错误", null, AlertType.ERROR);
             alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
             display.setCurrent(alert, form);
-            ml.display.setCurrent(ml.form);
+            //ml.display.setCurrent(ml.form);
 		}else{
 		
 		titles=FindString.extractContents(rcmd_data,"\"title\"");
@@ -77,7 +77,7 @@ public class RecommendPage implements CommandListener {
         if (c == back) {
             new Thread(new Runnable() {
                 public void run() {
-                	ml.display.setCurrent(ml.form);
+                	new MainPage(ml);
                 }
             }).start();
         }

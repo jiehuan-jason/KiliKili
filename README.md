@@ -10,7 +10,7 @@
 * [有关bilibili免登录获取高画质mp4直链的研究 - 赵苦瓜のBlog](https://blog.jixiaob.cn/?post=113)
 
 希望各位给出建议，可以在dospy论坛上找到我：[jiehuan的个人资料 - DOSPY论坛 诺亚方舟号 - 塞班论坛|固件下载|hmd诺基亚安卓|智能手机|数码科技 -](https://www.dospy.wang/space-uid-45511.html)
-或者给我发邮件：jiehuan233[AT]outlook.com
+或者给我发邮件：jiehuan233[AT]outlook.com jiehuan233[AT]gmail.com
 
 ## TODO
 
@@ -34,7 +34,7 @@
 
 - [ ] 个人空间视频获取
 
-## 测试 V0.1
+## 测试
 
 #### 模拟器
 
@@ -44,13 +44,11 @@ KEmulator-v1.0.5 功能完全正常
 
 #### 真机
 
-Nokia E72 功能完全正常
+Nokia E72 v0.2正式版 功能完全正常
 
-Nokia C5-03 功能完全正常 感谢dospy@sky161
+Nokia C5-03 功能完全正常 v0.1 感谢dospy@sky161
 
-Nokia N95 下载视频异常 感谢dospy@家养的大白鹅
-
-Nokia N86 功能异常 感谢dospy@黄金闪闪发光
+Nokia N95 无法直接下载视频 v0.2beta3 感谢dospy@家养的大白鹅
 
 索尼爱立信 M1i（WM6.5）功能正常 v0.2beta2 感谢DCMS@8192Bit
 

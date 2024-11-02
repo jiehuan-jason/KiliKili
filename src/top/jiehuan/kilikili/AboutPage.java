@@ -24,7 +24,7 @@ public class AboutPage implements CommandListener{
 	
 	public AboutPage(MainMIDlet midlet,VideoInfo video_info){
 		//初始化变量和界面
-		video_info.setPageNum(MainMIDlet.addPageNum(PageID,video_info));
+		video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
 		ml=midlet;
 		display = Display.getDisplay(midlet);
 		author = new StringItem("","软件作者：jiehuan\n" +
@@ -50,7 +50,7 @@ public class AboutPage implements CommandListener{
 	        if (c == back) {
 	            new Thread(new Runnable() {
 	                public void run() {
-	                	ml.display.setCurrent(ml.form);
+	                	new MainPage(ml);
 	                }
 	            }).start();
 	        }

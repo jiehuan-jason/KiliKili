@@ -41,7 +41,7 @@ public class UserInfoPage implements CommandListener {
 		this.bvid=video_info.getBVID();
 		this.video_info = video_info;
 		
-		this.video_info.setPageNum(MainMIDlet.addPageNum(PageID,video_info));
+		this.video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
 		
 		String text = URLget.BackWeb(URLget.USER_INFO_URL+video_info.getUserMID());
 		if(text.startsWith("error")){
@@ -55,7 +55,7 @@ public class UserInfoPage implements CommandListener {
 			Alert alert = new Alert("Error", "获取错误", null, AlertType.ERROR);
             alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
             display.setCurrent(alert, form);
-            ml.display.setCurrent(ml.form);
+            //ml.display.setCurrent(ml.form);
 		}else{
 		
 		String name = FindString.findValue(text, "name");

@@ -76,7 +76,7 @@ public class GetVideoInfoPage implements CommandListener{
 		
 		loadMessages();
 		
-		this.video_info.setPageNum(MainMIDlet.addPageNum(PageID,video_info));
+		this.video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
 		//video_info = new VideoInfo(bvid);
 		boolean status = video_info.getStatus();
 		
@@ -91,7 +91,7 @@ public class GetVideoInfoPage implements CommandListener{
 			Alert alert = new Alert("Error", video_info.getVideoContent(), null, AlertType.ERROR);
             alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
             display.setCurrent(alert, form);
-            ml.display.setCurrent(ml.form);
+            //ml.display.setCurrent(ml.form);
             
 		}else{
 			// 初始化视频信息界面
@@ -236,13 +236,13 @@ public class GetVideoInfoPage implements CommandListener{
 			System.out.println("call goLastPage.Page now is:"+video_info.getPageNum());
 			
 			 String page = (String) video_info.getPageList()[video_info.getPageNum()-1];
-			 if(page.equals(MainMIDlet.PageID)){
+			 if(page.equals(MainPage.PageID)){
 				 new Thread(new Runnable() {
 		                public void run() {
 		                	//MainMIDlet.pagelist=new String[100];
 		                	//MainMIDlet.pagelist[0]="0";
 		                	//MainMIDlet.page_list_num=0;
-		                	ml.display.setCurrent(ml.form);
+		                	new MainPage(ml);
 		                }
 		            }).start();
 			 }else if(page.equals(RecommendPage.PageID)){

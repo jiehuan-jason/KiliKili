@@ -45,7 +45,7 @@ public class SearchPage implements CommandListener{
 		ml=midlet;
 		display = Display.getDisplay(midlet);
 		this.video_info=video_info;
-		this.video_info.setPageNum(MainMIDlet.addPageNum(PageID,video_info));
+		this.video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
 		
 		System.out.println("start loadMessages");
 		
@@ -65,7 +65,7 @@ public class SearchPage implements CommandListener{
 			Alert alert = new Alert("Error", "获取错误", null, AlertType.ERROR);
             alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
             display.setCurrent(alert, form);
-            ml.display.setCurrent(ml.form);
+            //ml.display.setCurrent(ml.form);
 		}else{
 		String[] list_str=FindString.FindTitle(web);
 	    list_bvid=FindString.FindBVID(web);
@@ -93,7 +93,7 @@ public class SearchPage implements CommandListener{
 	        if (c == back) {
 	            new Thread(new Runnable() {
 	                public void run() {
-	                	ml.display.setCurrent(ml.form);
+	                	new MainPage(ml);
 	                }
 	            }).start();
 	        }

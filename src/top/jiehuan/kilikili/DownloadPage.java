@@ -32,7 +32,7 @@ public class DownloadPage implements CommandListener{
 		ml=midlet;
 		bvid = video_info.getBVID();
 		display = Display.getDisplay(midlet);
-		video_info.setPageNum(MainMIDlet.addPageNum(PageID,video_info));
+		video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
 		this.video_url=video_info.getVideoURL();
 		videoURL = new TextField("",this.video_url,10000,TextField.ANY);
 		tips = new StringItem("","tips:如果下载按钮无法下载，请把光标移到下方的链接处并复制到浏览器打开下载");
