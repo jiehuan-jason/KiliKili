@@ -1,6 +1,8 @@
 package top.jiehuan.kilikili;
 
 
+import java.io.IOException;
+
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
@@ -13,6 +15,8 @@ public class AboutPage implements CommandListener{
 	public static String PageID = "6";
 	// 定义所需要的变量
 	private MainMIDlet ml;
+	
+	GetLangRes lang_res;
 	Display display;
 	Form form;
 	Command back;
@@ -26,24 +30,10 @@ public class AboutPage implements CommandListener{
 		//初始化变量和界面
 		video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
 		ml=midlet;
-		display = Display.getDisplay(midlet);
-		author = new StringItem("","软件作者：jiehuan\n" +
-				"电子邮箱：jiehuan233@outlook.com\n" +
-				"dospy.wang:@jiehuan\n" +
-				"github:@jiehuan-jason\n" +
-				"网盘:jiehuan233.ysepan.com\n");
-		text = new StringItem("","软件版本：V0.2正式版\n" +
-				"更新日期：2024.11.2\n" +
-				"更新内容：修复了一些bug\n");
-		form=new Form("关于");
-		back=new Command("Back",Command.BACK,1);
-		exit=new Command("Exit",Command.EXIT,0);
-		form.addCommand(back);
-		form.addCommand(exit);
-		form.append(author);
-		form.append(text);
-		form.setCommandListener(this);
-		display.setCurrent(form);
+		
+		loadMessages();
+		initDisplayVars();
+		display();
 	}
 	 public void commandAction(Command c, Displayable d) {
 		 	// 返回主界面
@@ -58,6 +48,38 @@ public class AboutPage implements CommandListener{
 	        if(c==exit){
 	        	ml.exitApp();
 	        }
+	    }
+	 private void initDisplayVars(){
+		    display = Display.getDisplay(ml);
+		    form=new Form(lang_res.getValue("about"));
+			author = new StringItem("","软件作者：jiehuan\n" +
+					"电子邮箱：jiehuan233@outlook.com\n" +
+					"dospy.wang:@jiehuan\n" +
+					"github:@jiehuan-jason\n" +
+					"网盘:jiehuan233.ysepan.com\n");
+			text = new StringItem("","软件版本：V0.2正式版\n" +
+					"更新日期：2024.11.2\n" +
+					"更新内容：修复了一些bug\n");
+			back=new Command(lang_res.getValue("back"),Command.BACK,1);
+			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
+	 }
+	 private void display(){
+		form.addCommand(back);
+		form.addCommand(exit);
+		form.append(author);
+		form.append(text);
+		form.setCommandListener(this);
+		display.setCurrent(form);
+	 }
+	 
+	 private void loadMessages() {
+	        // 根据系统语言加载相应的资源文件
+	        try {
+				lang_res = new GetLangRes(System.getProperty("microedition.locale"));
+				//System.out.println(lang_res.getLangFileContent());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	    }
 
 }

@@ -13,11 +13,15 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.StringItem;
 
+import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
+import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
+
 public class UserInfoPage implements CommandListener {
 	
 	public static String PageID = "4";
 	
 	private MainMIDlet ml;
+	GetLangRes lang_res;
 	Display display;
 	Command back;
 	Command exit;
@@ -31,8 +35,14 @@ public class UserInfoPage implements CommandListener {
 	StringItem attentionsitem;
 	StringItem levelitem;
 	
-	String bvid;
-	String face_url;
+	private String bvid;
+	private String face_url;
+	private String text;
+	private String name;
+	private String sign;
+	private String fans;
+	private String attentions;
+	private String level;
 	
 	VideoInfo video_info;
 	
@@ -42,12 +52,17 @@ public class UserInfoPage implements CommandListener {
 		this.video_info = video_info;
 		
 		this.video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
+		loadMessages();
 		
-		String text = URLget.BackWeb(URLget.USER_INFO_URL+video_info.getUserMID());
-		if(text.startsWith("error")){
+		try{
+			initPageVars();
+			initDisplayVars();
+			display();
+			
+		}catch(Exception e){
 			form=new Form("Error");
-			back=new Command("back",Command.BACK,1);
-			exit=new Command("exit",Command.EXIT,0);
+			back=new Command(lang_res.getValue("back"),Command.BACK,1);
+			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
 			form.append(new StringItem("","获取错误"));
 			form.addCommand(back);
 			form.addCommand(exit);
@@ -55,47 +70,7 @@ public class UserInfoPage implements CommandListener {
 			Alert alert = new Alert("Error", "获取错误", null, AlertType.ERROR);
             alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
             display.setCurrent(alert, form);
-            //ml.display.setCurrent(ml.form);
-		}else{
-		
-		String name = FindString.findValue(text, "name");
-		String sign = FindString.findValue(text, "sign");
-		String fans = FindString.findValueInt(text, "fans");
-		String attentions = FindString.findValueInt(text, "attention");
-		String level = FindString.findValueInt(text, "current_level");
-		face_url = FindString.findValue(text, "face");
-		
-		nameitem=new StringItem("",name+"  ");
-		signitem=new StringItem("","简介:"+sign+"\n");
-		fansitem=new StringItem("","粉丝:"+fans+"\n");
-		attentionsitem=new StringItem("","关注数:"+attentions+"\n");
-		try {
-			System.out.println("/level_img/lv"+level+".png");
-			level_img = Image.createImage("/level_img/lv"+level+".png");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//levelitem=new StringItem("","LV"+level+"\n");
-		
-		
-		
-		display = Display.getDisplay(ml);
-		form=new Form(name+"的个人信息");
-		back=new Command("Back",Command.BACK,1);
-		exit=new Command("Exit",Command.EXIT,0);
-		showUserFace = new Command("显示用户头像",Command.OK,1);
-		form.append(nameitem);
-		//form.append(levelitem);
-		form.append(level_img);
-		form.append(signitem);
-		form.append(fansitem);
-		form.append(attentionsitem);
-		form.addCommand(back);
-		form.addCommand(exit);
-		form.addCommand(showUserFace);
-		form.setCommandListener(this);
-		display.setCurrent(form);
+            
 		}
 	}
 	
@@ -128,4 +103,52 @@ public class UserInfoPage implements CommandListener {
             }).start();
         }
     }
+	private void loadMessages() {
+        // 根据系统语言加载相应的资源文件
+        try {
+			lang_res = new GetLangRes(System.getProperty("microedition.locale"));
+			//System.out.println(lang_res.getLangFileContent());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+	private void initPageVars() throws IOException,WebReturnErrorCodeException, ErrorVideoStatusException{
+		text = URLget.BackWeb(URLget.USER_INFO_URL+video_info.getUserMID());
+		name = FindString.findValue(text, "name");
+		sign = FindString.findValue(text, "sign");
+		fans = FindString.findValueInt(text, "fans");
+		attentions = FindString.findValueInt(text, "attention");
+		level = FindString.findValueInt(text, "current_level");
+		face_url = FindString.findValue(text, "face");
+	}
+	
+	private void initDisplayVars() throws IOException{
+		nameitem=new StringItem("",name+"  ");
+		signitem=new StringItem("",lang_res.getValue("introduction")+sign+"\n");
+		fansitem=new StringItem("",lang_res.getValue("fans")+fans+"\n");
+		attentionsitem=new StringItem("",lang_res.getValue("attentions")+attentions+"\n");
+	
+		System.out.println("/level_img/lv"+level+".png");
+		level_img = Image.createImage("/level_img/lv"+level+".png");
+		
+		display = Display.getDisplay(ml);
+		form=new Form(name+lang_res.getValue("user_info"));
+		back=new Command(lang_res.getValue("back"),Command.BACK,1);
+		exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
+		showUserFace = new Command(lang_res.getValue("show_user_face"),Command.OK,1);
+	}
+	
+	private void display(){
+		form.append(nameitem);
+		//form.append(levelitem);
+		form.append(level_img);
+		form.append(signitem);
+		form.append(fansitem);
+		form.append(attentionsitem);
+		form.addCommand(back);
+		form.addCommand(exit);
+		form.addCommand(showUserFace);
+		form.setCommandListener(this);
+		display.setCurrent(form);
+	}
 }

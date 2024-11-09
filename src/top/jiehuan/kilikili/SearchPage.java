@@ -1,5 +1,6 @@
 package top.jiehuan.kilikili;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import javax.microedition.io.ConnectionNotFoundException;
@@ -13,11 +14,15 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.StringItem;
 
+import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
+import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
+
 public class SearchPage implements CommandListener{
 	
 	public static String PageID = "3";
 	
 	private MainMIDlet ml;
+	GetLangRes lang_res;
 	Display display;
 	List search_list;
 	Command back;
@@ -29,17 +34,12 @@ public class SearchPage implements CommandListener{
 	
 	static int maxVideosNum = 10;
 	
-	private String searchTitleString;
-	private String backString;
-	private String exitString;
-	private String goString;
-	private String viewCoverString;
-	//private String keyword;
 	private VideoInfo video_info;
+	private String keyword;
 	
 	public SearchPage(MainMIDlet midlet,VideoInfo video_info){
 		//this.keyword=keyword;
-		String keyword = URLget.urlEncode(video_info.getSearchKeyword());
+		keyword = URLget.urlEncode(video_info.getSearchKeyword());
 		System.out.println("keyword:"+keyword);
 		//初始化变量和界面
 		ml=midlet;
@@ -52,12 +52,16 @@ public class SearchPage implements CommandListener{
 		loadMessages();
 		
 		System.out.println("start get web");
-		search_list=new List(searchTitleString,List.IMPLICIT);
-		String web=URLget.BackWeb(URLget.SEARCH_URL+keyword);
-		if(web.startsWith("error")){
+		try{
+			initPageVars();
+			initDisplayVars();
+			display();
+
+		}catch(Exception e){
+			e.printStackTrace();
 			form=new Form("Error");
-			back=new Command(backString,Command.BACK,1);
-			exit=new Command(exitString,Command.EXIT,0);
+			back=new Command(lang_res.getValue("back"),Command.BACK,1);
+			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
 			form.append(new StringItem("","获取错误"));
 			form.addCommand(back);
 			form.addCommand(exit);
@@ -66,26 +70,6 @@ public class SearchPage implements CommandListener{
             alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
             display.setCurrent(alert, form);
             //ml.display.setCurrent(ml.form);
-		}else{
-		String[] list_str=FindString.FindTitle(web);
-	    list_bvid=FindString.FindBVID(web);
-		
-		for(int i=0;i<maxVideosNum;i++){	//在列表内添加搜索到的视频的标题
-			System.out.println(list_str[i]);
-			System.out.println(list_bvid[i]);
-			search_list.append(list_str[i], null);
-		}
-		
-		back=new Command(backString,Command.BACK,1);
-		exit=new Command(exitString,Command.EXIT,0);
-		go=new Command(goString,Command.OK,1);
-		view_cover=new Command(viewCoverString,Command.ITEM,2);
-		search_list.addCommand(back);
-		search_list.addCommand(go);
-		search_list.addCommand(exit);
-		search_list.addCommand(view_cover);
-		search_list.setCommandListener(this);
-		display.setCurrent(search_list);
 		}
 	}
 	 public void commandAction(Command c, Displayable d) {
@@ -137,19 +121,40 @@ public class SearchPage implements CommandListener{
 	    }
 	 private void loadMessages() {
 	        // 根据系统语言加载相应的资源文件
-	        
-	        if (System.getProperty("microedition.locale").equals("zh-CN")) {
-	        	exitString="退出";
-	        	backString="返回";
-	        	goString="前往";
-	        	searchTitleString="搜索结果";
-	        	viewCoverString="显示封面";
-	        } else {
-	        	exitString="Exit";
-	        	backString="Back";
-	        	goString="Go";
-	        	searchTitleString="Results";
-	        	viewCoverString="View the Cover";
-	        }
+	        try {
+				lang_res = new GetLangRes(System.getProperty("microedition.locale"));
+				//System.out.println(lang_res.getLangFileContent());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	    }
+	 private void initPageVars() throws IOException,WebReturnErrorCodeException, ErrorVideoStatusException{
+		search_list=new List(lang_res.getValue("search_list"),List.IMPLICIT);
+		String web=URLget.BackWeb(URLget.SEARCH_URL+keyword);
+		String[] list_str=FindString.FindTitle(web);
+	    list_bvid=FindString.FindBVID(web);
+		
+		for(int i=0;i<maxVideosNum;i++){	//在列表内添加搜索到的视频的标题
+			System.out.println(list_str[i]);
+			System.out.println(list_bvid[i]);
+			search_list.append(list_str[i], null);
+		}
+
+	 }
+	 private void initDisplayVars(){
+		back=new Command(lang_res.getValue("back"),Command.BACK,1);
+		exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
+		go=new Command(lang_res.getValue("go"),Command.OK,1);
+		view_cover=new Command(lang_res.getValue("view_cover"),Command.ITEM,2);
+	 }
+	 private void display(){
+		search_list.addCommand(back);
+		search_list.addCommand(go);
+		search_list.addCommand(exit);
+		search_list.addCommand(view_cover);
+		search_list.setCommandListener(this);
+		display.setCurrent(search_list);
+
+	 }
+
 }

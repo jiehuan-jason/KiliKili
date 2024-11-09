@@ -1,5 +1,7 @@
 package top.jiehuan.kilikili;
 
+import java.io.IOException;
+
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -14,6 +16,7 @@ public class DownloadPage implements CommandListener{
 	public static String PageID = "5";
 	
 	private MainMIDlet ml;
+	GetLangRes lang_res;
 	Display display;
 	Form form;
 	Command back;
@@ -30,25 +33,10 @@ public class DownloadPage implements CommandListener{
 	public DownloadPage(MainMIDlet midlet,VideoInfo video_info){
 		this.video_info=video_info;
 		ml=midlet;
-		bvid = video_info.getBVID();
-		display = Display.getDisplay(midlet);
-		video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
-		this.video_url=video_info.getVideoURL();
-		videoURL = new TextField("",this.video_url,10000,TextField.ANY);
-		tips = new StringItem("","tips:如果下载按钮无法下载，请把光标移到下方的链接处并复制到浏览器打开下载");
-		download=new Command("下载视频",Command.ITEM,1);
-		
-		form=new Form("下载");
-		back=new Command("Back",Command.BACK,1);
-		exit=new Command("Exit",Command.EXIT,0);
-		form.addCommand(back);
-		form.addCommand(exit);
-		form.addCommand(download);
-		form.append(tips);
-		form.append(videoURL);
-		form.setCommandListener(this);
-		display.setCurrent(form);
-
+		loadMessages();
+		initVideoVars();
+		initDisplayVars();
+		display();
 	}
 	
 	 public void commandAction(Command c, Displayable d) {
@@ -81,4 +69,40 @@ public class DownloadPage implements CommandListener{
 	            }).start();
 	        }
 	    }
+	 
+	 private void initVideoVars(){
+		bvid = video_info.getBVID();
+		display = Display.getDisplay(ml);
+		video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
+		this.video_url=video_info.getVideoURL();
+	 }
+	 
+	 private void initDisplayVars(){
+		form=new Form(lang_res.getValue("download"));
+		videoURL = new TextField("",this.video_url,10000,TextField.ANY);
+		tips = new StringItem("",lang_res.getValue("download_tips"));
+
+		download=new Command(lang_res.getValue("download"),Command.ITEM,1);	
+		back=new Command(lang_res.getValue("back"),Command.BACK,1);
+		exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
+	 }
+	 private void display(){
+		form.addCommand(back);
+		form.addCommand(exit);
+		form.addCommand(download);
+		form.append(tips);
+		form.append(videoURL);
+		form.setCommandListener(this);
+		display.setCurrent(form);
+	 }
+	 private void loadMessages() {
+	        // 根据系统语言加载相应的资源文件
+	        try {
+				lang_res = new GetLangRes(System.getProperty("microedition.locale"));
+				//System.out.println(lang_res.getLangFileContent());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	    }
+
 }

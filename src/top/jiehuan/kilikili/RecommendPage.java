@@ -1,5 +1,6 @@
 package top.jiehuan.kilikili;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import javax.microedition.io.ConnectionNotFoundException;
@@ -13,6 +14,7 @@ public class RecommendPage implements CommandListener {
 	
 	// 定义需要的变量
 	private MainMIDlet ml;
+	GetLangRes lang_res;
 	List rcmd_list;
 	Display display;
 	Command back;
@@ -32,12 +34,18 @@ public class RecommendPage implements CommandListener {
 		ml=midlet;
 		display = Display.getDisplay(midlet);
 		this.video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
-		String rcmd_data=URLget.BackWeb(URLget.RCMD_URL);
-		if(rcmd_data.startsWith("error")){
+		loadMessages();
+		
+		try{
+			initPageVars();
+			initDisplayVars();
+			display();
+		}catch(Exception e){
+			e.printStackTrace();
+			System.out.println(e.getMessage());
 			form=new Form("Error");
-			back=new Command("Back",Command.BACK,1);
-			exit=new Command("Exit",Command.EXIT,0);
-			
+			back=new Command(lang_res.getValue("back"),Command.BACK,1);
+			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
 			form.append(new StringItem("","获取错误"));
 			form.addCommand(back);
 			form.addCommand(exit);
@@ -45,30 +53,6 @@ public class RecommendPage implements CommandListener {
 			Alert alert = new Alert("Error", "获取错误", null, AlertType.ERROR);
             alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
             display.setCurrent(alert, form);
-            //ml.display.setCurrent(ml.form);
-		}else{
-		
-		titles=FindString.extractContents(rcmd_data,"\"title\"");
-		bvids=FindString.extractContents(rcmd_data,"\"bvid\"");
-		
-		
-		rcmd_list=new List("推荐列表",List.IMPLICIT);
-		
-		for(int i=0;i<maxVideosNum;i++){	//在列表内添加推荐视频的标题
-			System.out.println(titles[i]);
-			System.out.println(bvids[i]);
-			rcmd_list.append(titles[i], null);
-		}
-		back=new Command("Back",Command.BACK,1);
-		go=new Command("Go",Command.OK,1);
-		view_cover=new Command("View the Cover",Command.ITEM,2);
-		exit=new Command("Exit",Command.EXIT,0);
-		rcmd_list.addCommand(back);
-		rcmd_list.addCommand(exit);
-		rcmd_list.setSelectCommand(go);
-		rcmd_list.addCommand(view_cover);
-		rcmd_list.setCommandListener(this);
-		display.setCurrent(rcmd_list);
 		}
 	}
 	
@@ -115,7 +99,45 @@ public class RecommendPage implements CommandListener {
             }
         }
     }
+	private void loadMessages() {
+        // 根据系统语言加载相应的资源文件
+        try {
+        	System.out.println(System.getProperty("microedition.locale"));
+			lang_res = new GetLangRes(System.getProperty("microedition.locale"));
+			//System.out.println(lang_res.getLangFileContent());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }	
 	
-	
+	private void initPageVars() throws Exception{
+		System.out.println("start to get rcmd data");
+		String rcmd_data=URLget.BackWeb(URLget.RCMD_URL);
+		titles=FindString.extractContents(rcmd_data,"\"title\"");
+		bvids=FindString.extractContents(rcmd_data,"\"bvid\"");
+		rcmd_list=new List(lang_res.getValue("rcmd_list"),List.IMPLICIT);
+		for(int i=0;i<maxVideosNum;i++){	//在列表内添加推荐视频的标题
+			System.out.println(titles[i]);
+			System.out.println(bvids[i]);
+			rcmd_list.append(titles[i], null);
+		}
+	}
+	private void initDisplayVars(){
+		System.out.println("start to initDisplayVars");
+		view_cover=new Command(lang_res.getValue("view_cover"),Command.ITEM,2);
+		exit=new Command(lang_res.getValue("exit"),Command.EXIT,3);
+		back=new Command(lang_res.getValue("back"),Command.BACK,0);
+		go = new Command(lang_res.getValue("go"),Command.OK,1);
+	}
+	private void display(){
+		System.out.println("start to display");
+		rcmd_list.addCommand(back);
+		rcmd_list.addCommand(exit);
+		rcmd_list.addCommand(go);
+		rcmd_list.setSelectCommand(go);
+		rcmd_list.addCommand(view_cover);
+		rcmd_list.setCommandListener(this);
+		display.setCurrent(rcmd_list);
+	}
 	 
 }

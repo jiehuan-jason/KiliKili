@@ -9,6 +9,9 @@ import java.io.UnsupportedEncodingException;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 
+import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
+import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
+
 /**
  * URLget is a class about get the WEB pages code(info) and deal with the info.
  * 
@@ -26,14 +29,14 @@ public class URLget {
 	public static String GET_INFO_URL="http://"+IP_ADDRESS+":3000/view?";
 	public static String GET_VIDEO_DOWNLOAD_LINK_URL="http://"+IP_ADDRESS+":2121/api/playurl?";
 	
-	public static String[] sendGetRequest(String bvid) {
+	/*public static String[] sendGetRequest(String bvid) throws WebReturnErrorCodeException, IOException{
 	        String content = BackWeb(GET_INFO_URL+"bvid="+bvid+"&version="+AboutPage.version);
 	        if(content.startsWith("error")){
 	        	return new String[]{"error",content};
 	        }
 	        return new String[]{"ok",content};
-	    }
-	public static String BackVideoLink(String bvid,String cid){
+	    }*/
+	public static String BackVideoLink(String bvid,String cid) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
 		String url = GET_VIDEO_DOWNLOAD_LINK_URL+"bvid="+bvid+"&cid="+cid;
 		System.out.println(url);
 		String content = BackWeb(url);
@@ -44,7 +47,7 @@ public class URLget {
 			return FindString.findValue(content,"url");
 		}
 	}
-	 public static String BackWeb(String url){
+	 public static String BackWeb(String url) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
 		 	HttpConnection connection = null;
 	        DataInputStream dis =null;
 	        
@@ -54,11 +57,13 @@ public class URLget {
 	        String content="error";
 
 	        try {
+	        	System.out.println("open the connection");
 	            // 打开连接 设置请求方式和请求类型
 	            connection = (HttpConnection) Connector.open(url);
 	            connection.setRequestMethod(HttpConnection.GET);
 	            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
 	            
+	            System.out.println("connect now");
 	            // 连接
 	            num = connection.getResponseCode();
 	            
@@ -72,54 +77,41 @@ public class URLget {
 		            	content = getInfoFromHttpConnection(connection);
 	            	}catch(IOException e1){
 	            		e1.printStackTrace();
-	            		content = "error"+e1.getMessage();
+	            		throw e1;
 	            	}
+	            } else{
+	            	throw new WebReturnErrorCodeException(num);
 	            }
-	        }catch(Exception e){
-	        	e.printStackTrace();
-	        	return "error"+e.getMessage();
+	        }catch(IOException e){
+	        	throw e;
 	        }finally{
-	        	// 关闭HTTP连接
+	        	// 关闭连接
 	        	try {
 					connection.close();
+					if(inputStream!=null)
+						inputStream.close();
+					if(dis!=null)
+						dis.close();
 				} catch (IOException e1) {
-					return "error"+e1.getMessage();
+					e1.printStackTrace();
+					throw e1;
 				}
-	        	// 关闭inputStream连接
-	        	if(inputStream!=null){
-	        		try{
-	        			inputStream.close();
-	        		}catch(Exception e){
-	        			return "error"+e.getMessage();
-	        		}	
-	        	}
-	        	// 关闭DataInputStream连接
-	        	if(dis!=null){
-	        		try{
-	        			dis.close();
-	        		}catch(Exception e){
-	        			return "error"+e.getMessage();
-	        		}
-	        	}
-	        	
 	        }
-	        if(num==200){
-	        	return content;
-	        }
-	        return "error "+num;
-	            
-	    
+	        /*TODO if(getAPIBackCode(content) != 0){
+	        	throw new ErrorVideoStatusException(getAPIBackCode(content));
+	        }*/
+	        return content;
 		}
 	 	private static String getInfoFromHttpConnection(HttpConnection connection) throws UnsupportedEncodingException, IOException{
 	 		DataInputStream dis =connection.openDataInputStream();
         	int connectionLength = (int)connection.getLength();
         	
         	if(connectionLength!=-1){
-        		byte[] buffer = new byte[bufferZoneBytes]; // 2KB 缓冲区
+        		byte[] buffer = new byte[bufferZoneBytes]; // 缓冲区
                 int bytesRead = 0;
                 int totalBytesRead = 0;
                 StringBuffer webPageBuffer = new StringBuffer();
-
+                System.out.println("begin to read data");
                 // 逐块读取数据
                 while ((bytesRead = dis.read(buffer)) != -1) {
                     if (totalBytesRead + bytesRead > maxHttpGetBytes) {
@@ -170,5 +162,9 @@ public class URLget {
 	            e.printStackTrace();
 	        }
 	        return encoded.toString();
+	    }
+	    
+	    private static int getAPIBackCode(String content){
+	    	return Integer.parseInt(FindString.findValueInt(content, "code"));
 	    }
 }

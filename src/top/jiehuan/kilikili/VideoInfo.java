@@ -57,6 +57,10 @@ public class VideoInfo {
 	
 	private void getBasicVideoInfo(){
 		content = getVideoContent();
+		if(content.equals("error")){
+			System.out.println("VideoInfo content is error");
+			status = false;
+		}else{
 		user_mid=FindString.findValueInt(content, "mid");
 		cover_url=FindString.findValue(content, "pic");
 		title=FindString.findValue(content,"title");
@@ -71,18 +75,23 @@ public class VideoInfo {
 		coin=Integer.parseInt(FindString.findValueInt(content,"coin"));
 		share=Integer.parseInt(FindString.findValueInt(content,"share"));
 		favorite = Integer.parseInt(FindString.findValueInt(content,"favorite"));
-		
-		video_url=URLget.BackVideoLink(bvid, cid);
+		try{
+			video_url=URLget.BackVideoLink(bvid, cid);
+		}catch(Exception e){
+			System.out.println("BackVideoLink is error");
+			status = false;
+		}
+		}
 	}
 	
 	public String getVideoContent(){
-		String[] s_info= URLget.sendGetRequest(bvid);
-		if(s_info[0].equals("ok")){
-			status = true;
-			return s_info[1];
+		try{
+			String s_info = URLget.BackWeb(URLget.GET_INFO_URL+"bvid="+bvid+"&version="+AboutPage.version);
+			return s_info;
+		}catch(Exception e){
+			status = false;
+			return "error";
 		}
-		status = false;
-		return s_info[1];
 	}
 	
 	public String getVideoURL(){
@@ -128,7 +137,8 @@ public class VideoInfo {
 	}
 	
 	public boolean getStatus(){
-		return status;
+		//return status;
+		return true;
 	}
 	
 	public String getDescription(){

@@ -1,5 +1,7 @@
 package top.jiehuan.kilikili;
 
+import java.io.IOException;
+
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
@@ -15,8 +17,9 @@ public class MainPage implements CommandListener{
 	public static int page_list_num;
 	static String PageID = "0";
 	
-	public Display display;
-	public Form form;
+	GetLangRes lang_res;
+	Display display;
+	Form form;
 	StringItem tips;
 	TextField tf;
 	Command go;
@@ -24,16 +27,6 @@ public class MainPage implements CommandListener{
 	Command about;
 	Command rcmd;
 	Command search;
-	
-	private String goString;
-	private String exitString;
-	private String main_pageString;
-	private String inputString;
-	private String invalid_bvidStirng;
-	private String aboutString;
-	private String rcmd_listString;
-	private String searchString;
-	private String tipsString;
 	
 	public String lang;
 	
@@ -52,14 +45,14 @@ public class MainPage implements CommandListener{
 		System.out.println("Start init the display moudle");
 		
 		display = Display.getDisplay(m);
-		go = new Command(goString,Command.OK,0);
-		exit = new Command(exitString,Command.EXIT,1);
-		about = new Command(aboutString,Command.OK,1);
-		rcmd = new Command(rcmd_listString,Command.OK,1);
-		search = new Command(searchString,Command.OK,1);
-		form = new Form(main_pageString);
-		tf = new TextField(inputString,"",20,TextField.ANY);
-		tips = new StringItem("","\n"+tipsString);
+		go = new Command(lang_res.getValue("go"),Command.OK,0);
+		exit = new Command(lang_res.getValue("exit"),Command.EXIT,1);
+		about = new Command(lang_res.getValue("about"),Command.OK,1);
+		rcmd = new Command(lang_res.getValue("rcmd_list"),Command.OK,1);
+		search = new Command(lang_res.getValue("search"),Command.OK,1);
+		form = new Form(lang_res.getValue("main_page"));
+		tf = new TextField(lang_res.getValue("input"),"",20,TextField.ANY);
+		tips = new StringItem("","\n"+lang_res.getValue("tips"));
 		
 		System.out.println("Finish init the display moudle");
 		
@@ -93,7 +86,7 @@ public class MainPage implements CommandListener{
                 }).start();
         	}else{
         		//处理输入错误
-        		Alert alert = new Alert("Error", invalid_bvidStirng, null, AlertType.ERROR);
+        		Alert alert = new Alert("Error", lang_res.getValue("invalid_bvid"), null, AlertType.ERROR);
                 alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
                 display.setCurrent(alert, form);
         	}
@@ -134,28 +127,12 @@ public class MainPage implements CommandListener{
     }
 	private void loadMessages() {
         // 根据系统语言加载相应的资源文件
-        
-        if (lang.equals("zh-CN")) {
-        	goString="前往";
-        	exitString="退出";
-        	main_pageString="首页";
-        	inputString="输入bvid或搜索内容：";
-        	invalid_bvidStirng="无效的bvid号";
-        	aboutString="关于";
-        	rcmd_listString="推荐列表";
-        	searchString="搜索";
-        	tipsString="Tips:在上面的框里输入bvid或者搜索内容，然后在menu菜单中选择自己需要的命令吧";
-        } else {
-        	goString="Go";
-        	exitString="Exit";
-        	main_pageString="Main Page";
-        	inputString="input BVID or search words: ";
-        	invalid_bvidStirng="invalid bvid";
-        	aboutString="About";
-        	rcmd_listString="Recommend List";
-        	searchString="Search";
-        	tipsString="Tips:Please add 'BV' behind the BVID when you input it.";
-        }
+        try {
+			lang_res = new GetLangRes(lang);
+			//System.out.println(lang_res.getLangFileContent());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
 	static public int addPageNum(String PageID,VideoInfo video_info)
 	{

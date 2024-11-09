@@ -26,6 +26,6 @@ public class MainMIDlet extends MIDlet{
 		} // 销毁应用
         notifyDestroyed(); // 通知 MIDP 退出
     }
-
+	
 
 }

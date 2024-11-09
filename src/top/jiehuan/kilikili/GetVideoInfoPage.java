@@ -1,5 +1,6 @@
 package top.jiehuan.kilikili;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import javax.microedition.io.ConnectionNotFoundException;
@@ -13,29 +14,15 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.StringItem;
 
+import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
+import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
+
 public class GetVideoInfoPage implements CommandListener{
 	
 	public static String PageID = "1";
 	
-	String findErrorString;
-	String backString;
-	String exitString;
-	String likeString;
-	String viewString;
-	String replyString;
-	String coinString;
-	String shareString;
-	String introductionString;
-	String authorString;
-	String videoDisplayString;
-	String downloadString;
-	String coverString;
-	String authorInfoString;
-	String timeString;
-	String favoriteString;
-	String ci;
-	String ge;
-
+	GetLangRes lang_res;
+	
 	Display display;
 	Form form;
 	StringItem title;
@@ -82,66 +69,17 @@ public class GetVideoInfoPage implements CommandListener{
 		
 		//若返回代码为错误代码，则显示未找到视频
 		if(!status){
-			form=new Form(findErrorString);
-			back=new Command(backString,Command.BACK,1);
-			exit=new Command(exitString,Command.EXIT,0);
-			form.addCommand(back);
-			form.addCommand(exit);
-			form.setCommandListener(this);
-			Alert alert = new Alert("Error", video_info.getVideoContent(), null, AlertType.ERROR);
-            alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-            display.setCurrent(alert, form);
-            //ml.display.setCurrent(ml.form);
-            
+			displayErrorAlert(video_info.getVideoContent());
 		}else{
 			// 初始化视频信息界面
 			System.out.println("init video info form");
-			
-			
-			//title=FindString.findValue(s_info[1],"title");
-			title=new StringItem(null, video_info.getTitle());
-			up_name=new StringItem(null,"\n"+authorString+video_info.getUserName());
-			info = new StringItem(null,"\n"+viewString+video_info.getView()+ci+"  "+replyString+video_info.getReply()+ci+"  "+coinString+video_info.getCoin()+ge+"  "+shareString+video_info.getShare()+ci+"  "+likeString+video_info.getLike()+ci+"  "+favoriteString+video_info.getFavorite()+ci);
-			time = new StringItem(null,"\n"+timeString+":"+video_info.getFormatPubTime());
-			System.out.println("finish init string item");
-			desc = "\n"+introductionString+video_info.getDescription();
-			cid = Long.toString(video_info.getCID());
-			pic = video_info.getCoverURL();
-			mid = Long.toString(video_info.getUserMID());
-			System.out.println("finish findValue");
-			video_url=URLget.BackVideoLink(bvid, cid);
-			System.out.println("Get Already");
-			
-			
-			download=new Command(downloadString,Command.ITEM,1);
-			back=new Command(backString,Command.BACK,1);
-			exit=new Command(exitString,Command.EXIT,0);
-			view_cover=new Command(coverString,Command.ITEM,2);
-			author_info=new Command(authorInfoString,Command.ITEM,2);
-			
-			
-			form=new Form(videoDisplayString);
-			
-			
-			form.append(title);
-			form.append(up_name);
-			form.append(time);
-			if(!desc.equals("\n"+introductionString)){
-				String[] items=FindString.Display_Desc(desc);
-				for(int i=0;i<items.length;i++){
-					form.append(new StringItem(null,items[i]));
-				}
-				form.append(new StringItem(null,""));
+			try{
+				initPageVars();
+				initDisplayVars();
+				display();
+			}catch(Exception e){
+				displayErrorAlert("获取错误");
 			}
-			
-			form.append(info);
-			form.addCommand(back);
-			form.addCommand(author_info);
-			form.addCommand(download);
-			form.addCommand(view_cover);
-			form.addCommand(exit);
-			form.setCommandListener(this);
-			display.setCurrent(form);
 		}
 		
 	}
@@ -191,46 +129,12 @@ public class GetVideoInfoPage implements CommandListener{
 	 
 	 private void loadMessages() {
 	        // 根据系统语言加载相应的资源文件
-	        
-	        if (System.getProperty("microedition.locale").equals("zh-CN")) {
-	        	exitString="退出";
-	        	findErrorString="找不到该BVID对应的视频";
-	        	backString="返回";
-	        	likeString="赞";
-	        	viewString="看";
-	        	replyString="回";
-	        	coinString="币";
-	        	shareString="转";
-	        	introductionString="简介:";
-	        	authorString="作者:";
-	        	videoDisplayString="视频界面";
-	        	downloadString="下载视频";
-	        	coverString="显示封面";
-	        	authorInfoString="作者空间";
-	        	timeString="发布时间";
-	        	favoriteString="收藏";
-	        	ci="次";
-	        	ge="个";
-	        } else {
-	        	exitString="Exit";
-	        	findErrorString="No this video";
-	        	backString="Back";
-	        	likeString="Likes";
-	        	viewString="Views";
-	        	replyString="Replys";
-	        	coinString="Coins";
-	        	shareString="Shares";
-	        	introductionString="Introduction:";
-	        	authorString="Author:";
-	        	videoDisplayString="Video Screen";
-	        	downloadString="Download";
-	        	coverString="View the cover";
-	        	authorInfoString="Author Space";
-	        	timeString="Time";
-	        	favoriteString="Favorites";
-	        	ci="";
-	        	ge="";
-	        }
+	        try {
+				lang_res = new GetLangRes(System.getProperty("microedition.locale"));
+				//System.out.println(lang_res.getLangFileContent());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	    }
 		private void goLastPage(){
 			System.out.println("call goLastPage.Page now is:"+video_info.getPageNum());
@@ -259,5 +163,61 @@ public class GetVideoInfoPage implements CommandListener{
 		            }).start();
 			 }
 		 }
+		private void initPageVars() throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
+			System.out.println("start initPageVars");
+			desc = "\n"+lang_res.getValue("introduction")+video_info.getDescription();
+			cid = Long.toString(video_info.getCID());
+			pic = video_info.getCoverURL();
+			mid = Long.toString(video_info.getUserMID());
+			video_url=URLget.BackVideoLink(bvid, cid);
+		}
+		private void initDisplayVars(){
+			System.out.println("start initDisplayVars");
+			form=new Form(lang_res.getValue("videoDisplay"));
+			title=new StringItem(null, video_info.getTitle());
+			up_name=new StringItem(null,"\n"+lang_res.getValue("author")+video_info.getUserName());
+			info = new StringItem(null,"\n"+lang_res.getValue("view")+video_info.getView()+lang_res.getValue("ci")+"  "+lang_res.getValue("reply")+video_info.getReply()+lang_res.getValue("ci")+"  "+lang_res.getValue("coin")+video_info.getCoin()+lang_res.getValue("ge")+"  "+lang_res.getValue("share")+video_info.getShare()+lang_res.getValue("ci")+"  "+lang_res.getValue("like")+video_info.getLike()+lang_res.getValue("ci")+"  "+lang_res.getValue("favorite")+video_info.getFavorite()+lang_res.getValue("ci"));
+			time = new StringItem(null,"\n"+lang_res.getValue("public_time")+":"+video_info.getFormatPubTime());
+			download=new Command(lang_res.getValue("download"),Command.ITEM,1);
+			back=new Command(lang_res.getValue("back"),Command.BACK,1);
+			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
+			view_cover=new Command(lang_res.getValue("cover"),Command.ITEM,2);
+			author_info=new Command(lang_res.getValue("authorInfo"),Command.ITEM,2);
 
+		}
+		private void display(){
+			System.out.println("start display");
+			form.append(title);
+			form.append(up_name);
+			form.append(time);
+			if(!desc.equals("\n"+lang_res.getValue("introduction"))){
+				String[] items=FindString.Display_Desc(desc);
+				for(int i=0;i<items.length;i++){
+					form.append(new StringItem(null,items[i]));
+				}
+				form.append(new StringItem(null,""));
+			}
+			
+			form.append(info);
+			form.addCommand(back);
+			form.addCommand(author_info);
+			form.addCommand(download);
+			form.addCommand(view_cover);
+			form.addCommand(exit);
+			form.setCommandListener(this);
+			display.setCurrent(form);
+
+		}
+		private void displayErrorAlert(String error){
+			form=new Form(lang_res.getValue("findError"));
+			back=new Command(lang_res.getValue("back"),Command.BACK,1);
+			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
+			form.addCommand(back);
+			form.addCommand(exit);
+			form.setCommandListener(this);
+			Alert alert = new Alert("Error", error, null, AlertType.ERROR);
+            alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+            display.setCurrent(alert, form);
+            //ml.display.setCurrent(ml.form);
+		}
 }
