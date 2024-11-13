@@ -1,43 +1,78 @@
 package top.jiehuan.kilikili;
 
+import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
+
 public class PageInfo {
 	private VideoInfo video_info;
-	private static short[] Page_list = new short[100];
-	private static int page_num = 0;
-	private static MainMIDlet ml;
+	public short pageID;
+	public static MainMIDlet ml;
 	
-	public PageInfo(String bvid, short PageID){
-		video_info = new VideoInfo(bvid);
-		Page_list[page_num] = PageID;
-		page_num++;
-	}
+	private String BVID;
+	private boolean isBVIDSet;
+	private String search_keyword;
+	private int search_page;
+	private boolean isSearchSet;
+	private String content;
+	private boolean isContentSet;
 	
 	public PageInfo(short PageID){
-		Page_list[page_num] = PageID;
-		page_num++;
+		this.pageID = PageID;
+		isBVIDSet = false;
+		isSearchSet = false;
+		isContentSet = false;
 	}
 	
-	public PageInfo(MainMIDlet ml){
-		this((short)0);
-		this.ml = ml;
+	public void setVideoInfo(String bvid){
+		isBVIDSet = true;
+		BVID = bvid;
+		video_info = new VideoInfo(bvid);
 	}
 	
-	public PageInfo(MainMIDlet ml, String bvid){
-		this(bvid, (short)0);
-		this.ml = ml;
+	public VideoInfo getVideoInfo() throws PageInfoEmptyException{
+		if(isBVIDSet)
+			return video_info;
+		else
+			throw new PageInfoEmptyException();
 	}
 	
-	public void setNewBVID(String bvid){
-		video_info.setBVID(bvid);
+	public String getBVID() throws PageInfoEmptyException{
+		if(isBVIDSet)
+			return BVID;
+		else
+			throw new PageInfoEmptyException();
 	}
 	
-	public void backToLastPage(){
-		short pageID = getLastPageID();
-		//TODO 返回逻辑由本函数处理
+	public void setSearchInfo(String keyword, int page){
+		isSearchSet = true;
+		search_page = page;
+		search_keyword = keyword;
 	}
 	
-	private short getLastPageID(){
-		page_num -= 2;
-		return Page_list[page_num];
+	public String getSearchKeyword() throws PageInfoEmptyException{
+		if(isSearchSet)
+			return search_keyword;
+		else
+			throw new PageInfoEmptyException();
 	}
+	
+	public int getSearchPage() throws PageInfoEmptyException{
+		if(isSearchSet)
+			return search_page;
+		else
+			throw new PageInfoEmptyException();
+	}
+	
+	public void setContent(String content){
+		isContentSet = true;
+		this.content = content;
+	}
+	
+	public String getContent() throws PageInfoEmptyException{
+		if(isContentSet)
+			return content;
+		else
+			throw new PageInfoEmptyException();
+	}
+	
+	
 }

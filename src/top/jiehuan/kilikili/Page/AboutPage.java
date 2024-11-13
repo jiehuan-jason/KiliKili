@@ -1,7 +1,8 @@
-package top.jiehuan.kilikili;
+package top.jiehuan.kilikili.Page;
 
 
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -10,9 +11,12 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.StringItem;
 
+import top.jiehuan.kilikili.MainMIDlet;
+import top.jiehuan.kilikili.util.GetLangRes;
+
 public class AboutPage implements CommandListener{
 	
-	public static String PageID = "6";
+	public static short PageID = 6;
 	// 定义所需要的变量
 	private MainMIDlet ml;
 	
@@ -24,11 +28,11 @@ public class AboutPage implements CommandListener{
 	StringItem author;
 	StringItem text;
 	
-	public static String version = "0.2.5";
+	public static String version = "0.3.1";
 	
-	public AboutPage(MainMIDlet midlet,VideoInfo video_info){
+	public AboutPage(MainMIDlet midlet,Vector page_list_info){
 		//初始化变量和界面
-		video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
+		
 		ml=midlet;
 		
 		loadMessages();

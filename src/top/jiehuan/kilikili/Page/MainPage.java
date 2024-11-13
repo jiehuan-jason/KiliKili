@@ -1,6 +1,7 @@
-package top.jiehuan.kilikili;
+package top.jiehuan.kilikili.Page;
 
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
@@ -12,10 +13,12 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 
+import top.jiehuan.kilikili.MainMIDlet;
+import top.jiehuan.kilikili.PageInfo;
+import top.jiehuan.kilikili.util.GetLangRes;
+
 public class MainPage implements CommandListener{
-	public static String pagelist[] = new String[100];
-	public static int page_list_num;
-	static String PageID = "0";
+	public static short PageID = 0;
 	
 	GetLangRes lang_res;
 	Display display;
@@ -31,16 +34,17 @@ public class MainPage implements CommandListener{
 	public String lang;
 	
 	private MainMIDlet m;
+	private PageInfo page_info;
+	private Vector page_info_list;
 	
 	public MainPage(MainMIDlet m){
 		this.m=m;
 		lang = System.getProperty("microedition.locale");
-
-		loadMessages();
+		page_info = new PageInfo(PageID);
+		page_info_list = new Vector();
+		page_info_list.addElement(page_info);
 		
-		page_list_num = 0;
-		pagelist[0]=PageID;
-		//page_list_num++;
+		loadMessages();
 		
 		System.out.println("Start init the display moudle");
 		
@@ -74,14 +78,20 @@ public class MainPage implements CommandListener{
         		new Thread(new Runnable() {
                     public void run() {
                     	String bvid = tf.getString();
-                        new GetVideoInfoPage(m, new VideoInfo(bvid,0,pagelist));
+                    	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
+                    	newpage.setVideoInfo(bvid);
+                    	page_info_list.addElement(newpage);
+                        new GetVideoInfoPage(m, page_info_list);
                     }
                 }).start();
         	}else if(tf.getString().length()==10){
         		new Thread(new Runnable() {
                     public void run() {
-                    	String bvid = tf.getString();
-                        new GetVideoInfoPage(m, new VideoInfo("BV"+bvid,0,pagelist));
+                    	String bvid = "BV"+tf.getString();
+                    	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
+                    	newpage.setVideoInfo(bvid);
+                    	page_info_list.addElement(newpage);
+                        new GetVideoInfoPage(m, page_info_list);
                     }
                 }).start();
         	}else{
@@ -95,13 +105,15 @@ public class MainPage implements CommandListener{
         }else if(c==about){
         	new Thread(new Runnable() {
                 public void run() {
-                    new AboutPage(m,new VideoInfo(0,pagelist)); //打开关于界面
+                	page_info_list.addElement(new PageInfo(AboutPage.PageID));
+                    new AboutPage(m,page_info_list); //打开关于界面
                 }
             }).start();
         }else if(c==rcmd){
         	new Thread(new Runnable() {
                 public void run() {
-                    new RecommendPage(m,new VideoInfo(0,pagelist)); //打开推荐界面
+                	page_info_list.addElement(new PageInfo(RecommendPage.PageID));
+                    new RecommendPage(m,page_info_list); //打开推荐界面
                 }
             }).start();
         }else if(c==search){
@@ -120,7 +132,10 @@ public class MainPage implements CommandListener{
                     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
                     display.setCurrent(alert); // 显示 Alert*/
                 	System.out.println("keyword:"+tf.getString());
-                    new SearchPage(m,new VideoInfo(0,pagelist,tf.getString())); //打开搜索界面
+                	PageInfo newpage = new PageInfo(SearchPage.PageID);
+                	newpage.setSearchInfo(tf.getString(), 1);
+                	page_info_list.addElement(newpage);
+                    new SearchPage(m,page_info_list); //打开搜索界面
                 }
             }).start();
         }
@@ -134,19 +149,4 @@ public class MainPage implements CommandListener{
 			e.printStackTrace();
 		}
     }
-	static public int addPageNum(String PageID,VideoInfo video_info)
-	{
-		int index = video_info.getPageNum();
-		String[] pagelist = video_info.getPageList();
-		index+=1;
-		System.out.println("call addPage Num.Page is "+PageID+" list num is "+index);
-		//System.out.println(pagelist);
-		if(!pagelist[index-1].equals(PageID)){
-			pagelist[index]=PageID;
-			
-		}else{
-			index--;
-		}
-		return index;
-	}
 }

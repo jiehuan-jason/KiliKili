@@ -1,4 +1,4 @@
-package top.jiehuan.kilikili;
+package top.jiehuan.kilikili.util;
 
 public class FindString {
 	// 循环查找字符串函数 需要手动在传入的keyword内加入双引号

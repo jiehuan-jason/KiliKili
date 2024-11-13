@@ -1,14 +1,23 @@
-package top.jiehuan.kilikili;
+package top.jiehuan.kilikili.Page;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Vector;
 
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.*;
 
+import top.jiehuan.kilikili.MainMIDlet;
+import top.jiehuan.kilikili.PageInfo;
+import top.jiehuan.kilikili.VideoInfo;
+import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
+import top.jiehuan.kilikili.util.FindString;
+import top.jiehuan.kilikili.util.GetLangRes;
+import top.jiehuan.kilikili.util.URLget;
+
 public class RecommendPage implements CommandListener {
 	
-	public static String PageID = "2";
+	public static short PageID = 2;
 	
 	static int maxVideosNum = 20;
 	
@@ -26,14 +35,15 @@ public class RecommendPage implements CommandListener {
 	String[] titles;
 	String[] bvids;
 	
-	VideoInfo video_info;
+	PageInfo page_info;
+	Vector page_info_list;
 	
-	public RecommendPage(MainMIDlet midlet,VideoInfo video_info){
+	public RecommendPage(MainMIDlet midlet, Vector page_info_list){
 		// 初始化变量和界面
-		this.video_info = video_info;
 		ml=midlet;
 		display = Display.getDisplay(midlet);
-		this.video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
+		this.page_info = (PageInfo) page_info_list.lastElement();
+		this.page_info_list = page_info_list;
 		loadMessages();
 		
 		try{
@@ -86,7 +96,10 @@ public class RecommendPage implements CommandListener {
         	new Thread(new Runnable() {
                 public void run() {
                 	String bvid = bvids[rcmd_list.getSelectedIndex()];
-                    new GetVideoInfoPage(ml, new VideoInfo(bvid,video_info.getPageNum(),video_info.getPageList()));
+                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
+                	newpage.setVideoInfo(bvid);
+                	page_info_list.addElement(newpage);
+                    new GetVideoInfoPage(ml, page_info_list);
                 }
             }).start();
         }else if (d == rcmd_list) {
@@ -95,7 +108,10 @@ public class RecommendPage implements CommandListener {
             if (selectedIndex != -1) {
                 String bvid = bvids[selectedIndex];
                 System.out.println("Selected BVID: " + bvid);
-                new GetVideoInfoPage(ml, new VideoInfo(bvid,video_info.getPageNum(),video_info.getPageList())); // 创建新的页面以显示视频信息
+                PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
+            	newpage.setVideoInfo(bvid);
+            	page_info_list.addElement(newpage);
+                new GetVideoInfoPage(ml, page_info_list); // 创建新的页面以显示视频信息
             }
         }
     }
@@ -112,7 +128,14 @@ public class RecommendPage implements CommandListener {
 	
 	private void initPageVars() throws Exception{
 		System.out.println("start to get rcmd data");
-		String rcmd_data=URLget.BackWeb(URLget.RCMD_URL);
+		String rcmd_data;
+		try{
+			rcmd_data = page_info.getContent();
+		}catch(PageInfoEmptyException e){
+			rcmd_data = URLget.BackWeb(URLget.RCMD_URL);
+		}
+		
+		page_info.setContent(rcmd_data);
 		titles=FindString.extractContents(rcmd_data,"\"title\"");
 		bvids=FindString.extractContents(rcmd_data,"\"bvid\"");
 		rcmd_list=new List(lang_res.getValue("rcmd_list"),List.IMPLICIT);

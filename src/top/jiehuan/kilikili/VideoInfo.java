@@ -3,6 +3,10 @@ package top.jiehuan.kilikili;
 import java.util.Calendar;
 import java.util.Date;
 
+import top.jiehuan.kilikili.Page.AboutPage;
+import top.jiehuan.kilikili.util.FindString;
+import top.jiehuan.kilikili.util.URLget;
+
 
 public class VideoInfo {
 	private String bvid;
@@ -24,31 +28,6 @@ public class VideoInfo {
 	private int coin;
 	private int share;
 	private int favorite;
-	
-	private int page_num; //index of MainMIDlet.pagelist
-	private String[] pagelist;
-	
-	public VideoInfo(String bvid,int page_num,String[] pagelist){
-		this(bvid);
-		this.page_num = page_num;
-		this.pagelist = pagelist;
-		
-	}
-	
-	public VideoInfo(String bvid,int page_num,String search_keyword,String[] pagelist){
-		this(bvid,page_num,pagelist);
-		this.search_keyword = search_keyword;
-	}
-	
-	public VideoInfo(int page_num,String[] pagelist){
-		this.page_num = page_num;
-		this.pagelist = pagelist;
-	}
-	
-	public VideoInfo(int page_num,String[] pagelist,String search_keyword){
-		this(page_num,pagelist);
-		this.search_keyword = search_keyword;
-	}
 	
 	public VideoInfo(String bvid){
 		this.bvid = bvid;
@@ -169,20 +148,8 @@ public class VideoInfo {
 		return favorite;
 	}
 	
-	public int getPageNum(){
-		return page_num;
-	}
-	
-	public void setPageNum(int page_num){
-		this.page_num = page_num;
-	}
-	
 	public String getSearchKeyword(){
 		return search_keyword;
-	}
-	
-	public String[] getPageList(){
-		return pagelist;
 	}
 	
 	private String formatDate(Date date, long utcOffset) {

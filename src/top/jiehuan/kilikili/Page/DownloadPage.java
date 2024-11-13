@@ -1,8 +1,11 @@
-package top.jiehuan.kilikili;
+package top.jiehuan.kilikili.Page;
 
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.microedition.io.ConnectionNotFoundException;
+import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
@@ -11,9 +14,15 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 
+import top.jiehuan.kilikili.MainMIDlet;
+import top.jiehuan.kilikili.PageInfo;
+import top.jiehuan.kilikili.VideoInfo;
+import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
+import top.jiehuan.kilikili.util.GetLangRes;
+
 public class DownloadPage implements CommandListener{
 	
-	public static String PageID = "5";
+	public static short PageID = 5;
 	
 	private MainMIDlet ml;
 	GetLangRes lang_res;
@@ -29,10 +38,14 @@ public class DownloadPage implements CommandListener{
 	String bvid;
 	
 	VideoInfo video_info;
+	Vector page_info_list;
+	PageInfo page_info;
 	
-	public DownloadPage(MainMIDlet midlet,VideoInfo video_info){
-		this.video_info=video_info;
+	public DownloadPage(MainMIDlet midlet,Vector page_info_list){
+		//this.video_info=video_info;
 		ml=midlet;
+		this.page_info_list = page_info_list;
+		page_info = (PageInfo) page_info_list.lastElement();
 		loadMessages();
 		initVideoVars();
 		initDisplayVars();
@@ -44,10 +57,7 @@ public class DownloadPage implements CommandListener{
 	        if (c == back) {
 	            new Thread(new Runnable() {
 	                public void run() {
-	                	System.out.println("page "+PageID+" search_word:"+video_info.getSearchKeyword());
-	                	System.out.println("now "+video_info.getPageNum());
-	                	video_info.setPageNum(video_info.getPageNum()-1);
-	                	new GetVideoInfoPage(ml, video_info);
+	                	back();
 	                }
 	            }).start();
 	        }
@@ -73,8 +83,13 @@ public class DownloadPage implements CommandListener{
 	 private void initVideoVars(){
 		bvid = video_info.getBVID();
 		display = Display.getDisplay(ml);
-		video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
-		this.video_url=video_info.getVideoURL();
+		try {
+			this.video_url=page_info.getVideoInfo().getVideoURL();
+		} catch (PageInfoEmptyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			displayErrorAlert("获取错误");
+		}
 	 }
 	 
 	 private void initDisplayVars(){
@@ -103,6 +118,28 @@ public class DownloadPage implements CommandListener{
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-	    }
+	 }
+	 private void displayErrorAlert(String error){
+			form=new Form(lang_res.getValue("findError"));
+			back=new Command(lang_res.getValue("back"),Command.BACK,1);
+			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
+			form.addCommand(back);
+			form.addCommand(exit);
+			form.setCommandListener(this);
+			Alert alert = new Alert("Error", error, null, AlertType.ERROR);
+         alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+         display.setCurrent(alert, form);
+         //ml.display.setCurrent(ml.form);
+	}
+	 private void back(){
+		 page_info_list.removeElementAt(page_info_list.size()-1);
+		 PageInfo last_page = (PageInfo) page_info_list.lastElement();
+     	 if(last_page.pageID == GetVideoInfoPage.PageID){
+     		new GetVideoInfoPage(ml, page_info_list);
+     	 }else{
+     		 new MainPage(ml);
+     	 }
+	 }
+	 
 
 }

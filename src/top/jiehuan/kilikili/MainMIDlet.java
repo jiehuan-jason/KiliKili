@@ -3,6 +3,9 @@ package top.jiehuan.kilikili;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
+import top.jiehuan.kilikili.Page.MainPage;
+
+
 public class MainMIDlet extends MIDlet{
 
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
@@ -18,7 +21,7 @@ public class MainMIDlet extends MIDlet{
 	protected void startApp() throws MIDletStateChangeException {
 		new MainPage(this);
 	}
-	void exitApp() {
+	public void exitApp() {
         try {
 			destroyApp(false);
 		} catch (MIDletStateChangeException e) {

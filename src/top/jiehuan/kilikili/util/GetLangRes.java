@@ -1,8 +1,9 @@
-package top.jiehuan.kilikili;
+package top.jiehuan.kilikili.util;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 
 public class GetLangRes {
 	private String lang_file_content;

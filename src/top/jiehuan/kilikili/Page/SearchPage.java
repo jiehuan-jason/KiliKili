@@ -1,7 +1,8 @@
-package top.jiehuan.kilikili;
+package top.jiehuan.kilikili.Page;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Vector;
 
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Alert;
@@ -12,14 +13,20 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.List;
-import javax.microedition.lcdui.StringItem;
 
+import top.jiehuan.kilikili.MainMIDlet;
+import top.jiehuan.kilikili.PageInfo;
+import top.jiehuan.kilikili.VideoInfo;
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
+import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
+import top.jiehuan.kilikili.util.FindString;
+import top.jiehuan.kilikili.util.GetLangRes;
+import top.jiehuan.kilikili.util.URLget;
 
 public class SearchPage implements CommandListener{
 	
-	public static String PageID = "3";
+	public static short PageID = 3;
 	
 	private MainMIDlet ml;
 	GetLangRes lang_res;
@@ -34,19 +41,27 @@ public class SearchPage implements CommandListener{
 	
 	static int maxVideosNum = 10;
 	
-	private VideoInfo video_info;
 	private String keyword;
 	
-	public SearchPage(MainMIDlet midlet,VideoInfo video_info){
-		//this.keyword=keyword;
-		keyword = URLget.urlEncode(video_info.getSearchKeyword());
-		System.out.println("keyword:"+keyword);
+	private Vector page_info_list;
+	private PageInfo page_info;
+	
+	public SearchPage(MainMIDlet midlet,Vector page_info_list){
 		//初始化变量和界面
 		ml=midlet;
 		display = Display.getDisplay(midlet);
-		this.video_info=video_info;
-		this.video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
 		
+		//this.keyword=keyword;
+		page_info = (PageInfo) page_info_list.lastElement();
+		this.page_info_list = page_info_list;
+		try {
+			keyword = URLget.urlEncode(page_info.getSearchKeyword());
+		} catch (PageInfoEmptyException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			displayErrorAlert("获取错误");
+		}
+		System.out.println("keyword:"+keyword);
 		System.out.println("start loadMessages");
 		
 		loadMessages();
@@ -59,17 +74,7 @@ public class SearchPage implements CommandListener{
 
 		}catch(Exception e){
 			e.printStackTrace();
-			form=new Form("Error");
-			back=new Command(lang_res.getValue("back"),Command.BACK,1);
-			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
-			form.append(new StringItem("","获取错误"));
-			form.addCommand(back);
-			form.addCommand(exit);
-			form.setCommandListener(this);
-			Alert alert = new Alert("Error", "获取错误", null, AlertType.ERROR);
-            alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-            display.setCurrent(alert, form);
-            //ml.display.setCurrent(ml.form);
+			displayErrorAlert("获取错误");
 		}
 	}
 	 public void commandAction(Command c, Displayable d) {
@@ -104,8 +109,10 @@ public class SearchPage implements CommandListener{
 	                public void run() {
 	                	String bvid = list_bvid[search_list.getSelectedIndex()];
 	                	System.out.println(bvid);
-	                	video_info.setBVID(bvid);
-	                    new GetVideoInfoPage(ml, video_info);
+	                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
+	                	newpage.setVideoInfo(bvid);
+	                	page_info_list.addElement(newpage);
+	                    new GetVideoInfoPage(ml, page_info_list);
 	                }
 	            }).start();
 	        }else if (d == search_list) {
@@ -114,8 +121,10 @@ public class SearchPage implements CommandListener{
 	            if (selectedIndex != -1) {
 	                String bvid = list_bvid[selectedIndex];
 	                System.out.println("Selected BVID: " + bvid);
-	                video_info.setBVID(bvid);
-	                new GetVideoInfoPage(ml, video_info);
+	                PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
+	            	newpage.setVideoInfo(bvid);
+	            	page_info_list.addElement(newpage);
+	                new GetVideoInfoPage(ml, page_info_list);
 	                }
 	        }
 	    }
@@ -130,7 +139,13 @@ public class SearchPage implements CommandListener{
 	    }
 	 private void initPageVars() throws IOException,WebReturnErrorCodeException, ErrorVideoStatusException{
 		search_list=new List(lang_res.getValue("search_list"),List.IMPLICIT);
-		String web=URLget.BackWeb(URLget.SEARCH_URL+keyword);
+		String web;
+		try {
+			web = page_info.getContent();
+		} catch (PageInfoEmptyException e) {
+			web = URLget.BackWeb(URLget.SEARCH_URL+keyword);
+		}
+		
 		String[] list_str=FindString.FindTitle(web);
 	    list_bvid=FindString.FindBVID(web);
 		
@@ -156,5 +171,17 @@ public class SearchPage implements CommandListener{
 		display.setCurrent(search_list);
 
 	 }
+	 private void displayErrorAlert(String error){
+			form=new Form(lang_res.getValue("findError"));
+			back=new Command(lang_res.getValue("back"),Command.BACK,1);
+			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
+			form.addCommand(back);
+			form.addCommand(exit);
+			form.setCommandListener(this);
+			Alert alert = new Alert("Error", error, null, AlertType.ERROR);
+         alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+         display.setCurrent(alert, form);
+         //ml.display.setCurrent(ml.form);
+		}
 
 }

@@ -1,6 +1,7 @@
-package top.jiehuan.kilikili;
+package top.jiehuan.kilikili.Page;
 
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Alert;
@@ -13,12 +14,19 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.StringItem;
 
+import top.jiehuan.kilikili.MainMIDlet;
+import top.jiehuan.kilikili.PageInfo;
+import top.jiehuan.kilikili.VideoInfo;
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
+import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
+import top.jiehuan.kilikili.util.FindString;
+import top.jiehuan.kilikili.util.GetLangRes;
+import top.jiehuan.kilikili.util.URLget;
 
 public class UserInfoPage implements CommandListener {
 	
-	public static String PageID = "4";
+	public static short PageID = 4;
 	
 	private MainMIDlet ml;
 	GetLangRes lang_res;
@@ -35,7 +43,6 @@ public class UserInfoPage implements CommandListener {
 	StringItem attentionsitem;
 	StringItem levelitem;
 	
-	private String bvid;
 	private String face_url;
 	private String text;
 	private String name;
@@ -44,14 +51,21 @@ public class UserInfoPage implements CommandListener {
 	private String attentions;
 	private String level;
 	
-	VideoInfo video_info;
+	private VideoInfo video_info;
+	private Vector page_info_list;
 	
-	public UserInfoPage(MainMIDlet ml,VideoInfo video_info){
+	public UserInfoPage(MainMIDlet ml,Vector page_info_list){
 		this.ml=ml;
-		this.bvid=video_info.getBVID();
-		this.video_info = video_info;
+		this.page_info_list = page_info_list;
+		PageInfo page_info = (PageInfo) page_info_list.lastElement();
+		try {
+			video_info = page_info.getVideoInfo();
+		} catch (PageInfoEmptyException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			displayErrorAlert("获取错误");
+		}
 		
-		this.video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
 		loadMessages();
 		
 		try{
@@ -80,8 +94,8 @@ public class UserInfoPage implements CommandListener {
             new Thread(new Runnable() {
                 public void run() {
                 	System.out.println("page "+PageID+" search_word:"+video_info.getSearchKeyword());
-                	video_info.setPageNum(video_info.getPageNum()-1);
-                	new GetVideoInfoPage(ml, video_info);
+                	page_info_list.removeElementAt(page_info_list.size()-1);
+                	new GetVideoInfoPage(ml, page_info_list);
                 }
             }).start();
         }
@@ -113,6 +127,7 @@ public class UserInfoPage implements CommandListener {
 		}
     }
 	private void initPageVars() throws IOException,WebReturnErrorCodeException, ErrorVideoStatusException{
+		System.out.println(video_info.getUserMID());
 		text = URLget.BackWeb(URLget.USER_INFO_URL+video_info.getUserMID());
 		name = FindString.findValue(text, "name");
 		sign = FindString.findValue(text, "sign");
@@ -150,5 +165,17 @@ public class UserInfoPage implements CommandListener {
 		form.addCommand(showUserFace);
 		form.setCommandListener(this);
 		display.setCurrent(form);
+	}
+	private void displayErrorAlert(String error){
+		form=new Form(lang_res.getValue("findError"));
+		back=new Command(lang_res.getValue("back"),Command.BACK,1);
+		exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
+		form.addCommand(back);
+		form.addCommand(exit);
+		form.setCommandListener(this);
+		Alert alert = new Alert("Error", error, null, AlertType.ERROR);
+        alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+        display.setCurrent(alert, form);
+        //ml.display.setCurrent(ml.form);
 	}
 }

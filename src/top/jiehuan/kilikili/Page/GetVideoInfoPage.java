@@ -1,7 +1,8 @@
-package top.jiehuan.kilikili;
+package top.jiehuan.kilikili.Page;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Vector;
 
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Alert;
@@ -14,12 +15,19 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.StringItem;
 
+import top.jiehuan.kilikili.MainMIDlet;
+import top.jiehuan.kilikili.PageInfo;
+import top.jiehuan.kilikili.VideoInfo;
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
+import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
+import top.jiehuan.kilikili.util.FindString;
+import top.jiehuan.kilikili.util.GetLangRes;
+import top.jiehuan.kilikili.util.URLget;
 
 public class GetVideoInfoPage implements CommandListener{
 	
-	public static String PageID = "1";
+	public static final short PageID = 1;
 	
 	GetLangRes lang_res;
 	
@@ -51,19 +59,27 @@ public class GetVideoInfoPage implements CommandListener{
 	String video_url;
 	String cid;
 	
+	Vector page_info_list;
+	PageInfo page_info;
 	VideoInfo video_info;
 
-	public GetVideoInfoPage(MainMIDlet midlet,VideoInfo video_info){
-		//video_info.setPageNum(video_info.getPageNum()+1);
-		this.video_info = video_info;
-		//初始化需要用到的变量 输入的bvid要求前面带上BV两个字母
-		this.bvid=video_info.getBVID();
+	public GetVideoInfoPage(MainMIDlet midlet,Vector page_info_list){
+		//初始化需要用到的变量 
 		ml=midlet;
 		display = Display.getDisplay(midlet);
 		
 		loadMessages();
 		
-		this.video_info.setPageNum(MainPage.addPageNum(PageID,video_info));
+		this.page_info_list = page_info_list;
+		page_info = (PageInfo) page_info_list.lastElement();
+		try {
+			this.bvid=page_info.getBVID();
+			video_info = page_info.getVideoInfo();
+		} catch (PageInfoEmptyException e1) {
+			// TODO Auto-generated catch block
+			displayErrorAlert(video_info.getVideoContent());
+		}
+		
 		//video_info = new VideoInfo(bvid);
 		boolean status = video_info.getStatus();
 		
@@ -97,7 +113,9 @@ public class GetVideoInfoPage implements CommandListener{
 	        	new Thread(new Runnable() {
                     public void run() {
                     	System.out.println("video_url is:"+video_url);
-						new DownloadPage(ml,video_info);
+                    	PageInfo newpage = new PageInfo(DownloadPage.PageID);
+                    	page_info_list.addElement(newpage);
+						new DownloadPage(ml,page_info_list);
                     	
                     }
 	            }).start();
@@ -120,8 +138,11 @@ public class GetVideoInfoPage implements CommandListener{
 	        }if (c == author_info) {
 	            new Thread(new Runnable() {
 	                public void run() {
-	                	System.out.println("page "+PageID+" search_word:"+video_info.getSearchKeyword());
-	                	new UserInfoPage(ml,video_info);
+	                	PageInfo newpage = new PageInfo(UserInfoPage.PageID);
+	                	System.out.println(bvid);
+	                	newpage.setVideoInfo(bvid);
+	                	page_info_list.addElement(newpage);
+	                	new UserInfoPage(ml,page_info_list);
 	                }
 	            }).start();
 	        }
@@ -137,10 +158,14 @@ public class GetVideoInfoPage implements CommandListener{
 			}
 	    }
 		private void goLastPage(){
-			System.out.println("call goLastPage.Page now is:"+video_info.getPageNum());
 			
-			 String page = (String) video_info.getPageList()[video_info.getPageNum()-1];
-			 if(page.equals(MainPage.PageID)){
+			page_info_list.removeElementAt(page_info_list.size()-1);
+			PageInfo last_page = (PageInfo) page_info_list.lastElement();
+			
+			System.out.println("call goLastPage.Page now is:"+last_page.pageID);
+			
+			 short page = last_page.pageID;
+			 if(page == MainPage.PageID){
 				 new Thread(new Runnable() {
 		                public void run() {
 		                	//MainMIDlet.pagelist=new String[100];
@@ -149,16 +174,16 @@ public class GetVideoInfoPage implements CommandListener{
 		                	new MainPage(ml);
 		                }
 		            }).start();
-			 }else if(page.equals(RecommendPage.PageID)){
+			 }else if(page==RecommendPage.PageID){
 				 new Thread(new Runnable() {
 		                public void run() {
-		                	new RecommendPage(ml,video_info);
+		                	new RecommendPage(ml,page_info_list);
 		                }
 		            }).start();
-			 }else if(page.equals(SearchPage.PageID)){
+			 }else if(page==SearchPage.PageID){
 				 new Thread(new Runnable() {
 		                public void run() {
-		                	new SearchPage(ml,video_info);
+		                	new SearchPage(ml,page_info_list);
 		                }
 		            }).start();
 			 }

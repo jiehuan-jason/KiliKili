@@ -1,4 +1,4 @@
-package top.jiehuan.kilikili;
+package top.jiehuan.kilikili.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -164,7 +164,8 @@ public class URLget {
 	        return encoded.toString();
 	    }
 	    
-	    private static int getAPIBackCode(String content){
+	    /* TODO
+	     * private static int getAPIBackCode(String content){
 	    	return Integer.parseInt(FindString.findValueInt(content, "code"));
-	    }
+	    }*/
 }
