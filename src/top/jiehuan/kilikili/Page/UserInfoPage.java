@@ -34,6 +34,7 @@ public class UserInfoPage implements CommandListener {
 	Command back;
 	Command exit;
 	Command showUserFace;
+	Command getUserVideo;
 	Form form;
 	Image level_img;
 	Image face_img;
@@ -100,10 +101,10 @@ public class UserInfoPage implements CommandListener {
             }).start();
         }
         // 退出app
-        if(c==exit){
+        else if(c==exit){
         	ml.exitApp();
         }
-        if(c==showUserFace){
+        else if(c==showUserFace){
         	new Thread(new Runnable() {
                 public void run() {
                 	try {
@@ -113,6 +114,16 @@ public class UserInfoPage implements CommandListener {
 						e.printStackTrace();
 					}
                 	
+                }
+            }).start();
+        }
+        else if(c==getUserVideo){
+        	new Thread(new Runnable() {
+                public void run() {
+                	PageInfo newpage = new PageInfo(UserVideoListPage.PageID);
+                	newpage.setVideoInfo(video_info);
+                	page_info_list.addElement(newpage);
+                	new UserVideoListPage(ml, page_info_list);
                 }
             }).start();
         }
@@ -151,6 +162,7 @@ public class UserInfoPage implements CommandListener {
 		back=new Command(lang_res.getValue("back"),Command.BACK,1);
 		exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
 		showUserFace = new Command(lang_res.getValue("show_user_face"),Command.OK,1);
+		getUserVideo = new Command(lang_res.getValue("get_user_video"),Command.OK,1);
 	}
 	
 	private void display(){
@@ -163,6 +175,7 @@ public class UserInfoPage implements CommandListener {
 		form.addCommand(back);
 		form.addCommand(exit);
 		form.addCommand(showUserFace);
+		form.addCommand(getUserVideo);
 		form.setCommandListener(this);
 		display.setCurrent(form);
 	}

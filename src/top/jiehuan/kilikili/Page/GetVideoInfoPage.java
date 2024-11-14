@@ -165,16 +165,7 @@ public class GetVideoInfoPage implements CommandListener{
 			System.out.println("call goLastPage.Page now is:"+last_page.pageID);
 			
 			 short page = last_page.pageID;
-			 if(page == MainPage.PageID){
-				 new Thread(new Runnable() {
-		                public void run() {
-		                	//MainMIDlet.pagelist=new String[100];
-		                	//MainMIDlet.pagelist[0]="0";
-		                	//MainMIDlet.page_list_num=0;
-		                	new MainPage(ml);
-		                }
-		            }).start();
-			 }else if(page==RecommendPage.PageID){
+			 if(page==RecommendPage.PageID){
 				 new Thread(new Runnable() {
 		                public void run() {
 		                	new RecommendPage(ml,page_info_list);
@@ -186,6 +177,22 @@ public class GetVideoInfoPage implements CommandListener{
 		                	new SearchPage(ml,page_info_list);
 		                }
 		            }).start();
+			 }else if(page==UserVideoListPage.PageID){
+				 new Thread(new Runnable() {
+		                public void run() {
+		                	new UserVideoListPage(ml,page_info_list);
+		                }
+		            }).start();
+			 }else{
+				 new Thread(new Runnable() {
+		                public void run() {
+		                	//MainMIDlet.pagelist=new String[100];
+		                	//MainMIDlet.pagelist[0]="0";
+		                	//MainMIDlet.page_list_num=0;
+		                	new MainPage(ml);
+		                }
+		            }).start();
+
 			 }
 		 }
 		private void initPageVars() throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{

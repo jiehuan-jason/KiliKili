@@ -28,6 +28,7 @@ public class URLget {
 	public static String RCMD_URL="http://"+IP_ADDRESS+":3232";
 	public static String GET_INFO_URL="http://"+IP_ADDRESS+":3000/view?";
 	public static String GET_VIDEO_DOWNLOAD_LINK_URL="http://"+IP_ADDRESS+":2121/api/playurl?";
+	public static String GET_USER_VIDEOS_URL="http://"+IP_ADDRESS+":3000/user/video?";
 	
 	/*public static String[] sendGetRequest(String bvid) throws WebReturnErrorCodeException, IOException{
 	        String content = BackWeb(GET_INFO_URL+"bvid="+bvid+"&version="+AboutPage.version);

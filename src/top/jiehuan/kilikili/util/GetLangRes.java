@@ -39,7 +39,11 @@ public class GetLangRes {
 		return lang_file_content;
 	}
 	public String getValue(String key){
-		System.out.println("Start get:"+key+"  "+FindString.findValue(lang_file_content, key));
-		return FindString.findValue(lang_file_content, key);
+		String value = FindString.findValue(lang_file_content, key);
+		if(value.equals("No Find Text")){
+			return key;
+		}
+		//System.out.println("Start get:"+key+"  "+value);
+		return value;
 	}
 }

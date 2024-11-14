@@ -28,6 +28,12 @@ public class PageInfo {
 		video_info = new VideoInfo(bvid);
 	}
 	
+	public void setVideoInfo(VideoInfo video_info){
+		isBVIDSet = true;
+		BVID = video_info.getBVID();
+		this.video_info = video_info;
+	}
+	
 	public VideoInfo getVideoInfo() throws PageInfoEmptyException{
 		if(isBVIDSet)
 			return video_info;
