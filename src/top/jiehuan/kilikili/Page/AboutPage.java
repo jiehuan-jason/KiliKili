@@ -61,9 +61,12 @@ public class AboutPage implements CommandListener{
 					"dospy.wang:@jiehuan\n" +
 					"github:@jiehuan-jason\n" +
 					"网盘:jiehuan233.ysepan.com\n");
-			text = new StringItem("","软件版本：V0.2正式版\n" +
-					"更新日期：2024.11.2\n" +
-					"更新内容：修复了一些bug\n");
+			text = new StringItem("","软件版本：V0.3alpha\n" +
+					"更新日期：2024.11.15\n" +
+					"更新内容：添加了搜索分页\n" +
+					"添加了个人主页视频\n" +
+					"加快了部分资源获取速度\n" +
+					"修复了一些bug");
 			back=new Command(lang_res.getValue("back"),Command.BACK,1);
 			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
 	 }

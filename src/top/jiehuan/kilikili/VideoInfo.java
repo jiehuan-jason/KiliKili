@@ -3,6 +3,7 @@ package top.jiehuan.kilikili;
 import java.util.Calendar;
 import java.util.Date;
 
+import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Page.AboutPage;
 import top.jiehuan.kilikili.util.FindString;
 import top.jiehuan.kilikili.util.URLget;
@@ -36,9 +37,8 @@ public class VideoInfo {
 	
 	private void getBasicVideoInfo(){
 		content = getVideoContent();
-		if(content.equals("error")){
+		if(!status){
 			System.out.println("VideoInfo content is error");
-			status = false;
 		}else{
 		user_mid=FindString.findValueInt(content, "mid");
 		cover_url=FindString.findValue(content, "pic");
@@ -67,7 +67,12 @@ public class VideoInfo {
 		try{
 			String s_info = URLget.BackWeb(URLget.GET_INFO_URL+"bvid="+bvid+"&version="+AboutPage.version);
 			return s_info;
-		}catch(Exception e){
+		}catch(ErrorVideoStatusException e1){
+			System.out.println("VideoInfo:ErrorVideoStatusException");
+			status = false;
+			return "error api code:"+Integer.toString(e1.getCode());
+		}
+		catch(Exception e){
 			status = false;
 			return "error";
 		}
@@ -116,8 +121,8 @@ public class VideoInfo {
 	}
 	
 	public boolean getStatus(){
-		//return status;
-		return true;
+		return status;
+		//return true;
 	}
 	
 	public String getDescription(){

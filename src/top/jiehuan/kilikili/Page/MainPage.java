@@ -40,35 +40,12 @@ public class MainPage implements CommandListener{
 	public MainPage(MainMIDlet m){
 		this.m=m;
 		lang = System.getProperty("microedition.locale");
-		page_info = new PageInfo(PageID);
-		page_info_list = new Vector();
-		page_info_list.addElement(page_info);
 		
 		loadMessages();
 		
-		System.out.println("Start init the display moudle");
-		
-		display = Display.getDisplay(m);
-		go = new Command(lang_res.getValue("go"),Command.OK,0);
-		exit = new Command(lang_res.getValue("exit"),Command.EXIT,1);
-		about = new Command(lang_res.getValue("about"),Command.OK,1);
-		rcmd = new Command(lang_res.getValue("rcmd_list"),Command.OK,1);
-		search = new Command(lang_res.getValue("search"),Command.OK,1);
-		form = new Form(lang_res.getValue("main_page"));
-		tf = new TextField(lang_res.getValue("input"),"",20,TextField.ANY);
-		tips = new StringItem("","\n"+lang_res.getValue("tips"));
-		
-		System.out.println("Finish init the display moudle");
-		
-		form.append(tf);
-		form.append(tips);
-		form.addCommand(go);
-		form.addCommand(exit);
-		form.addCommand(search);
-		form.addCommand(rcmd);
-		form.addCommand(about);
-		form.setCommandListener(this);
-		display.setCurrent(form);
+		initPageVars();
+		initDisplayVars();
+		display();
 	}
 	
 	public void commandAction(Command c, Displayable d) {
@@ -135,6 +112,7 @@ public class MainPage implements CommandListener{
                 	PageInfo newpage = new PageInfo(SearchPage.PageID);
                 	newpage.setSearchInfo(tf.getString(), 1);
                 	page_info_list.addElement(newpage);
+                	System.out.println("go to SearchPage");
                     new SearchPage(m,page_info_list); //打开搜索界面
                 }
             }).start();
@@ -149,4 +127,42 @@ public class MainPage implements CommandListener{
 			e.printStackTrace();
 		}
     }
+	
+	private void initPageVars(){
+		lang = System.getProperty("microedition.locale");
+		page_info = new PageInfo(PageID);
+		page_info_list = new Vector();
+		page_info_list.addElement(page_info);
+		page_info = new PageInfo(PageID);
+		page_info_list = new Vector();
+		page_info_list.addElement(page_info);
+	}
+	
+	private void initDisplayVars(){
+		System.out.println("Start init the display moudle");
+		
+		display = Display.getDisplay(m);
+		go = new Command(lang_res.getValue("go"),Command.OK,0);
+		exit = new Command(lang_res.getValue("exit"),Command.EXIT,1);
+		about = new Command(lang_res.getValue("about"),Command.OK,1);
+		rcmd = new Command(lang_res.getValue("rcmd_list"),Command.OK,1);
+		search = new Command(lang_res.getValue("search"),Command.OK,1);
+		form = new Form(lang_res.getValue("main_page"));
+		tf = new TextField(lang_res.getValue("input"),"",20,TextField.ANY);
+		tips = new StringItem("","\n"+lang_res.getValue("tips"));
+		
+		System.out.println("Finish init the display moudle");
+	}
+	
+	private void display(){
+		form.append(tf);
+		form.append(tips);
+		form.addCommand(go);
+		form.addCommand(exit);
+		form.addCommand(search);
+		form.addCommand(rcmd);
+		form.addCommand(about);
+		form.setCommandListener(this);
+		display.setCurrent(form);
+	}
 }

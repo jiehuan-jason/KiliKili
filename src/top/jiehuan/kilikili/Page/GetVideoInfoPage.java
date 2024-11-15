@@ -67,35 +67,37 @@ public class GetVideoInfoPage implements CommandListener{
 		//初始化需要用到的变量 
 		ml=midlet;
 		display = Display.getDisplay(midlet);
-		
-		loadMessages();
-		
 		this.page_info_list = page_info_list;
 		page_info = (PageInfo) page_info_list.lastElement();
 		try {
-			this.bvid=page_info.getBVID();
 			video_info = page_info.getVideoInfo();
 		} catch (PageInfoEmptyException e1) {
 			// TODO Auto-generated catch block
-			displayErrorAlert(video_info.getVideoContent());
+			e1.printStackTrace();
+		}
+		
+		loadMessages();
+		
+		// 初始化视频信息界面
+		System.out.println("init video info form");
+		try{
+			initPageVars();
+			initDisplayVars();
+			display();
+		}catch(Exception e){
+			displayErrorAlert("获取错误");
 		}
 		
 		//video_info = new VideoInfo(bvid);
 		boolean status = video_info.getStatus();
 		
+		System.out.println("GetVideoInfoPage:status = "+status);
 		//若返回代码为错误代码，则显示未找到视频
 		if(!status){
+			System.out.println("GetVideoInfoPage:Back code error");
 			displayErrorAlert(video_info.getVideoContent());
 		}else{
-			// 初始化视频信息界面
-			System.out.println("init video info form");
-			try{
-				initPageVars();
-				initDisplayVars();
-				display();
-			}catch(Exception e){
-				displayErrorAlert("获取错误");
-			}
+			
 		}
 		
 	}
@@ -153,6 +155,7 @@ public class GetVideoInfoPage implements CommandListener{
 	        try {
 				lang_res = new GetLangRes(System.getProperty("microedition.locale"));
 				//System.out.println(lang_res.getLangFileContent());
+				System.out.println("GetVideoInfoPage:Get lang_res OK");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -196,6 +199,23 @@ public class GetVideoInfoPage implements CommandListener{
 			 }
 		 }
 		private void initPageVars() throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
+			
+			try {
+				this.bvid=page_info.getBVID();
+				video_info = page_info.getVideoInfo();
+				
+			} catch (PageInfoEmptyException e1) {
+				// TODO Auto-generated catch block
+				displayErrorAlert(video_info.getVideoContent());
+			}
+			boolean status = video_info.getStatus();
+			System.out.println("GetVideoInfoPage:status = "+status);
+			//若返回代码为错误代码，则显示未找到视频
+			if(!status){
+				System.out.println("GetVideoInfoPage:Back code error");
+				displayErrorAlert(video_info.getVideoContent());
+			}
+			
 			System.out.println("start initPageVars");
 			desc = "\n"+lang_res.getValue("introduction")+video_info.getDescription();
 			cid = Long.toString(video_info.getCID());

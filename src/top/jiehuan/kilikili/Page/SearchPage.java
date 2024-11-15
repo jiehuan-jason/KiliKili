@@ -36,15 +36,18 @@ public class SearchPage implements CommandListener{
 	Command exit;
 	Command go;
 	Command view_cover;
+	Command last_page;
+	Command next_page;
 	Form form;
 	String[] list_bvid;
 	
-	static int maxVideosNum = 10;
+	static int maxVideosNum = 15;
 	
 	private String keyword;
 	
 	private Vector page_info_list;
 	private PageInfo page_info;
+	private int page_num = 1;
 	
 	public SearchPage(MainMIDlet midlet,Vector page_info_list){
 		//初始化变量和界面
@@ -52,10 +55,16 @@ public class SearchPage implements CommandListener{
 		display = Display.getDisplay(midlet);
 		
 		//this.keyword=keyword;
-		page_info = (PageInfo) page_info_list.lastElement();
+		
 		this.page_info_list = page_info_list;
+		page_info = (PageInfo) page_info_list.lastElement();
+		
+		
+		loadMessages();
+		
 		try {
 			keyword = URLget.urlEncode(page_info.getSearchKeyword());
+			page_num = page_info.getSearchPage();
 		} catch (PageInfoEmptyException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -64,7 +73,7 @@ public class SearchPage implements CommandListener{
 		System.out.println("keyword:"+keyword);
 		System.out.println("start loadMessages");
 		
-		loadMessages();
+		
 		
 		System.out.println("start get web");
 		try{
@@ -115,7 +124,30 @@ public class SearchPage implements CommandListener{
 	                    new GetVideoInfoPage(ml, page_info_list);
 	                }
 	            }).start();
-	        }else if (d == search_list) {
+	        }else if(c == last_page){
+	        	page_num--;
+	        	page_info.setSearchInfo(keyword, page_num);
+	        	try {
+					initPageVars();
+					display();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					displayErrorAlert(e.getMessage());
+				} 
+	        }else if(c == next_page){
+	        	page_num++;
+	        	page_info.setSearchInfo(keyword, page_num);
+	        	try {
+					initPageVars();
+					display();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					displayErrorAlert(e.getMessage());
+				} 
+	        }
+	        else if (d == search_list) {
 	            // 检查是否是通过选择列表项触发的 OK 键
 	            int selectedIndex = search_list.getSelectedIndex();
 	            if (selectedIndex != -1) {
@@ -138,21 +170,26 @@ public class SearchPage implements CommandListener{
 			}
 	    }
 	 private void initPageVars() throws IOException,WebReturnErrorCodeException, ErrorVideoStatusException{
+		
 		search_list=new List(lang_res.getValue("search_list"),List.IMPLICIT);
 		String web;
 		try {
 			web = page_info.getContent();
 		} catch (PageInfoEmptyException e) {
-			web = URLget.BackWeb(URLget.SEARCH_URL+keyword);
+			web = URLget.BackWeb(URLget.SEARCH_URL+keyword+"&page="+page_num);
 		}
 		
 		String[] list_str=FindString.FindTitle(web);
 	    list_bvid=FindString.FindBVID(web);
 		
-		for(int i=0;i<maxVideosNum;i++){	//在列表内添加搜索到的视频的标题
-			System.out.println(list_str[i]);
-			System.out.println(list_bvid[i]);
-			search_list.append(list_str[i], null);
+		for(int i=0;i<maxVideosNum;i++){
+			if(!((list_str[i].equals(null))||(list_bvid[i].equals(null)))){//在列表内添加搜索到的视频的标题
+			System.out.println("str:"+list_str[i]);
+			System.out.println("bvid:"+list_bvid[i]);
+			search_list.append(list_str[i], null);}
+			else{
+				break;
+			}
 		}
 
 	 }
@@ -160,13 +197,20 @@ public class SearchPage implements CommandListener{
 		back=new Command(lang_res.getValue("back"),Command.BACK,1);
 		exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
 		go=new Command(lang_res.getValue("go"),Command.OK,1);
+		last_page=new Command(lang_res.getValue("last_page"),Command.OK,2);
+		next_page=new Command(lang_res.getValue("next_page"),Command.OK,2);
 		view_cover=new Command(lang_res.getValue("view_cover"),Command.ITEM,2);
 	 }
 	 private void display(){
 		search_list.addCommand(back);
 		search_list.addCommand(go);
-		search_list.addCommand(exit);
 		search_list.addCommand(view_cover);
+		if(!(page_num==1))
+			search_list.addCommand(last_page);
+		if(page_num<=20)
+			search_list.addCommand(next_page);
+		search_list.addCommand(exit);
+		
 		search_list.setCommandListener(this);
 		display.setCurrent(search_list);
 

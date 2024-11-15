@@ -42,8 +42,9 @@ public class RecommendPage implements CommandListener {
 		// 初始化变量和界面
 		ml=midlet;
 		display = Display.getDisplay(midlet);
-		this.page_info = (PageInfo) page_info_list.lastElement();
+		
 		this.page_info_list = page_info_list;
+		page_info = (PageInfo) page_info_list.lastElement();
 		loadMessages();
 		
 		try{
@@ -128,6 +129,7 @@ public class RecommendPage implements CommandListener {
     }	
 	
 	private void initPageVars() throws Exception{
+		
 		System.out.println("start to get rcmd data");
 		String rcmd_data;
 		try{

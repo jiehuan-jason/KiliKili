@@ -48,6 +48,8 @@ public class UserVideoListPage implements CommandListener {
 		display = Display.getDisplay(ml);
 		this.page_info_list = page_info_list;
 		page_info = (PageInfo) page_info_list.lastElement();
+		loadMessages();
+		
 		try {
 			video_info = page_info.getVideoInfo();
 		} catch (PageInfoEmptyException e) {
@@ -56,7 +58,7 @@ public class UserVideoListPage implements CommandListener {
 			displayErrorAlert(e.getMessage());
 		}
 		
-		loadMessages();
+		
 		
 		try{
 			initPageVars();
@@ -145,6 +147,7 @@ public class UserVideoListPage implements CommandListener {
     }	
 	
 	private void initPageVars() throws Exception{
+		
 		System.out.println("start to get user video data");
 		String video_data;
 		video_data = URLget.BackWeb(URLget.GET_USER_VIDEOS_URL+"mid="+video_info.getUserMID());

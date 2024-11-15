@@ -8,12 +8,12 @@ public class PageInfo {
 	public static MainMIDlet ml;
 	
 	private String BVID;
-	private boolean isBVIDSet;
+	private boolean isBVIDSet = false;
 	private String search_keyword;
 	private int search_page;
-	private boolean isSearchSet;
+	private boolean isSearchSet = false;
 	private String content;
-	private boolean isContentSet;
+	private boolean isContentSet = false;
 	
 	public PageInfo(short PageID){
 		this.pageID = PageID;
@@ -79,6 +79,7 @@ public class PageInfo {
 		else
 			throw new PageInfoEmptyException();
 	}
+	
 	
 	
 }

@@ -98,9 +98,10 @@ public class URLget {
 					throw e1;
 				}
 	        }
-	        /*TODO if(getAPIBackCode(content) != 0){
+	        if(getAPIBackCode(content) != 0){
+	        	System.out.println("URLget: get api code error = "+getAPIBackCode(content));
 	        	throw new ErrorVideoStatusException(getAPIBackCode(content));
-	        }*/
+	        }
 	        return content;
 		}
 	 	private static String getInfoFromHttpConnection(HttpConnection connection) throws UnsupportedEncodingException, IOException{
@@ -165,8 +166,8 @@ public class URLget {
 	        return encoded.toString();
 	    }
 	    
-	    /* TODO
-	     * private static int getAPIBackCode(String content){
+	    
+	     private static int getAPIBackCode(String content){
 	    	return Integer.parseInt(FindString.findValueInt(content, "code"));
-	    }*/
+	    }
 }

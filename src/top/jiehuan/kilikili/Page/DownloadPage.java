@@ -47,6 +47,15 @@ public class DownloadPage implements CommandListener{
 		this.page_info_list = page_info_list;
 		page_info = (PageInfo) page_info_list.lastElement();
 		loadMessages();
+		try {
+			video_info = page_info.getVideoInfo();
+		} catch (PageInfoEmptyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			displayErrorAlert(e.getMessage());
+		}
+		
+		
 		initVideoVars();
 		initDisplayVars();
 		display();
@@ -93,6 +102,7 @@ public class DownloadPage implements CommandListener{
 	 }
 	 
 	 private void initDisplayVars(){
+		
 		form=new Form(lang_res.getValue("download"));
 		videoURL = new TextField("",this.video_url,10000,TextField.ANY);
 		tips = new StringItem("",lang_res.getValue("download_tips"));

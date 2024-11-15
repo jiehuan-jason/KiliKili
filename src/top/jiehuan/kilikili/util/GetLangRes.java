@@ -33,6 +33,7 @@ public class GetLangRes {
 		}
 		lang_file_content = new String(dataBuf);
 		//System.out.println(lang_file_content);
+		System.out.println("GetLangRes:return correctly");
 		return true;
 	}
 	public String getLangFileContent(){
