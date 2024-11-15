@@ -40,6 +40,7 @@ public class VideoInfo {
 		if(!status){
 			System.out.println("VideoInfo content is error");
 		}else{
+		System.out.println("VideoInfo content:"+content);
 		user_mid=FindString.findValueInt(content, "mid");
 		cover_url=FindString.findValue(content, "pic");
 		title=FindString.findValue(content,"title");
@@ -60,12 +61,15 @@ public class VideoInfo {
 			System.out.println("BackVideoLink is error");
 			status = false;
 		}
+		System.out.println("getBasicVideoInfo successfully");
 		}
 	}
 	
 	public String getVideoContent(){
 		try{
 			String s_info = URLget.BackWeb(URLget.GET_INFO_URL+"bvid="+bvid+"&version="+AboutPage.version);
+			System.out.println("VideoInfo:getVideoContent successfully");
+			status = true;
 			return s_info;
 		}catch(ErrorVideoStatusException e1){
 			System.out.println("VideoInfo:ErrorVideoStatusException");

@@ -102,6 +102,7 @@ public class URLget {
 	        	System.out.println("URLget: get api code error = "+getAPIBackCode(content));
 	        	throw new ErrorVideoStatusException(getAPIBackCode(content));
 	        }
+	        System.out.println("URLget:return successfully");
 	        return content;
 		}
 	 	private static String getInfoFromHttpConnection(HttpConnection connection) throws UnsupportedEncodingException, IOException{

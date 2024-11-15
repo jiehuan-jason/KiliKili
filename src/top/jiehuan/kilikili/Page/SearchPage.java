@@ -121,6 +121,7 @@ public class SearchPage implements CommandListener{
 	                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
 	                	newpage.setVideoInfo(bvid);
 	                	page_info_list.addElement(newpage);
+	                	System.out.println("SearchPage call GetVideoInfoPage");
 	                    new GetVideoInfoPage(ml, page_info_list);
 	                }
 	            }).start();

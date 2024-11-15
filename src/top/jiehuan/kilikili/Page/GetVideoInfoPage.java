@@ -65,6 +65,7 @@ public class GetVideoInfoPage implements CommandListener{
 
 	public GetVideoInfoPage(MainMIDlet midlet,Vector page_info_list){
 		//初始化需要用到的变量 
+		System.out.println("GetVideoInfoPage init");
 		ml=midlet;
 		display = Display.getDisplay(midlet);
 		this.page_info_list = page_info_list;
