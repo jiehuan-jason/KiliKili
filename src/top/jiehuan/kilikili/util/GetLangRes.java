@@ -31,9 +31,8 @@ public class GetLangRes {
 		if(hasReadLen == -1){
 			return false;
 		}
-		lang_file_content = new String(dataBuf);
+		lang_file_content = new String(dataBuf,"gbk");
 		//System.out.println(lang_file_content);
-		System.out.println("GetLangRes:return correctly");
 		return true;
 	}
 	public String getLangFileContent(){

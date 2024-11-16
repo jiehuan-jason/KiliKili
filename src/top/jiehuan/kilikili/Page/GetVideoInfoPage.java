@@ -117,6 +117,7 @@ public class GetVideoInfoPage implements CommandListener{
                     public void run() {
                     	System.out.println("video_url is:"+video_url);
                     	PageInfo newpage = new PageInfo(DownloadPage.PageID);
+                    	newpage.setVideoInfo(video_info);
                     	page_info_list.addElement(newpage);
 						new DownloadPage(ml,page_info_list);
                     	
