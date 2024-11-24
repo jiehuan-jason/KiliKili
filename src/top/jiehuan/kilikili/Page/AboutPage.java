@@ -63,7 +63,7 @@ public class AboutPage implements CommandListener{
 					"网盘:jiehuan233.ysepan.com\n");
 			text = new StringItem("","软件版本：V0.3beta1\n" +
 					"更新日期：2024.11.24\n" +
-					"更新内容：添加了转码视频获取" +
+					"更新内容：添加了转码视频获取\n" +
 					"修复了一些bug");
 			back=new Command(lang_res.getValue("back"),Command.BACK,1);
 			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);

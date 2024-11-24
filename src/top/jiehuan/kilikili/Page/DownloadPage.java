@@ -112,7 +112,10 @@ public class DownloadPage implements CommandListener{
 	        		displayErrorAlert("Error code:"+e1.getMessage());
 	        	}
 	        }if(c==goto_transcoding_site){
-	        	if(isTranscodingGet){
+	        	Alert alert = new Alert("Task", lang_res.getValue("task_exists"), null, AlertType.INFO);
+    	        alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+    	        display.setCurrent(alert, form);
+	        	/*if(isTranscodingGet){
 	        		try {
 						ml.platformRequest(TRANSCODING_WEBSITE_URL);
 					} catch (ConnectionNotFoundException e) {
@@ -122,7 +125,7 @@ public class DownloadPage implements CommandListener{
 					}
 	        	}else{
 	        		displayErrorAlert(lang_res.getValue("not_get_transcoding"));
-	        	}
+	        	}*/
 	        }
 	    }
 	 
