@@ -17,8 +17,9 @@ import javax.microedition.lcdui.TextField;
 import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.PageInfo;
 import top.jiehuan.kilikili.VideoInfo;
-import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
+import top.jiehuan.kilikili.Exception.*;
 import top.jiehuan.kilikili.util.GetLangRes;
+import top.jiehuan.kilikili.util.URLget;
 
 public class DownloadPage implements CommandListener{
 	
@@ -31,7 +32,9 @@ public class DownloadPage implements CommandListener{
 	Command back;
 	Command exit;
 	Command download;
+	Command transcoding_download;
 	TextField videoURL;
+	TextField bvid_for_user;
 	StringItem tips;
 	
 	String video_url;
@@ -86,6 +89,23 @@ public class DownloadPage implements CommandListener{
                     	
                     }
 	            }).start();
+	        }if(c==transcoding_download){
+	        	try{
+	        		URLget.BackWeb(URLget.SEND_TRANSCODING_REQUEST_URL+"bvid="+bvid);
+	        		Alert alert = new Alert("Task", lang_res.getValue("task_add_ok"), null, AlertType.INFO);
+        	        alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+        	        display.setCurrent(alert, form);
+	        	}catch(ErrorVideoStatusException e){
+	        		if(e.getCode()==12){
+	        			Alert alert = new Alert("Task", lang_res.getValue("task_exists"), null, AlertType.INFO);
+	        	        alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+	        	        display.setCurrent(alert, form);
+	        		}else{
+	        			displayErrorAlert("Error code:"+e.getCode());
+	        		}
+	        	}catch(Exception e1){
+	        		displayErrorAlert("Error code:"+e1.getMessage());
+	        	}
 	        }
 	    }
 	 
@@ -105,8 +125,10 @@ public class DownloadPage implements CommandListener{
 		
 		form=new Form(lang_res.getValue("download"));
 		videoURL = new TextField("",this.video_url,10000,TextField.ANY);
+		bvid_for_user = new TextField("",this.bvid,12,TextField.ANY);
 		tips = new StringItem("",lang_res.getValue("download_tips"));
-
+		
+		transcoding_download = new Command(lang_res.getValue("transcoding_download"),Command.ITEM,1);
 		download=new Command(lang_res.getValue("download"),Command.ITEM,1);	
 		back=new Command(lang_res.getValue("back"),Command.BACK,1);
 		exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
@@ -115,6 +137,8 @@ public class DownloadPage implements CommandListener{
 		form.addCommand(back);
 		form.addCommand(exit);
 		form.addCommand(download);
+		form.addCommand(transcoding_download);
+		form.append(bvid_for_user);
 		form.append(tips);
 		form.append(videoURL);
 		form.setCommandListener(this);
@@ -136,7 +160,7 @@ public class DownloadPage implements CommandListener{
 			form.addCommand(back);
 			form.addCommand(exit);
 			form.setCommandListener(this);
-			Alert alert = new Alert("Error", error, null, AlertType.ERROR);
+		 Alert alert = new Alert("Error", error, null, AlertType.ERROR);
          alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
          display.setCurrent(alert, form);
          //ml.display.setCurrent(ml.form);

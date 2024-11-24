@@ -135,6 +135,7 @@ public class RecommendPage implements CommandListener {
 		try{
 			rcmd_data = page_info.getContent();
 		}catch(PageInfoEmptyException e){
+			//rcmd_data = URLget.BackWebHttps("https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd");
 			rcmd_data = URLget.BackWeb(URLget.RCMD_URL);
 		}
 		
