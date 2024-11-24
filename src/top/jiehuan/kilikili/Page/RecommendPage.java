@@ -62,7 +62,7 @@ public class RecommendPage implements CommandListener {
 			form.addCommand(back);
 			form.addCommand(exit);
 			form.setCommandListener(this);
-			Alert alert = new Alert("Error", "获取错误", null, AlertType.ERROR);
+			Alert alert = new Alert("Error", e.getMessage(), null, AlertType.ERROR);
             alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
             display.setCurrent(alert, form);
 		}
@@ -143,7 +143,10 @@ public class RecommendPage implements CommandListener {
 		titles=FindString.extractContents(rcmd_data,"\"title\"");
 		bvids=FindString.extractContents(rcmd_data,"\"bvid\"");
 		rcmd_list=new List(lang_res.getValue("rcmd_list"),List.IMPLICIT);
-		for(int i=0;i<maxVideosNum;i++){	//在列表内添加推荐视频的标题
+		for(int i=0;i<maxVideosNum;i++){//在列表内添加推荐视频的标题
+			if(titles[i]==null||bvids[i]==null){
+				break;
+			}
 			System.out.println(titles[i]);
 			System.out.println(bvids[i]);
 			rcmd_list.append(titles[i], null);
