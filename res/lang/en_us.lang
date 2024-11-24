@@ -33,6 +33,8 @@
 "show_user_face":"Show User's Face"
 "task_add_ok":"Task adds over!Please go to http://www.kinsler.top/downloads/ and input BVID to download"
 "task_exists":"Task already exists!Please go to http://www.kinsler.top/downloads/ and input BVID to download"
+"goto_transcoding_site":"Go to transcoding website"
+"not_get_transcoding":"Please press [Download from Transcoding Website] button first"
 "authorInfo":"Author Space"
 "public_time":"Release Time"
 "favorite":"Favorite"

@@ -33,12 +33,15 @@ public class DownloadPage implements CommandListener{
 	Command exit;
 	Command download;
 	Command transcoding_download;
+	Command goto_transcoding_site;
 	TextField videoURL;
 	TextField bvid_for_user;
 	StringItem tips;
 	
 	String video_url;
 	String bvid;
+	boolean isTranscodingGet;
+	public static final String TRANSCODING_WEBSITE_URL = "http://www.kinsler.top/downloads/";
 	
 	VideoInfo video_info;
 	Vector page_info_list;
@@ -92,11 +95,13 @@ public class DownloadPage implements CommandListener{
 	        }if(c==transcoding_download){
 	        	try{
 	        		URLget.BackWeb(URLget.SEND_TRANSCODING_REQUEST_URL+"bvid="+bvid);
+	        		isTranscodingGet = true;
 	        		Alert alert = new Alert("Task", lang_res.getValue("task_add_ok"), null, AlertType.INFO);
         	        alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
         	        display.setCurrent(alert, form);
 	        	}catch(ErrorVideoStatusException e){
 	        		if(e.getCode()==12){
+	        			isTranscodingGet = true;
 	        			Alert alert = new Alert("Task", lang_res.getValue("task_exists"), null, AlertType.INFO);
 	        	        alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
 	        	        display.setCurrent(alert, form);
@@ -106,12 +111,25 @@ public class DownloadPage implements CommandListener{
 	        	}catch(Exception e1){
 	        		displayErrorAlert("Error code:"+e1.getMessage());
 	        	}
+	        }if(c==goto_transcoding_site){
+	        	if(isTranscodingGet){
+	        		try {
+						ml.platformRequest(TRANSCODING_WEBSITE_URL);
+					} catch (ConnectionNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						displayErrorAlert(e.getMessage());
+					}
+	        	}else{
+	        		displayErrorAlert(lang_res.getValue("not_get_transcoding"));
+	        	}
 	        }
 	    }
 	 
 	 private void initVideoVars(){
 		bvid = video_info.getBVID();
 		display = Display.getDisplay(ml);
+		isTranscodingGet = false;
 		try {
 			this.video_url=page_info.getVideoInfo().getVideoURL();
 		} catch (PageInfoEmptyException e) {
@@ -132,12 +150,14 @@ public class DownloadPage implements CommandListener{
 		download=new Command(lang_res.getValue("download"),Command.ITEM,1);	
 		back=new Command(lang_res.getValue("back"),Command.BACK,1);
 		exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
+		goto_transcoding_site=new Command(lang_res.getValue("goto_transcoding_site"),Command.ITEM,1);
 	 }
 	 private void display(){
 		form.addCommand(back);
 		form.addCommand(exit);
 		form.addCommand(download);
 		form.addCommand(transcoding_download);
+		form.addCommand(goto_transcoding_site);
 		form.append(bvid_for_user);
 		form.append(tips);
 		form.append(videoURL);

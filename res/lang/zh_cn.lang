@@ -33,6 +33,8 @@
 "authorInfo":"作者空间"
 "task_add_ok":"任务已添加！请前往http://www.kinsler.top/downloads/ 输入BVID查询进度"
 "task_exists":"任务已存在！请前往http://www.kinsler.top/downloads/ 输入BVID下载"
+"goto_transcoding_site":"前往转码网站"
+"not_get_transcoding":"请先按下[下载转码视频]"
 "public_time":"发布时间"
 "show_user_face":"显示用户头像"
 "favorite":"收藏"
