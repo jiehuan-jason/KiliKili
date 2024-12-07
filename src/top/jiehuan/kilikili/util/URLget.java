@@ -24,14 +24,17 @@ public class URLget {
 	static int maxHttpGetBytes = 81920;
 	static int bufferZoneBytes = 2048;
 	public static String IP_ADDRESS="localhost";
+	public static String DOWNLOAD_ADDRESS=IP_ADDRESS;
 	public static String SEARCH_URL="http://"+IP_ADDRESS+":3000/search?keyword=";
 	public static String USER_INFO_URL="http://"+IP_ADDRESS+":3000/user?mid=";
 	public static String RCMD_URL="http://"+IP_ADDRESS+":3232";
 	public static String GET_INFO_URL="http://"+IP_ADDRESS+":3000/view?";
 	public static String GET_VIDEO_DOWNLOAD_LINK_URL="http://"+IP_ADDRESS+":2121/api/playurl?";
 	public static String GET_USER_VIDEOS_URL="http://"+IP_ADDRESS+":3000/user/video?";
-	public static String SEND_TRANSCODING_REQUEST_URL="http://"+IP_ADDRESS+":4000/api/download?";
 	public static String GET_VIDEOS_PAGE_LIST_URL="http://"+IP_ADDRESS+":3000/list?";
+	public static String SEND_TRANSCODING_REQUEST_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/download?";
+	public static String GET_TRANSCODING_STATUS_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/status?";
+	public static String DOWNLOAD_TRANSCODING_VIDEO_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/output/";
 	
 	/*public static String[] sendGetRequest(String bvid) throws WebReturnErrorCodeException, IOException{
 	        String content = BackWeb(GET_INFO_URL+"bvid="+bvid+"&version="+AboutPage.version);
@@ -103,11 +106,12 @@ public class URLget {
 	        }
 	        if(!((getAPIBackCode(content) == 0 )||(getAPIBackCode(content) == 1 ))){
 	        	System.out.println("URLget: get api code error = "+getAPIBackCode(content));
-	        	throw new ErrorVideoStatusException(getAPIBackCode(content));
+	        	throw new ErrorVideoStatusException(getAPIBackCode(content),content);
 	        }
 	        System.out.println("URLget:return successfully");
 	        return content;
 		}
+	 
 	 /*public static String BackWebHttps(String url) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
 		 	HttpsConnection connection = null;
 	        DataInputStream dis =null;

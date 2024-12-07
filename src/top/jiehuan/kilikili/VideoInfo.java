@@ -123,6 +123,7 @@ public class VideoInfo {
 	public void setBVID(String bvid, int pn){
 		this.pn = pn;
 		this.bvid = bvid;
+		initPartInfo(bvid, pn);
 		getBasicVideoInfo();
 	}
 	

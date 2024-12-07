@@ -78,7 +78,7 @@ public class PartVideoListPage implements CommandListener{
 	                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
 	                	VideoInfo newvideo = video_info;
 	                	newvideo.setBVID(video_info.getBVID(), videos_list.getSelectedIndex()+parts_base+1);
-	                	newpage.setVideoInfo(video_info.getBVID());
+	                	newpage.setVideoInfo(newvideo);
 	                	page_info_list.addElement(newpage);
 	                	System.out.println("PartVideoPage call GetVideoInfoPage");
 	                    new GetVideoInfoPage(ml, page_info_list);
@@ -119,7 +119,7 @@ public class PartVideoListPage implements CommandListener{
                 	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
                 	VideoInfo newvideo = video_info;
                 	newvideo.setBVID(video_info.getBVID(), videos_list.getSelectedIndex()+parts_base+1);
-                	newpage.setVideoInfo(video_info.getBVID());
+                	newpage.setVideoInfo(newvideo);
                 	page_info_list.addElement(newpage);
                 	System.out.println("PartVideoPage call GetVideoInfoPage");
                     new GetVideoInfoPage(ml, page_info_list);

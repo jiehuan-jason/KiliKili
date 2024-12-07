@@ -18,6 +18,7 @@ import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.PageInfo;
 import top.jiehuan.kilikili.VideoInfo;
 import top.jiehuan.kilikili.Exception.*;
+import top.jiehuan.kilikili.util.FindString;
 import top.jiehuan.kilikili.util.GetLangRes;
 import top.jiehuan.kilikili.util.URLget;
 
@@ -29,7 +30,10 @@ public class DownloadPage implements CommandListener{
 	GetLangRes lang_res;
 	Display display;
 	Form form;
+	Form alert_form;
 	Command back;
+	Command alert_back;
+	Command alert_download;
 	Command exit;
 	Command download;
 	Command transcoding_download;
@@ -41,8 +45,6 @@ public class DownloadPage implements CommandListener{
 	String video_url;
 	String bvid;
 	String cid;
-	boolean isTranscodingGet;
-	public static final String TRANSCODING_WEBSITE_URL = "http://www.kinsler.top/downloads/";
 	
 	VideoInfo video_info;
 	Vector page_info_list;
@@ -78,10 +80,10 @@ public class DownloadPage implements CommandListener{
 	            }).start();
 	        }
 	        // 退出app
-	        if(c==exit){
+	        else if(c==exit){
 	        	ml.exitApp();
 	        }
-	        if(c==download){
+	        else if(c==download){
 	        	new Thread(new Runnable() {
                     public void run() {
                     	try {
@@ -93,16 +95,14 @@ public class DownloadPage implements CommandListener{
                     	
                     }
 	            }).start();
-	        }if(c==transcoding_download){
+	        }else if(c==transcoding_download){
 	        	try{
-	        		URLget.BackWeb(URLget.SEND_TRANSCODING_REQUEST_URL+"bvid="+bvid);
-	        		isTranscodingGet = true;
+	        		URLget.BackWeb(URLget.SEND_TRANSCODING_REQUEST_URL+"bvid="+bvid+"&cid="+video_info.getCID());
 	        		Alert alert = new Alert("Task", lang_res.getValue("task_add_ok"), null, AlertType.INFO);
         	        alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
         	        display.setCurrent(alert, form);
 	        	}catch(ErrorVideoStatusException e){
 	        		if(e.getCode()==12){
-	        			isTranscodingGet = true;
 	        			Alert alert = new Alert("Task", lang_res.getValue("task_exists"), null, AlertType.INFO);
 	        	        alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
 	        	        display.setCurrent(alert, form);
@@ -112,24 +112,49 @@ public class DownloadPage implements CommandListener{
 	        	}catch(Exception e1){
 	        		displayErrorAlert("Error code:"+e1.getMessage());
 	        	}
-	        }if(c==goto_transcoding_site){
-	        	if(isTranscodingGet){
-	        		//ml.platformRequest(TRANSCODING_WEBSITE_URL);
-	        		Alert alert = new Alert("Task", lang_res.getValue("task_exists"), null, AlertType.INFO);
-	        	    alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-	        	    display.setCurrent(alert, form);
-	        	}else{
-	        		Alert alert = new Alert("Task", lang_res.getValue("not_get_transcoding"), null, AlertType.INFO);
-	        	    alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-	        	    display.setCurrent(alert, form);
+	        }else if(c==goto_transcoding_site){
+	        	try{
+	        		URLget.BackWeb(URLget.GET_TRANSCODING_STATUS_URL+"taskId="+video_info.getCID());
+	        		Alert alert = new Alert("Task", lang_res.getValue("task_is_ok"), null, AlertType.INFO);
+        	        alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+        	        alert.setCommandListener(new CommandListener() {
+        	            public void commandAction(Command c, Displayable d) {
+        	                // 此处可以处理 Alert 的关闭事件
+        	            	new Thread(new Runnable() {
+        	                    public void run() {
+        	                    	try {
+        								ml.platformRequest(URLget.DOWNLOAD_TRANSCODING_VIDEO_URL+video_info.getCID()+"_240p.mp4");
+        	                    	} catch (ConnectionNotFoundException e) {
+        								e.printStackTrace();
+        							}
+        	                    	
+        	                    }
+        		            }).start();
+        	            }
+        	        });
+        	        display.setCurrent(alert, form);
+	        	}catch(ErrorVideoStatusException e){
+	        		if(e.getCode()==10){
+	        			Alert alert = new Alert("Task", lang_res.getValue("task_is_being_processed"), null, AlertType.INFO);
+	        	        alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+	        	        display.setCurrent(alert, form);
+	        		}else if(e.getCode() == 11){
+	        			Alert alert = new Alert("Task", lang_res.getValue("task_is_being_processed")+FindString.findValueInt(e.getContent(), "queueLength"), null, AlertType.INFO);
+	        			alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+	        	        display.setCurrent(alert, form);
+	        		}else{
+	        			displayErrorAlert("Error code:"+e.getCode());
+	        		}
+	        	}catch(Exception e1){
+	        		displayErrorAlert("Error code:"+e1.getMessage());
 	        	}
 	        }
+	        
 	    }
 	 
 	 private void initVideoVars(){
 		bvid = video_info.getBVID();
 		display = Display.getDisplay(ml);
-		isTranscodingGet = false;
 		try {
 			this.video_url=page_info.getVideoInfo().getVideoURL();
 		} catch (Exception e) {

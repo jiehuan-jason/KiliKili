@@ -27,6 +27,7 @@ public class AboutPage implements CommandListener{
 	Command exit;
 	StringItem author;
 	StringItem text;
+	StringItem thanks_list;
 	
 	public static String version = "0.3.3";
 	
@@ -61,10 +62,17 @@ public class AboutPage implements CommandListener{
 					"dospy.wang:@jiehuan\n" +
 					"github:@jiehuan-jason\n" +
 					"网盘:jiehuan233.ysepan.com\n");
-			text = new StringItem("","软件版本：V0.3beta1\n" +
-					"更新日期：2024.11.24\n" +
-					"更新内容：添加了转码视频获取\n" +
-					"修复了一些bug");
+			text = new StringItem("","软件版本：V0.3beta2\n" +
+					"更新日期：2024.12.7\n" +
+					"更新内容：添加了分p视频获取\n" +
+					"转码下载可以完全在软件内完成\n" +
+					"修复了一些bug\n");
+			thanks_list = new StringItem("","感谢列表（截至更新时，排名不分先后）：" +
+					"爱发电用户_898f2\n" +
+					"爱发电用户_wnJK\n" +
+					"爱发电用户_7ebbe\n" +
+					"爱发电用户_kMRv\n" +
+					"欢迎用智能手机/PC访问 https://afdian.com/a/jiehuan233 赞助本项目");
 			back=new Command(lang_res.getValue("back"),Command.BACK,1);
 			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
 	 }
