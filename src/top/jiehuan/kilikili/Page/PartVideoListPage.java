@@ -16,7 +16,6 @@ import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.PageInfo;
 import top.jiehuan.kilikili.PartInfo;
 import top.jiehuan.kilikili.VideoInfo;
-import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 import top.jiehuan.kilikili.util.GetLangRes;
 import top.jiehuan.kilikili.util.URLget;
 
