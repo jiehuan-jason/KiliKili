@@ -41,6 +41,7 @@ public class GetVideoInfoPage implements CommandListener{
 	StringItem share;
 	StringItem like;
 	StringItem time;
+	StringItem part_title;
 	String desc;
 	StringItem info;
 	StringItem ln;
@@ -188,7 +189,14 @@ public class GetVideoInfoPage implements CommandListener{
 		                	new UserVideoListPage(ml,page_info_list);
 		                }
 		            }).start();
-			 }else{
+			 }else if(page==PartVideoListPage.PageID){
+				 new Thread(new Runnable() {
+		                public void run() {
+		                	new PartVideoListPage(ml,page_info_list);
+		                }
+		            }).start();
+			 }
+			 else{
 				 new Thread(new Runnable() {
 		                public void run() {
 		                	//MainMIDlet.pagelist=new String[100];
@@ -204,7 +212,6 @@ public class GetVideoInfoPage implements CommandListener{
 			
 			try {
 				this.bvid=page_info.getBVID();
-				video_info = page_info.getVideoInfo();
 				
 			} catch (PageInfoEmptyException e1) {
 				// TODO Auto-generated catch block
@@ -218,6 +225,7 @@ public class GetVideoInfoPage implements CommandListener{
 				displayErrorAlert(video_info.getVideoContent());
 			}
 			
+			
 			System.out.println("start initPageVars");
 			desc = "\n"+lang_res.getValue("introduction")+video_info.getDescription();
 			cid = Long.toString(video_info.getCID());
@@ -229,6 +237,9 @@ public class GetVideoInfoPage implements CommandListener{
 			System.out.println("start initDisplayVars");
 			form=new Form(lang_res.getValue("videoDisplay"));
 			title=new StringItem(null, video_info.getTitle());
+			if(video_info.getVideoParts() != 1){
+				part_title = new StringItem(null, "P"+video_info.getPart()+" "+lang_res.getValue("part_title")+video_info.getPartTitle());
+			}
 			up_name=new StringItem(null,"\n"+lang_res.getValue("author")+video_info.getUserName());
 			info = new StringItem(null,"\n"+lang_res.getValue("view")+video_info.getView()+lang_res.getValue("ci")+"  "+lang_res.getValue("reply")+video_info.getReply()+lang_res.getValue("ci")+"  "+lang_res.getValue("coin")+video_info.getCoin()+lang_res.getValue("ge")+"  "+lang_res.getValue("share")+video_info.getShare()+lang_res.getValue("ci")+"  "+lang_res.getValue("like")+video_info.getLike()+lang_res.getValue("ci")+"  "+lang_res.getValue("favorite")+video_info.getFavorite()+lang_res.getValue("ci"));
 			time = new StringItem(null,"\n"+lang_res.getValue("public_time")+":"+video_info.getFormatPubTime());
@@ -242,6 +253,9 @@ public class GetVideoInfoPage implements CommandListener{
 		private void display(){
 			System.out.println("start display");
 			form.append(title);
+			if(video_info.getVideoParts() != 1){
+				form.append(part_title);
+			}
 			form.append(up_name);
 			form.append(time);
 			if(!desc.equals("\n"+lang_res.getValue("introduction"))){

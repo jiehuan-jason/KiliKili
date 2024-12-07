@@ -40,6 +40,7 @@ public class DownloadPage implements CommandListener{
 	
 	String video_url;
 	String bvid;
+	String cid;
 	boolean isTranscodingGet;
 	public static final String TRANSCODING_WEBSITE_URL = "http://www.kinsler.top/downloads/";
 	
@@ -131,7 +132,7 @@ public class DownloadPage implements CommandListener{
 		isTranscodingGet = false;
 		try {
 			this.video_url=page_info.getVideoInfo().getVideoURL();
-		} catch (PageInfoEmptyException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			displayErrorAlert("获取错误");

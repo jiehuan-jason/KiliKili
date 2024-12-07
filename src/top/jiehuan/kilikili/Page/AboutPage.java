@@ -28,7 +28,7 @@ public class AboutPage implements CommandListener{
 	StringItem author;
 	StringItem text;
 	
-	public static String version = "0.3.2";
+	public static String version = "0.3.3";
 	
 	public AboutPage(MainMIDlet midlet,Vector page_list_info){
 		//初始化变量和界面

@@ -116,13 +116,7 @@ public class SearchPage implements CommandListener{
 	        }else if(c==go){
 	        	new Thread(new Runnable() {
 	                public void run() {
-	                	String bvid = list_bvid[search_list.getSelectedIndex()];
-	                	System.out.println(bvid);
-	                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
-	                	newpage.setVideoInfo(bvid);
-	                	page_info_list.addElement(newpage);
-	                	System.out.println("SearchPage call GetVideoInfoPage");
-	                    new GetVideoInfoPage(ml, page_info_list);
+	                	goToVideoListPage();
 	                }
 	            }).start();
 	        }else if(c == last_page){
@@ -152,13 +146,8 @@ public class SearchPage implements CommandListener{
 	            // 检查是否是通过选择列表项触发的 OK 键
 	            int selectedIndex = search_list.getSelectedIndex();
 	            if (selectedIndex != -1) {
-	                String bvid = list_bvid[selectedIndex];
-	                System.out.println("Selected BVID: " + bvid);
-	                PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
-	            	newpage.setVideoInfo(bvid);
-	            	page_info_list.addElement(newpage);
-	                new GetVideoInfoPage(ml, page_info_list);
-	                }
+	            	goToVideoListPage();
+	            }
 	        }
 	    }
 	 private void loadMessages() {
@@ -227,6 +216,15 @@ public class SearchPage implements CommandListener{
          alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
          display.setCurrent(alert, form);
          //ml.display.setCurrent(ml.form);
-		}
+	}
+	 private void goToVideoListPage(){
+		String bvid = list_bvid[search_list.getSelectedIndex()];
+     	System.out.println(bvid);
+     	PageInfo newpage = new PageInfo(PartVideoListPage.PageID);
+     	newpage.setVideoInfo(bvid);
+     	page_info_list.addElement(newpage);
+     	System.out.println("SearchPage call GetVideoInfoPage");
+        new PartVideoListPage(ml, page_info_list);
+	 }
 
 }

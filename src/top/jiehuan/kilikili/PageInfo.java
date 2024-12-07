@@ -10,7 +10,8 @@ public class PageInfo {
 	private String BVID;
 	private boolean isBVIDSet = false;
 	private String search_keyword;
-	private int search_page;
+	private boolean isPageSet = false;
+	private int page;
 	private boolean isSearchSet = false;
 	private String content;
 	private boolean isContentSet = false;
@@ -20,6 +21,7 @@ public class PageInfo {
 		isBVIDSet = false;
 		isSearchSet = false;
 		isContentSet = false;
+		isPageSet = false;
 	}
 	
 	public void setVideoInfo(String bvid){
@@ -50,8 +52,20 @@ public class PageInfo {
 	
 	public void setSearchInfo(String keyword, int page){
 		isSearchSet = true;
-		search_page = page;
+		this.page = page;
 		search_keyword = keyword;
+	}
+	
+	public void setPageInfo(int page){
+		isPageSet = true;
+		this.page = page;
+	}
+	
+	public int getPageInfo() throws PageInfoEmptyException{
+		if(isPageSet)
+			return page;
+		else
+			throw new PageInfoEmptyException();
 	}
 	
 	public String getSearchKeyword() throws PageInfoEmptyException{
@@ -63,7 +77,7 @@ public class PageInfo {
 	
 	public int getSearchPage() throws PageInfoEmptyException{
 		if(isSearchSet)
-			return search_page;
+			return page;
 		else
 			throw new PageInfoEmptyException();
 	}

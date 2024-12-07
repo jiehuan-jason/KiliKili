@@ -21,7 +21,7 @@ import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
  *
  */
 public class URLget {
-	static int maxHttpGetBytes = 40960;
+	static int maxHttpGetBytes = 81920;
 	static int bufferZoneBytes = 2048;
 	public static String IP_ADDRESS="localhost";
 	public static String SEARCH_URL="http://"+IP_ADDRESS+":3000/search?keyword=";
@@ -31,6 +31,7 @@ public class URLget {
 	public static String GET_VIDEO_DOWNLOAD_LINK_URL="http://"+IP_ADDRESS+":2121/api/playurl?";
 	public static String GET_USER_VIDEOS_URL="http://"+IP_ADDRESS+":3000/user/video?";
 	public static String SEND_TRANSCODING_REQUEST_URL="http://"+IP_ADDRESS+":4000/api/download?";
+	public static String GET_VIDEOS_PAGE_LIST_URL="http://"+IP_ADDRESS+":3000/list?";
 	
 	/*public static String[] sendGetRequest(String bvid) throws WebReturnErrorCodeException, IOException{
 	        String content = BackWeb(GET_INFO_URL+"bvid="+bvid+"&version="+AboutPage.version);
@@ -167,6 +168,8 @@ public class URLget {
 	 	private static String getInfoFromHttpConnection(HttpConnection connection) throws UnsupportedEncodingException, IOException{
 	 		DataInputStream dis =connection.openDataInputStream();
         	int connectionLength = (int)connection.getLength();
+        	
+        	System.gc();
         	
         	if(connectionLength!=-1){
         		byte[] buffer = new byte[bufferZoneBytes]; // 缓冲区

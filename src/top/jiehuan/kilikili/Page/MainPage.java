@@ -55,20 +55,20 @@ public class MainPage implements CommandListener{
         		new Thread(new Runnable() {
                     public void run() {
                     	String bvid = tf.getString();
-                    	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
+                    	PageInfo newpage = new PageInfo(PartVideoListPage.PageID);
                     	newpage.setVideoInfo(bvid);
                     	page_info_list.addElement(newpage);
-                        new GetVideoInfoPage(m, page_info_list);
+                        new PartVideoListPage(m, page_info_list);
                     }
                 }).start();
         	}else if(tf.getString().length()==10){
         		new Thread(new Runnable() {
                     public void run() {
                     	String bvid = "BV"+tf.getString();
-                    	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
+                    	PageInfo newpage = new PageInfo(PartVideoListPage.PageID);
                     	newpage.setVideoInfo(bvid);
                     	page_info_list.addElement(newpage);
-                        new GetVideoInfoPage(m, page_info_list);
+                        new PartVideoListPage(m, page_info_list);
                     }
                 }).start();
         	}else{

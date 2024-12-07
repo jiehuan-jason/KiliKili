@@ -98,10 +98,10 @@ public class RecommendPage implements CommandListener {
         	new Thread(new Runnable() {
                 public void run() {
                 	String bvid = bvids[rcmd_list.getSelectedIndex()];
-                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
+                	PageInfo newpage = new PageInfo(PartVideoListPage.PageID);
                 	newpage.setVideoInfo(bvid);
                 	page_info_list.addElement(newpage);
-                    new GetVideoInfoPage(ml, page_info_list);
+                    new PartVideoListPage(ml, page_info_list);
                 }
             }).start();
         }else if (d == rcmd_list) {
@@ -110,10 +110,10 @@ public class RecommendPage implements CommandListener {
             if (selectedIndex != -1) {
                 String bvid = bvids[selectedIndex];
                 System.out.println("Selected BVID: " + bvid);
-                PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
+                PageInfo newpage = new PageInfo(PartVideoListPage.PageID);
             	newpage.setVideoInfo(bvid);
             	page_info_list.addElement(newpage);
-                new GetVideoInfoPage(ml, page_info_list); // 创建新的页面以显示视频信息
+                new PartVideoListPage(ml, page_info_list); // 创建新的页面以显示视频信息
             }
         }
     }
