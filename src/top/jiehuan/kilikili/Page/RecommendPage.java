@@ -17,7 +17,7 @@ import top.jiehuan.kilikili.util.URLget;
 
 public class RecommendPage implements CommandListener {
 	
-	public static short PageID = 2;
+	public static final short PageID = 2;
 	
 	static int maxVideosNum = 20;
 	
@@ -38,13 +38,16 @@ public class RecommendPage implements CommandListener {
 	PageInfo page_info;
 	Vector page_info_list;
 	
-	public RecommendPage(MainMIDlet midlet, Vector page_info_list){
+	public RecommendPage(Vector page_info_list){
 		// 初始化变量和界面
-		ml=midlet;
-		display = Display.getDisplay(midlet);
+		
 		
 		this.page_info_list = page_info_list;
 		page_info = (PageInfo) page_info_list.lastElement();
+		
+		ml=page_info.getMainMIDletObject();
+		display = Display.getDisplay(ml);
+		
 		loadMessages();
 		
 		try{
@@ -71,11 +74,7 @@ public class RecommendPage implements CommandListener {
 	//命令的执行函数 详细内容请参考MainMIDlet文件
 	public void commandAction(Command c, Displayable d) {
         if (c == back) {
-            new Thread(new Runnable() {
-                public void run() {
-                	new MainPage(ml);
-                }
-            }).start();
+        	page_info.backMainPage();
         }
         else if(c==exit){
         	ml.exitApp();
@@ -98,10 +97,10 @@ public class RecommendPage implements CommandListener {
         	new Thread(new Runnable() {
                 public void run() {
                 	String bvid = bvids[rcmd_list.getSelectedIndex()];
-                	PageInfo newpage = new PageInfo(PartVideoListPage.PageID);
+                	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,ml);
                 	newpage.setVideoInfo(bvid);
                 	page_info_list.addElement(newpage);
-                    new PartVideoListPage(ml, page_info_list);
+                    new PartVideoListPage(page_info_list);
                 }
             }).start();
         }else if (d == rcmd_list) {
@@ -110,10 +109,10 @@ public class RecommendPage implements CommandListener {
             if (selectedIndex != -1) {
                 String bvid = bvids[selectedIndex];
                 System.out.println("Selected BVID: " + bvid);
-                PageInfo newpage = new PageInfo(PartVideoListPage.PageID);
+                PageInfo newpage = new PageInfo(PartVideoListPage.PageID,ml);
             	newpage.setVideoInfo(bvid);
             	page_info_list.addElement(newpage);
-                new PartVideoListPage(ml, page_info_list); // 创建新的页面以显示视频信息
+                new PartVideoListPage(page_info_list); // 创建新的页面以显示视频信息
             }
         }
     }

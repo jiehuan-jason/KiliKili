@@ -18,7 +18,7 @@ import top.jiehuan.kilikili.PageInfo;
 import top.jiehuan.kilikili.util.GetLangRes;
 
 public class MainPage implements CommandListener{
-	public static short PageID = 0;
+	public static final short PageID = 0;
 	
 	GetLangRes lang_res;
 	Display display;
@@ -55,20 +55,20 @@ public class MainPage implements CommandListener{
         		new Thread(new Runnable() {
                     public void run() {
                     	String bvid = tf.getString();
-                    	PageInfo newpage = new PageInfo(PartVideoListPage.PageID);
+                    	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,m);
                     	newpage.setVideoInfo(bvid);
                     	page_info_list.addElement(newpage);
-                        new PartVideoListPage(m, page_info_list);
+                        new PartVideoListPage(page_info_list);
                     }
                 }).start();
         	}else if(tf.getString().length()==10){
         		new Thread(new Runnable() {
                     public void run() {
                     	String bvid = "BV"+tf.getString();
-                    	PageInfo newpage = new PageInfo(PartVideoListPage.PageID);
+                    	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,m);
                     	newpage.setVideoInfo(bvid);
                     	page_info_list.addElement(newpage);
-                        new PartVideoListPage(m, page_info_list);
+                        new PartVideoListPage(page_info_list);
                     }
                 }).start();
         	}else{
@@ -82,38 +82,27 @@ public class MainPage implements CommandListener{
         }else if(c==about){
         	new Thread(new Runnable() {
                 public void run() {
-                	page_info_list.addElement(new PageInfo(AboutPage.PageID));
-                    new AboutPage(m,page_info_list); //打开关于界面
+                	page_info_list.addElement(new PageInfo(AboutPage.PageID,m));
+                    new AboutPage(page_info_list); //打开关于界面
                 }
             }).start();
         }else if(c==rcmd){
         	new Thread(new Runnable() {
                 public void run() {
-                	page_info_list.addElement(new PageInfo(RecommendPage.PageID));
-                    new RecommendPage(m,page_info_list); //打开推荐界面
+                	page_info_list.addElement(new PageInfo(RecommendPage.PageID,m));
+                    new RecommendPage(page_info_list); //打开推荐界面
                 }
             }).start();
         }else if(c==search){
         	new Thread(new Runnable() {
                 public void run() {
                 	System.out.println("search button");
-                	/*String search_text;
-					try {
-						search_text = new String( tf.getString().getBytes( "utf8" ), "utf8" );
-					} catch (UnsupportedEncodingException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						search_text = tf.getString();
-					}*/
-                    /*Alert alert = new Alert("Keyword", tf.getString(), null, AlertType.INFO);
-                    alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-                    display.setCurrent(alert); // 显示 Alert*/
                 	System.out.println("keyword:"+tf.getString());
-                	PageInfo newpage = new PageInfo(SearchPage.PageID);
+                	PageInfo newpage = new PageInfo(SearchPage.PageID,m);
                 	newpage.setSearchInfo(tf.getString(), 1);
                 	page_info_list.addElement(newpage);
                 	System.out.println("go to SearchPage");
-                    new SearchPage(m,page_info_list); //打开搜索界面
+                    new SearchPage(page_info_list); //打开搜索界面
                 }
             }).start();
         }
@@ -130,10 +119,7 @@ public class MainPage implements CommandListener{
 	
 	private void initPageVars(){
 		lang = System.getProperty("microedition.locale");
-		page_info = new PageInfo(PageID);
-		page_info_list = new Vector();
-		page_info_list.addElement(page_info);
-		page_info = new PageInfo(PageID);
+		page_info = new PageInfo(PageID,m);
 		page_info_list = new Vector();
 		page_info_list.addElement(page_info);
 	}

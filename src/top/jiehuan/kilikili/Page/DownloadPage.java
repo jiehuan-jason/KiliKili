@@ -24,7 +24,7 @@ import top.jiehuan.kilikili.util.URLget;
 
 public class DownloadPage implements CommandListener{
 	
-	public static short PageID = 5;
+	public static final short PageID = 5;
 	
 	private MainMIDlet ml;
 	GetLangRes lang_res;
@@ -39,7 +39,6 @@ public class DownloadPage implements CommandListener{
 	Command transcoding_download;
 	Command goto_transcoding_site;
 	TextField videoURL;
-	TextField bvid_for_user;
 	StringItem tips;
 	
 	String video_url;
@@ -50,11 +49,12 @@ public class DownloadPage implements CommandListener{
 	Vector page_info_list;
 	PageInfo page_info;
 	
-	public DownloadPage(MainMIDlet midlet,Vector page_info_list){
+	public DownloadPage(Vector page_info_list){
 		//this.video_info=video_info;
-		ml=midlet;
+		
 		this.page_info_list = page_info_list;
 		page_info = (PageInfo) page_info_list.lastElement();
+		ml=page_info.getMainMIDletObject();
 		loadMessages();
 		try {
 			video_info = page_info.getVideoInfo();
@@ -75,7 +75,7 @@ public class DownloadPage implements CommandListener{
 	        if (c == back) {
 	            new Thread(new Runnable() {
 	                public void run() {
-	                	back();
+	                	goLastPage();
 	                }
 	            }).start();
 	        }
@@ -168,7 +168,6 @@ public class DownloadPage implements CommandListener{
 		
 		form=new Form(lang_res.getValue("download"));
 		videoURL = new TextField("",this.video_url,10000,TextField.ANY);
-		bvid_for_user = new TextField("",this.bvid,12,TextField.ANY);
 		tips = new StringItem("",lang_res.getValue("download_tips"));
 		
 		transcoding_download = new Command(lang_res.getValue("transcoding_download"),Command.ITEM,1);
@@ -183,7 +182,6 @@ public class DownloadPage implements CommandListener{
 		form.addCommand(download);
 		form.addCommand(transcoding_download);
 		form.addCommand(goto_transcoding_site);
-		form.append(bvid_for_user);
 		form.append(tips);
 		form.append(videoURL);
 		form.setCommandListener(this);
@@ -210,15 +208,15 @@ public class DownloadPage implements CommandListener{
          display.setCurrent(alert, form);
          //ml.display.setCurrent(ml.form);
 	}
-	 private void back(){
-		 page_info_list.removeElementAt(page_info_list.size()-1);
-		 PageInfo last_page = (PageInfo) page_info_list.lastElement();
-     	 if(last_page.pageID == GetVideoInfoPage.PageID){
-     		new GetVideoInfoPage(ml, page_info_list);
-     	 }else{
-     		 new MainPage(ml);
-     	 }
-	 }
+	 private void goLastPage(){
+			
+			page_info_list.removeElementAt(page_info_list.size()-1);
+			PageInfo last_page = (PageInfo) page_info_list.lastElement();
+			System.out.println("call goLastPage.Page now is:"+last_page.pageID);
+			
+			short page = last_page.pageID;
+			page_info.back(page, page_info_list);
+	}
 	 
 
 }

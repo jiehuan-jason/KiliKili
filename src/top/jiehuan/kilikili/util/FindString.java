@@ -184,7 +184,7 @@ public class FindString {
 			    // 找到指定字段的索引
 			    int titleIndex = jsonString.indexOf("\"" + findText + "\"");
 			    if (titleIndex == -1) {
-			        System.out.println("No Find Text");
+			        System.out.println("No Find Text:"+findText);
 			        return null; // 如果没有找到指定字段，返回 null
 			    }
 
@@ -210,7 +210,7 @@ public class FindString {
 			public static String findValueInt(String jsonString, String findText){
 				int titleIndex = jsonString.indexOf("\"" + findText + "\"");
 			    if (titleIndex == -1) {
-			        System.out.println("No Find Text");
+			        System.out.println("No Find Text:"+findText);
 			        return null; // 如果没有找到指定字段，返回 null
 			    }
 

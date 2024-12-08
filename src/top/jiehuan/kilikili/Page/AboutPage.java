@@ -12,11 +12,12 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.StringItem;
 
 import top.jiehuan.kilikili.MainMIDlet;
+import top.jiehuan.kilikili.PageInfo;
 import top.jiehuan.kilikili.util.GetLangRes;
 
 public class AboutPage implements CommandListener{
 	
-	public static short PageID = 6;
+	public static final short PageID = 6;
 	// 定义所需要的变量
 	private MainMIDlet ml;
 	
@@ -28,13 +29,14 @@ public class AboutPage implements CommandListener{
 	StringItem author;
 	StringItem text;
 	StringItem thanks_list;
+	PageInfo page_info;
 	
 	public static String version = "0.3.3";
 	
-	public AboutPage(MainMIDlet midlet,Vector page_list_info){
+	public AboutPage(Vector page_list_info){
 		//初始化变量和界面
-		
-		ml=midlet;
+		page_info = (PageInfo) page_list_info.lastElement();
+		ml=page_info.getMainMIDletObject();
 		
 		loadMessages();
 		initDisplayVars();
@@ -43,11 +45,7 @@ public class AboutPage implements CommandListener{
 	 public void commandAction(Command c, Displayable d) {
 		 	// 返回主界面
 	        if (c == back) {
-	            new Thread(new Runnable() {
-	                public void run() {
-	                	new MainPage(ml);
-	                }
-	            }).start();
+	            page_info.backMainPage();
 	        }
 	        // 退出app
 	        if(c==exit){

@@ -21,7 +21,7 @@ import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
  */
 public class URLget {
 	static int maxHttpGetBytes = 48000;
-	static int bufferZoneBytes = 2048;
+	static int bufferZoneBytes = 3072;
 	public static String IP_ADDRESS="localhost";
 	public static String DOWNLOAD_ADDRESS=IP_ADDRESS;
 	public static String SEARCH_URL="http://"+IP_ADDRESS+":3000/search?keyword=";
@@ -37,7 +37,6 @@ public class URLget {
 	
 	public static String BackVideoLink(String bvid,String cid) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
 		String url = GET_VIDEO_DOWNLOAD_LINK_URL+"bvid="+bvid+"&cid="+cid;
-		System.out.println(url);
 		String content = BackWeb(url);
 		System.out.println(content);
 		if(content.startsWith("error")){
@@ -57,13 +56,12 @@ public class URLget {
 
 	        try {
 	        	System.gc();
-	        	System.out.println("open the connection");
+	        	System.out.println("before open connection,free memory is:"+Runtime.getRuntime().freeMemory());
+	        	System.out.println("open the connection :"+url);
 	            // 打开连接 设置请求方式和请求类型
 	            connection = (HttpConnection) Connector.open(url);
 	            connection.setRequestMethod(HttpConnection.GET);
 	            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
-	            
-	            System.out.println("connect now");
 	            // 连接
 	            num = connection.getResponseCode();
 	            
@@ -97,6 +95,7 @@ public class URLget {
 					throw e1;
 				}
 	        }
+	        System.out.println("after open connection,free memory is:"+Runtime.getRuntime().freeMemory());
 	        if(!((getAPIBackCode(content) == 0 )||(getAPIBackCode(content) == 1 ))){
 	        	System.out.println("URLget: get api code error = "+getAPIBackCode(content));
 	        	throw new ErrorVideoStatusException(getAPIBackCode(content),content);

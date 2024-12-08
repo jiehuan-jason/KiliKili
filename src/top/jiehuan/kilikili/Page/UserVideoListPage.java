@@ -23,7 +23,7 @@ import top.jiehuan.kilikili.util.GetLangRes;
 import top.jiehuan.kilikili.util.URLget;
 
 public class UserVideoListPage implements CommandListener {
-	public static short PageID = 8;
+	public static final short PageID = 8;
 	public static int maxVideosNum = 10;
 	
 	private MainMIDlet ml;
@@ -43,11 +43,12 @@ public class UserVideoListPage implements CommandListener {
 	String[] titles;
 	String[] bvids;
 	
-	public UserVideoListPage(MainMIDlet ml, Vector page_info_list){
-		this.ml=ml;
-		display = Display.getDisplay(ml);
+	public UserVideoListPage(Vector page_info_list){
+		
 		this.page_info_list = page_info_list;
 		page_info = (PageInfo) page_info_list.lastElement();
+		this.ml=page_info.getMainMIDletObject();
+		display = Display.getDisplay(ml);
 		loadMessages();
 		
 		try {
@@ -90,7 +91,7 @@ public class UserVideoListPage implements CommandListener {
             new Thread(new Runnable() {
                 public void run() {
                 	page_info_list.removeElementAt(page_info_list.size()-1);
-                	new UserInfoPage(ml, page_info_list);
+                	new UserInfoPage(page_info_list);
                 }
             }).start();
         }
@@ -115,10 +116,10 @@ public class UserVideoListPage implements CommandListener {
         	new Thread(new Runnable() {
                 public void run() {
                 	String bvid = bvids[video_list.getSelectedIndex()];
-                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
+                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID,ml);
                 	newpage.setVideoInfo(bvid);
                 	page_info_list.addElement(newpage);
-                    new GetVideoInfoPage(ml, page_info_list);
+                    new GetVideoInfoPage(page_info_list);
                 }
             }).start();
         }else if (d == video_list) {
@@ -127,10 +128,10 @@ public class UserVideoListPage implements CommandListener {
             if (selectedIndex != -1) {
                 String bvid = bvids[selectedIndex];
                 System.out.println("Selected BVID: " + bvid);
-                PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
+                PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID,ml);
             	newpage.setVideoInfo(bvid);
             	page_info_list.addElement(newpage);
-                new GetVideoInfoPage(ml, page_info_list); // 创建新的页面以显示视频信息
+                new GetVideoInfoPage(page_info_list); // 创建新的页面以显示视频信息
             }
         }
     }

@@ -26,7 +26,7 @@ import top.jiehuan.kilikili.util.URLget;
 
 public class UserInfoPage implements CommandListener {
 	
-	public static short PageID = 4;
+	public static final short PageID = 4;
 	
 	private MainMIDlet ml;
 	GetLangRes lang_res;
@@ -55,10 +55,11 @@ public class UserInfoPage implements CommandListener {
 	private VideoInfo video_info;
 	private Vector page_info_list;
 	
-	public UserInfoPage(MainMIDlet ml,Vector page_info_list){
-		this.ml=ml;
+	public UserInfoPage(Vector page_info_list){
+		
 		this.page_info_list = page_info_list;
 		PageInfo page_info = (PageInfo) page_info_list.lastElement();
+		this.ml=page_info.getMainMIDletObject();
 		try {
 			video_info = page_info.getVideoInfo();
 		} catch (PageInfoEmptyException e1) {
@@ -96,7 +97,7 @@ public class UserInfoPage implements CommandListener {
                 public void run() {
                 	System.out.println("page "+PageID+" search_word:"+video_info.getSearchKeyword());
                 	page_info_list.removeElementAt(page_info_list.size()-1);
-                	new GetVideoInfoPage(ml, page_info_list);
+                	new GetVideoInfoPage(page_info_list);
                 }
             }).start();
         }
@@ -120,10 +121,10 @@ public class UserInfoPage implements CommandListener {
         else if(c==getUserVideo){
         	new Thread(new Runnable() {
                 public void run() {
-                	PageInfo newpage = new PageInfo(UserVideoListPage.PageID);
+                	PageInfo newpage = new PageInfo(UserVideoListPage.PageID,ml);
                 	newpage.setVideoInfo(video_info);
                 	page_info_list.addElement(newpage);
-                	new UserVideoListPage(ml, page_info_list);
+                	new UserVideoListPage(page_info_list);
                 }
             }).start();
         }

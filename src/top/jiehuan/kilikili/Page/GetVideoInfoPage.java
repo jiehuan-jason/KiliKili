@@ -64,13 +64,13 @@ public class GetVideoInfoPage implements CommandListener{
 	PageInfo page_info;
 	VideoInfo video_info;
 
-	public GetVideoInfoPage(MainMIDlet midlet,Vector page_info_list){
+	public GetVideoInfoPage(Vector page_info_list){
 		//初始化需要用到的变量 
 		System.out.println("GetVideoInfoPage init");
-		ml=midlet;
-		display = Display.getDisplay(midlet);
 		this.page_info_list = page_info_list;
 		page_info = (PageInfo) page_info_list.lastElement();
+		ml=page_info.getMainMIDletObject();
+		display = Display.getDisplay(ml);
 		try {
 			video_info = page_info.getVideoInfo();
 		} catch (PageInfoEmptyException e1) {
@@ -116,11 +116,14 @@ public class GetVideoInfoPage implements CommandListener{
 	        if(c==download){
 	        	new Thread(new Runnable() {
                     public void run() {
-                    	System.out.println("video_url is:"+video_url);
-                    	PageInfo newpage = new PageInfo(DownloadPage.PageID);
+                    	PageInfo newpage = new PageInfo(DownloadPage.PageID,ml);
                     	newpage.setVideoInfo(video_info);
                     	page_info_list.addElement(newpage);
-						new DownloadPage(ml,page_info_list);
+                    	for(int i=0;i<page_info_list.size();i++){
+                    		PageInfo info = (PageInfo)(page_info_list.elementAt(i));
+                    		System.out.println("page num in"+i+" is:"+info.pageID);
+                    	}
+						new DownloadPage(page_info_list);
                     	
                     }
 	            }).start();
@@ -143,11 +146,11 @@ public class GetVideoInfoPage implements CommandListener{
 	        }if (c == author_info) {
 	            new Thread(new Runnable() {
 	                public void run() {
-	                	PageInfo newpage = new PageInfo(UserInfoPage.PageID);
+	                	PageInfo newpage = new PageInfo(UserInfoPage.PageID,ml);
 	                	System.out.println(bvid);
 	                	newpage.setVideoInfo(bvid);
 	                	page_info_list.addElement(newpage);
-	                	new UserInfoPage(ml,page_info_list);
+	                	new UserInfoPage(page_info_list);
 	                }
 	            }).start();
 	        }
@@ -167,46 +170,10 @@ public class GetVideoInfoPage implements CommandListener{
 			
 			page_info_list.removeElementAt(page_info_list.size()-1);
 			PageInfo last_page = (PageInfo) page_info_list.lastElement();
-			
 			System.out.println("call goLastPage.Page now is:"+last_page.pageID);
 			
-			 short page = last_page.pageID;
-			 if(page==RecommendPage.PageID){
-				 new Thread(new Runnable() {
-		                public void run() {
-		                	new RecommendPage(ml,page_info_list);
-		                }
-		            }).start();
-			 }else if(page==SearchPage.PageID){
-				 new Thread(new Runnable() {
-		                public void run() {
-		                	new SearchPage(ml,page_info_list);
-		                }
-		            }).start();
-			 }else if(page==UserVideoListPage.PageID){
-				 new Thread(new Runnable() {
-		                public void run() {
-		                	new UserVideoListPage(ml,page_info_list);
-		                }
-		            }).start();
-			 }else if(page==PartVideoListPage.PageID){
-				 new Thread(new Runnable() {
-		                public void run() {
-		                	new PartVideoListPage(ml,page_info_list);
-		                }
-		            }).start();
-			 }
-			 else{
-				 new Thread(new Runnable() {
-		                public void run() {
-		                	//MainMIDlet.pagelist=new String[100];
-		                	//MainMIDlet.pagelist[0]="0";
-		                	//MainMIDlet.page_list_num=0;
-		                	new MainPage(ml);
-		                }
-		            }).start();
-
-			 }
+			short page = last_page.pageID;
+			page_info.back(page, page_info_list);
 		 }
 		private void initPageVars() throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
 			

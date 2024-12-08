@@ -44,10 +44,11 @@ public class PartVideoListPage implements CommandListener{
 	private PageInfo page_info;
 	private VideoInfo video_info;
 	
-	public PartVideoListPage(MainMIDlet ml, Vector page_info_list){
-		this.ml = ml;
+	public PartVideoListPage(Vector page_info_list){
+		
 		this.page_info_list = page_info_list;
 		page_info = (PageInfo) page_info_list.lastElement();
+		this.ml = page_info.getMainMIDletObject();
 		display = Display.getDisplay(ml);
 		loadMessages();
 		
@@ -59,11 +60,7 @@ public class PartVideoListPage implements CommandListener{
 	public void commandAction(Command c, Displayable d) {
 		 	// 返回主界面
 	        if (c == back) {
-	            new Thread(new Runnable() {
-	                public void run() {
-	                	new MainPage(ml);
-	                }
-	            }).start();
+	        	page_info.backMainPage();
 	        }
 	        // 退出app
 	        else if(c==exit){
@@ -74,13 +71,13 @@ public class PartVideoListPage implements CommandListener{
 	                	long cid = cid_list[videos_list.getSelectedIndex()];
 	                	int parts_base = (page_pn-1)*PARTS_IN_PAGE;
 	                	System.out.println(cid);
-	                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
+	                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID,ml);
 	                	VideoInfo newvideo = video_info;
 	                	newvideo.setBVID(video_info.getBVID(), videos_list.getSelectedIndex()+parts_base+1);
 	                	newpage.setVideoInfo(newvideo);
 	                	page_info_list.addElement(newpage);
 	                	System.out.println("PartVideoPage call GetVideoInfoPage");
-	                    new GetVideoInfoPage(ml, page_info_list);
+	                    new GetVideoInfoPage(page_info_list);
 	                }
 	            }).start();
 	        }else if(c == last_page){
@@ -115,13 +112,13 @@ public class PartVideoListPage implements CommandListener{
 	            	long cid = cid_list[videos_list.getSelectedIndex()];
                 	int parts_base = (page_pn-1)*PARTS_IN_PAGE;
                 	System.out.println(cid);
-                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
+                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID,ml);
                 	VideoInfo newvideo = video_info;
                 	newvideo.setBVID(video_info.getBVID(), videos_list.getSelectedIndex()+parts_base+1);
                 	newpage.setVideoInfo(newvideo);
                 	page_info_list.addElement(newpage);
                 	System.out.println("PartVideoPage call GetVideoInfoPage");
-                    new GetVideoInfoPage(ml, page_info_list);
+                    new GetVideoInfoPage(page_info_list);
 	                }
 	        }
 	    }
@@ -141,11 +138,15 @@ public class PartVideoListPage implements CommandListener{
 				if(parts == 1){
 					new Thread(new Runnable() {
 		                public void run() {
-		                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID);
+		                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID,ml);
 		                	newpage.setVideoInfo(video_info);
 		                	page_info_list.removeElement(page_info_list.lastElement());
 		                	page_info_list.addElement(newpage);
-							new GetVideoInfoPage(ml, page_info_list);
+		                	for(int i=0;i<page_info_list.size();i++){
+	                    		PageInfo info = (PageInfo)(page_info_list.elementAt(i));
+	                    		System.out.println("page num in"+i+" is:"+info.pageID);
+	                    	}
+							new GetVideoInfoPage(page_info_list);
 		                }
 		            }).start();
 				}

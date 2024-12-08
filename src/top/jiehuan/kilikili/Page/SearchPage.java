@@ -26,7 +26,7 @@ import top.jiehuan.kilikili.util.URLget;
 
 public class SearchPage implements CommandListener{
 	
-	public static short PageID = 3;
+	public static final short PageID = 3;
 	
 	private MainMIDlet ml;
 	GetLangRes lang_res;
@@ -49,16 +49,14 @@ public class SearchPage implements CommandListener{
 	private PageInfo page_info;
 	private int page_num = 1;
 	
-	public SearchPage(MainMIDlet midlet,Vector page_info_list){
+	public SearchPage(Vector page_info_list){
 		//初始化变量和界面
-		ml=midlet;
-		display = Display.getDisplay(midlet);
-		
-		//this.keyword=keyword;
 		
 		this.page_info_list = page_info_list;
 		page_info = (PageInfo) page_info_list.lastElement();
 		
+		ml=page_info.getMainMIDletObject();
+		display = Display.getDisplay(ml);
 		
 		loadMessages();
 		
@@ -89,11 +87,7 @@ public class SearchPage implements CommandListener{
 	 public void commandAction(Command c, Displayable d) {
 		 	// 返回主界面
 	        if (c == back) {
-	            new Thread(new Runnable() {
-	                public void run() {
-	                	new MainPage(ml);
-	                }
-	            }).start();
+	        	page_info.backMainPage();
 	        }
 	        // 退出app
 	        else if(c==exit){
@@ -220,11 +214,11 @@ public class SearchPage implements CommandListener{
 	 private void goToVideoListPage(){
 		String bvid = list_bvid[search_list.getSelectedIndex()];
      	System.out.println(bvid);
-     	PageInfo newpage = new PageInfo(PartVideoListPage.PageID);
+     	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,ml);
      	newpage.setVideoInfo(bvid);
      	page_info_list.addElement(newpage);
      	System.out.println("SearchPage call GetVideoInfoPage");
-        new PartVideoListPage(ml, page_info_list);
+        new PartVideoListPage(page_info_list);
 	 }
 
 }
