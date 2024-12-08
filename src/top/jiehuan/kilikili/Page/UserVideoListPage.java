@@ -17,7 +17,8 @@ import javax.microedition.lcdui.List;
 import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.PageInfo;
 import top.jiehuan.kilikili.VideoInfo;
-import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
+import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
+import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
 import top.jiehuan.kilikili.util.FindString;
 import top.jiehuan.kilikili.util.GetLangRes;
 import top.jiehuan.kilikili.util.URLget;
@@ -35,13 +36,19 @@ public class UserVideoListPage implements CommandListener {
 	Command exit;
 	Command view_cover;
 	Command go;
+	Command last_page;
+	Command next_page;
 	
 	private VideoInfo video_info;
 	private Vector page_info_list;
 	private PageInfo page_info;
 	
-	String[] titles;
-	String[] bvids;
+	private short page_num;
+	private Vector last_aid;
+	private short video_counts;
+	private String[] aids;
+	private String[] titles;
+	private String[] bvids;
 	
 	public UserVideoListPage(Vector page_info_list){
 		
@@ -49,23 +56,15 @@ public class UserVideoListPage implements CommandListener {
 		page_info = (PageInfo) page_info_list.lastElement();
 		this.ml=page_info.getMainMIDletObject();
 		display = Display.getDisplay(ml);
+		page_num = 1;
+		last_aid = new Vector();
 		loadMessages();
 		
-		try {
-			video_info = page_info.getVideoInfo();
-		} catch (PageInfoEmptyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			displayErrorAlert(e.getMessage());
-		}
-		
-		
-		
 		try{
-			initPageVars();
+			video_info = page_info.getVideoInfo();
+			initPageVars("");
 			initDisplayVars();
 			display();
-			
 		}catch(Exception e){
 			displayErrorAlert(e.getMessage());
 		}
@@ -122,6 +121,30 @@ public class UserVideoListPage implements CommandListener {
                     new GetVideoInfoPage(page_info_list);
                 }
             }).start();
+        }else if(c == last_page){
+        	page_num--;
+        	page_info.setPageInfo(page_num);
+        	last_aid.removeElementAt(last_aid.size()-1);
+        	last_aid.removeElementAt(last_aid.size()-1);
+        	try {
+				initPageVars(last_aid.lastElement().toString());
+				display();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				displayErrorAlert(e.getMessage());
+			} 
+        }else if(c == next_page){
+        	page_num++;
+        	page_info.setPageInfo(page_num);
+        	try {
+				initPageVars(last_aid.lastElement().toString());
+				display();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				displayErrorAlert(e.getMessage());
+			} 
         }else if (d == video_list) {
             // 检查是否是通过选择列表项触发的 OK 键
             int selectedIndex = video_list.getSelectedIndex();
@@ -147,41 +170,64 @@ public class UserVideoListPage implements CommandListener {
 		}
     }	
 	
-	private void initPageVars() throws Exception{
+	private void initPageVars(String aid) throws Exception{
 		
 		System.out.println("start to get user video data");
 		String video_data;
-		video_data = URLget.BackWeb(URLget.GET_USER_VIDEOS_URL+"mid="+video_info.getUserMID());
+		video_data = getWeb(aid);
 		
 		//page_info.setContent(video_data);
 		System.out.println("Video_data is:"+video_data);
 		titles=FindString.extractContents(video_data,"\"title\"");
 		bvids=FindString.extractContents(video_data,"\"bvid\"");
+		aids=FindString.extractContents(video_data,"\"param\"");
 		video_list=new List(video_info.getUserName()+lang_res.getValue("video_list"),List.IMPLICIT);
+		String laid = "";
+		video_counts = 0;
 		for(int i=0;i<maxVideosNum;i++){	//在列表内添加用户视频的标题
 			if(titles[i]!=null){
 				System.out.println(titles[i]);
 				System.out.println(bvids[i]);
 				video_list.append(titles[i], null);
+				laid = aids[i];
+				video_counts++;
 			}else break;
 		}
+		last_aid.addElement(laid);
 	}
+	
+	private String getWeb(String aid) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
+		return URLget.BackWeb(URLget.GET_USER_VIDEOS_URL+"mid="+video_info.getUserMID()+"&aid="+aid);
+	}
+	
 	private void initDisplayVars(){
 		System.out.println("start to initDisplayVars");
 		view_cover=new Command(lang_res.getValue("view_cover"),Command.ITEM,2);
 		exit=new Command(lang_res.getValue("exit"),Command.EXIT,3);
 		back=new Command(lang_res.getValue("back"),Command.BACK,0);
 		go = new Command(lang_res.getValue("go"),Command.OK,1);
+		last_page=new Command(lang_res.getValue("last_page"),Command.OK,2);
+		next_page=new Command(lang_res.getValue("next_page"),Command.OK,2);
 	}
 	private void display(){
 		System.out.println("start to display");
 		video_list.addCommand(back);
 		video_list.addCommand(exit);
 		video_list.addCommand(go);
+		checkVideoPage();
 		video_list.setSelectCommand(go);
 		video_list.addCommand(view_cover);
 		video_list.setCommandListener(this);
 		display.setCurrent(video_list);
 	}
-
+	
+	private void checkVideoPage(){
+		if(!(page_num==1))
+			video_list.addCommand(last_page);
+		if(video_counts == maxVideosNum){
+			video_list.addCommand(next_page);
+		}
+		
+	}
+	
 }

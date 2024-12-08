@@ -20,7 +20,7 @@ import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
  *
  */
 public class URLget {
-	static int maxHttpGetBytes = 48000;
+	static int maxHttpGetBytes = 60000;
 	static int bufferZoneBytes = 3072;
 	public static String IP_ADDRESS="localhost";
 	public static String DOWNLOAD_ADDRESS=IP_ADDRESS;
