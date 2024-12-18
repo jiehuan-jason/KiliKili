@@ -60,10 +60,10 @@ public class AboutPage implements CommandListener{
 					"dospy.wang:@jiehuan\n" +
 					"github:@jiehuan-jason\n" +
 					"网盘:jiehuan233.ysepan.com\n");
-			text = new StringItem("","软件版本：V0.3beta2\n" +
-					"更新日期：2024.12.7\n" +
-					"更新内容：添加了分p视频获取\n" +
-					"转码下载可以完全在软件内完成\n" +
+			text = new StringItem("","软件版本：V0.3beta3\n" +
+					"更新日期：2024.12.18\n" +
+					"更新内容：对部分代码进行重构\n" +
+					"压缩了软件包体积\n" +
 					"修复了一些bug\n");
 			thanks_list = new StringItem("","感谢列表（截至更新时，排名不分先后）：" +
 					"爱发电用户_898f2\n" +
