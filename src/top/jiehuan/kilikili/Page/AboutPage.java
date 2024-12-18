@@ -31,7 +31,7 @@ public class AboutPage implements CommandListener{
 	StringItem thanks_list;
 	PageInfo page_info;
 	
-	public static String version = "0.3.3";
+	public static String version = "0.3.4";
 	
 	public AboutPage(Vector page_list_info){
 		//初始化变量和界面
