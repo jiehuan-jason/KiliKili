@@ -117,19 +117,28 @@ public class DownloadPage implements CommandListener{
 	        		URLget.BackWeb(URLget.GET_TRANSCODING_STATUS_URL+"taskId="+video_info.getCID());
 	        		Alert alert = new Alert("Task", lang_res.getValue("task_is_ok"), null, AlertType.INFO);
         	        alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+        	        final Command closeCommand = new Command("关闭", Command.EXIT, 1);
+        	        final Command confirmCommand = new Command("确认", Command.OK, 0);
+        	        alert.addCommand(closeCommand);
+        	        alert.addCommand(confirmCommand);
+
         	        alert.setCommandListener(new CommandListener() {
         	            public void commandAction(Command c, Displayable d) {
-        	                // 此处可以处理 Alert 的关闭事件
-        	            	new Thread(new Runnable() {
-        	                    public void run() {
-        	                    	try {
-        								ml.platformRequest(URLget.DOWNLOAD_TRANSCODING_VIDEO_URL+video_info.getCID()+"_240p.mp4");
-        	                    	} catch (ConnectionNotFoundException e) {
-        								e.printStackTrace();
-        							}
-        	                    	
-        	                    }
-        		            }).start();
+        	            	if (c == confirmCommand) {
+        	                    // 确认按钮被按下，执行任务
+        	                    new Thread(new Runnable() {
+        	                        public void run() {
+        	                            try {
+        	                                ml.platformRequest(URLget.DOWNLOAD_TRANSCODING_VIDEO_URL + video_info.getCID() + "_240p.mp4");
+        	                            } catch (ConnectionNotFoundException e) {
+        	                                e.printStackTrace();
+        	                            }
+        	                        }
+        	                    }).start();
+        	                } else if (c == closeCommand) {
+        	                    // 关闭按钮被按下，返回到之前的界面
+        	                    display.setCurrent(form);
+        	                }
         	            }
         	        });
         	        display.setCurrent(alert, form);
