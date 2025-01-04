@@ -45,16 +45,28 @@ public class PartVideoListPage implements CommandListener{
 	private VideoInfo video_info;
 	
 	public PartVideoListPage(Vector page_info_list){
+		try{
+			this.page_info_list = page_info_list;
+			page_info = (PageInfo) page_info_list.lastElement();
+			this.ml = page_info.getMainMIDletObject();
+			videos_list = new List("PartVideoListPage",List.IMPLICIT);
+			display = Display.getDisplay(ml);
+			video_info = page_info.getVideoInfo();
+			loadMessages();
+		}catch(Exception e){
+			e.printStackTrace();
+			displayErrorAlert(e.getMessage());
+		}
+		videos_list = new List(video_info.getTitle(),List.IMPLICIT);
 		
-		this.page_info_list = page_info_list;
-		page_info = (PageInfo) page_info_list.lastElement();
-		this.ml = page_info.getMainMIDletObject();
-		display = Display.getDisplay(ml);
-		loadMessages();
-		
-		initPageVars();
-		initDisplayVars();
-		display();
+		try{
+			initPageVars();
+			initDisplayVars();
+			display();
+		}catch(Exception e){
+			e.printStackTrace();
+			displayErrorAlert(e.getMessage());
+		}
 	}
 	
 	public void commandAction(Command c, Displayable d) {
@@ -73,7 +85,12 @@ public class PartVideoListPage implements CommandListener{
 	                	System.out.println(cid);
 	                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID,ml);
 	                	VideoInfo newvideo = video_info;
-	                	newvideo.setBVID(video_info.getBVID(), videos_list.getSelectedIndex()+parts_base+1);
+	                	try {
+							newvideo.setBVID(video_info.getBVID(), videos_list.getSelectedIndex()+parts_base+1);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							displayErrorAlert(e.getMessage());
+						}
 	                	newpage.setVideoInfo(newvideo);
 	                	page_info_list.addElement(newpage);
 	                	System.out.println("PartVideoPage call GetVideoInfoPage");
@@ -114,7 +131,12 @@ public class PartVideoListPage implements CommandListener{
                 	System.out.println(cid);
                 	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID,ml);
                 	VideoInfo newvideo = video_info;
-                	newvideo.setBVID(video_info.getBVID(), videos_list.getSelectedIndex()+parts_base+1);
+                	try {
+						newvideo.setBVID(video_info.getBVID(), videos_list.getSelectedIndex()+parts_base+1);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						displayErrorAlert(e.getMessage());
+					}
                 	newpage.setVideoInfo(newvideo);
                 	page_info_list.addElement(newpage);
                 	System.out.println("PartVideoPage call GetVideoInfoPage");
@@ -133,7 +155,6 @@ public class PartVideoListPage implements CommandListener{
 	 }
 	 private void initPageVars(){
 		 try {
-				video_info = page_info.getVideoInfo();
 				parts = video_info.getVideoParts();
 				if(parts == 1){
 					new Thread(new Runnable() {
@@ -191,7 +212,6 @@ public class PartVideoListPage implements CommandListener{
 	 
 	 private void initDisplayVars(){
 		 System.out.println("initDisplayVars starts");
-		 videos_list = new List(video_info.getTitle(),List.IMPLICIT);
 		 for(int i=1;i<=PARTS_IN_PAGE;i++){
 			 System.out.println("for i="+i+" ptitle="+part_title_list[i-1]);
 			 if(part_title_list[i-1]!=null)
@@ -220,15 +240,11 @@ public class PartVideoListPage implements CommandListener{
 	 }
 	 
 	 private void displayErrorAlert(String error){
-			form=new Form(lang_res.getValue("findError"));
-			back=new Command(lang_res.getValue("back"),Command.BACK,1);
-			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
-			form.addCommand(back);
-			form.addCommand(exit);
-			form.setCommandListener(this);
-			Alert alert = new Alert("Error", error, null, AlertType.ERROR);
-      alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-      display.setCurrent(alert, form);
-      //ml.display.setCurrent(ml.form);
-	}
+		 Alert alert = new Alert("Error", error, null, AlertType.ERROR);
+	     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+	     back=new Command(lang_res.getValue("back"),Command.BACK,1);
+	     alert.addCommand(back);
+	     alert.setCommandListener(this);
+	     display.setCurrent(alert, videos_list);	
+	 }
 }

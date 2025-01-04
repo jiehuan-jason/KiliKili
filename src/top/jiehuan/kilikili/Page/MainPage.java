@@ -30,6 +30,7 @@ public class MainPage implements CommandListener{
 	Command about;
 	Command rcmd;
 	Command search;
+	Command back;
 	
 	public String lang;
 	
@@ -48,6 +49,16 @@ public class MainPage implements CommandListener{
 		display();
 	}
 	
+	private void displayErrorAlert(String error){
+		 Alert alert = new Alert("Error", error, null, AlertType.ERROR);
+	     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+	     back=new Command(lang_res.getValue("back"),Command.BACK,1);
+	     alert.addCommand(back);
+	     alert.setCommandListener(this);
+	     display.setCurrent(alert, form);	
+	 }
+
+	
 	public void commandAction(Command c, Displayable d) {
         if (c == go) //前往视频信息页面
         {
@@ -56,7 +67,12 @@ public class MainPage implements CommandListener{
                     public void run() {
                     	String bvid = tf.getString();
                     	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,m);
-                    	newpage.setVideoInfo(bvid);
+                    	try {
+							newpage.setVideoInfo(bvid);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							displayErrorAlert(e.getMessage());
+						}
                     	page_info_list.addElement(newpage);
                         new PartVideoListPage(page_info_list);
                     }
@@ -66,7 +82,12 @@ public class MainPage implements CommandListener{
                     public void run() {
                     	String bvid = "BV"+tf.getString();
                     	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,m);
-                    	newpage.setVideoInfo(bvid);
+                    	try {
+							newpage.setVideoInfo(bvid);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							displayErrorAlert(e.getMessage());
+						}
                     	page_info_list.addElement(newpage);
                         new PartVideoListPage(page_info_list);
                     }
@@ -94,6 +115,9 @@ public class MainPage implements CommandListener{
                 }
             }).start();
         }else if(c==search){
+        	if(tf.getString().equals(""))
+        		displayErrorAlert("输入不能为空");
+        	else
         	new Thread(new Runnable() {
                 public void run() {
                 	System.out.println("search button");
@@ -105,6 +129,8 @@ public class MainPage implements CommandListener{
                     new SearchPage(page_info_list); //打开搜索界面
                 }
             }).start();
+        }else if(c==back){
+        	display.setCurrent(form);
         }
     }
 	private void loadMessages() {

@@ -1,10 +1,8 @@
 package top.jiehuan.kilikili.Page;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
-import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
@@ -20,9 +18,7 @@ import top.jiehuan.kilikili.VideoInfo;
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
-import top.jiehuan.kilikili.util.FindString;
-import top.jiehuan.kilikili.util.GetLangRes;
-import top.jiehuan.kilikili.util.URLget;
+import top.jiehuan.kilikili.util.*;
 
 public class SearchPage implements CommandListener{
 	
@@ -60,20 +56,16 @@ public class SearchPage implements CommandListener{
 		
 		loadMessages();
 		
+		search_list=new List(lang_res.getValue("search_list"),List.IMPLICIT);
+		
 		try {
 			keyword = URLget.urlEncode(page_info.getSearchKeyword());
 			page_num = page_info.getSearchPage();
 		} catch (PageInfoEmptyException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-			displayErrorAlert("获取错误");
+			displayErrorAlert(e1.getMessage());
 		}
-		System.out.println("keyword:"+keyword);
-		System.out.println("start loadMessages");
-		
-		
-		
-		System.out.println("start get web");
 		try{
 			initPageVars();
 			initDisplayVars();
@@ -81,7 +73,7 @@ public class SearchPage implements CommandListener{
 
 		}catch(Exception e){
 			e.printStackTrace();
-			displayErrorAlert("获取错误");
+			displayErrorAlert(e.getMessage());
 		}
 	}
 	 public void commandAction(Command c, Displayable d) {
@@ -99,11 +91,10 @@ public class SearchPage implements CommandListener{
 	                		VideoInfo cover_info= new VideoInfo(list_bvid[search_list.getSelectedIndex()]);
 	                		System.out.println("cover_url is:"+cover_info.getCoverURL());
 							ml.platformRequest(new String(cover_info.getCoverURL().getBytes("UTF-8"),"UTF-8"));
-						} catch (ConnectionNotFoundException e) {
+						} catch (Exception e) {
 							e.printStackTrace();
-						} catch (UnsupportedEncodingException e) {
-							e.printStackTrace();
-						}
+							displayErrorAlert(e.getMessage());
+						} 
 	                	
 	                }
 	            }).start();
@@ -155,7 +146,6 @@ public class SearchPage implements CommandListener{
 	    }
 	 private void initPageVars() throws IOException,WebReturnErrorCodeException, ErrorVideoStatusException{
 		
-		search_list=new List(lang_res.getValue("search_list"),List.IMPLICIT);
 		String web;
 		try {
 			web = page_info.getContent();
@@ -200,22 +190,24 @@ public class SearchPage implements CommandListener{
 
 	 }
 	 private void displayErrorAlert(String error){
-			form=new Form(lang_res.getValue("findError"));
-			back=new Command(lang_res.getValue("back"),Command.BACK,1);
-			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
-			form.addCommand(back);
-			form.addCommand(exit);
-			form.setCommandListener(this);
-			Alert alert = new Alert("Error", error, null, AlertType.ERROR);
-         alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-         display.setCurrent(alert, form);
-         //ml.display.setCurrent(ml.form);
-	}
+		 Alert alert = new Alert("Error", error, null, AlertType.ERROR);
+	     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+	     back=new Command(lang_res.getValue("back"),Command.BACK,1);
+	     alert.addCommand(back);
+	     alert.setCommandListener(this);
+	     display.setCurrent(alert, form);	
+	 }
 	 private void goToVideoListPage(){
 		String bvid = list_bvid[search_list.getSelectedIndex()];
      	System.out.println(bvid);
      	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,ml);
-     	newpage.setVideoInfo(bvid);
+     	try {
+			newpage.setVideoInfo(bvid);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			displayErrorAlert(e.getMessage());
+		}
      	page_info_list.addElement(newpage);
      	System.out.println("SearchPage call GetVideoInfoPage");
         new PartVideoListPage(page_info_list);

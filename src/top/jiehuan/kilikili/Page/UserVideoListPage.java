@@ -1,27 +1,23 @@
 package top.jiehuan.kilikili.Page;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
-import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.List;
 
 import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.PageInfo;
 import top.jiehuan.kilikili.VideoInfo;
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
+import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
-import top.jiehuan.kilikili.util.FindString;
-import top.jiehuan.kilikili.util.GetLangRes;
-import top.jiehuan.kilikili.util.URLget;
+import top.jiehuan.kilikili.util.*;
 
 public class UserVideoListPage implements CommandListener {
 	public static final short PageID = 8;
@@ -58,10 +54,17 @@ public class UserVideoListPage implements CommandListener {
 		display = Display.getDisplay(ml);
 		page_num = 1;
 		last_aid = new Vector();
+		try {
+			video_info = page_info.getVideoInfo();
+		} catch (PageInfoEmptyException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		loadMessages();
+		video_list=new List(video_info.getUserName()+lang_res.getValue("video_list"),List.IMPLICIT);
 		
 		try{
-			video_info = page_info.getVideoInfo();
+			
 			initPageVars("");
 			initDisplayVars();
 			display();
@@ -73,17 +76,16 @@ public class UserVideoListPage implements CommandListener {
 	}
 	
 	private void displayErrorAlert(String error){
-		Form form=new Form(lang_res.getValue("findError"));
-		back=new Command(lang_res.getValue("back"),Command.BACK,1);
-		exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
-		form.addCommand(back);
-		form.addCommand(exit);
-		form.setCommandListener(this);
 		Alert alert = new Alert("Error", error, null, AlertType.ERROR);
-        alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-        display.setCurrent(alert, form);
+	     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+	     back=new Command(lang_res.getValue("back"),Command.BACK,1);
+	     alert.addCommand(back);
+	     alert.setCommandListener(this);
+	     display.setCurrent(alert, video_list);
         //ml.display.setCurrent(ml.form);
 	}
+	
+	
 	
 	public void commandAction(Command c, Displayable d) {
         if (c == back) {
@@ -103,10 +105,9 @@ public class UserVideoListPage implements CommandListener {
                 		VideoInfo cover_info= new VideoInfo(bvids[video_list.getSelectedIndex()]);
                 		System.out.println("cover_url is:"+cover_info.getCoverURL());
 						ml.platformRequest(new String(cover_info.getCoverURL().getBytes("UTF-8"),"UTF-8"));
-					} catch (ConnectionNotFoundException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
-					} catch (UnsupportedEncodingException e) {
-						e.printStackTrace();
+						displayErrorAlert(e.getMessage());
 					}
                 	
                 }
@@ -116,7 +117,13 @@ public class UserVideoListPage implements CommandListener {
                 public void run() {
                 	String bvid = bvids[video_list.getSelectedIndex()];
                 	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID,ml);
-                	newpage.setVideoInfo(bvid);
+                	try {
+						newpage.setVideoInfo(bvid);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						displayErrorAlert(e.getMessage());
+					}
                 	page_info_list.addElement(newpage);
                     new GetVideoInfoPage(page_info_list);
                 }
@@ -152,7 +159,13 @@ public class UserVideoListPage implements CommandListener {
                 String bvid = bvids[selectedIndex];
                 System.out.println("Selected BVID: " + bvid);
                 PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID,ml);
-            	newpage.setVideoInfo(bvid);
+            	try {
+					newpage.setVideoInfo(bvid);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					displayErrorAlert(e.getMessage());
+				}
             	page_info_list.addElement(newpage);
                 new GetVideoInfoPage(page_info_list); // 创建新的页面以显示视频信息
             }
@@ -181,7 +194,7 @@ public class UserVideoListPage implements CommandListener {
 		titles=FindString.extractContents(video_data,"\"title\"");
 		bvids=FindString.extractContents(video_data,"\"bvid\"");
 		aids=FindString.extractContents(video_data,"\"param\"");
-		video_list=new List(video_info.getUserName()+lang_res.getValue("video_list"),List.IMPLICIT);
+		
 		String laid = "";
 		video_counts = 0;
 		for(int i=0;i<maxVideosNum;i++){	//在列表内添加用户视频的标题

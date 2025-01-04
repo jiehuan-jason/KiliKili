@@ -56,6 +56,9 @@ public class DownloadPage implements CommandListener{
 		page_info = (PageInfo) page_info_list.lastElement();
 		ml=page_info.getMainMIDletObject();
 		loadMessages();
+
+		display = Display.getDisplay(ml);
+		form=new Form(lang_res.getValue("download"));
 		try {
 			video_info = page_info.getVideoInfo();
 		} catch (PageInfoEmptyException e) {
@@ -163,7 +166,6 @@ public class DownloadPage implements CommandListener{
 	 
 	 private void initVideoVars(){
 		bvid = video_info.getBVID();
-		display = Display.getDisplay(ml);
 		try {
 			this.video_url=page_info.getVideoInfo().getVideoURL();
 		} catch (Exception e) {
@@ -175,7 +177,7 @@ public class DownloadPage implements CommandListener{
 	 
 	 private void initDisplayVars(){
 		
-		form=new Form(lang_res.getValue("download"));
+		
 		videoURL = new TextField("",this.video_url,10000,TextField.ANY);
 		tips = new StringItem("",lang_res.getValue("download_tips"));
 		
@@ -206,17 +208,13 @@ public class DownloadPage implements CommandListener{
 			}
 	 }
 	 private void displayErrorAlert(String error){
-			form=new Form(lang_res.getValue("findError"));
-			back=new Command(lang_res.getValue("back"),Command.BACK,1);
-			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
-			form.addCommand(back);
-			form.addCommand(exit);
-			form.setCommandListener(this);
 		 Alert alert = new Alert("Error", error, null, AlertType.ERROR);
-         alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-         display.setCurrent(alert, form);
-         //ml.display.setCurrent(ml.form);
-	}
+	     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+	     back=new Command(lang_res.getValue("back"),Command.BACK,1);
+	     alert.addCommand(back);
+	     alert.setCommandListener(this);
+	     display.setCurrent(alert, form);	
+	 }
 	 private void goLastPage(){
 			
 			page_info_list.removeElementAt(page_info_list.size()-1);

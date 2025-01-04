@@ -71,6 +71,9 @@ public class GetVideoInfoPage implements CommandListener{
 		page_info = (PageInfo) page_info_list.lastElement();
 		ml=page_info.getMainMIDletObject();
 		display = Display.getDisplay(ml);
+		loadMessages();
+		form=new Form(lang_res.getValue("videoDisplay"));
+		
 		try {
 			video_info = page_info.getVideoInfo();
 		} catch (PageInfoEmptyException e1) {
@@ -78,7 +81,7 @@ public class GetVideoInfoPage implements CommandListener{
 			e1.printStackTrace();
 		}
 		
-		loadMessages();
+
 		
 		// 初始化视频信息界面
 		System.out.println("init video info form");
@@ -148,7 +151,12 @@ public class GetVideoInfoPage implements CommandListener{
 	                public void run() {
 	                	PageInfo newpage = new PageInfo(UserInfoPage.PageID,ml);
 	                	System.out.println(bvid);
-	                	newpage.setVideoInfo(bvid);
+	                	try {
+							newpage.setVideoInfo(bvid);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							displayErrorAlert(e.getMessage());
+						}
 	                	page_info_list.addElement(newpage);
 	                	new UserInfoPage(page_info_list);
 	                }
@@ -202,7 +210,6 @@ public class GetVideoInfoPage implements CommandListener{
 		}
 		private void initDisplayVars(){
 			System.out.println("start initDisplayVars");
-			form=new Form(lang_res.getValue("videoDisplay"));
 			title=new StringItem(null, video_info.getTitle());
 			if(video_info.getVideoParts() != 1){
 				part_title = new StringItem(null, "P"+video_info.getPart()+" "+lang_res.getValue("part_title")+video_info.getPartTitle());
@@ -244,15 +251,11 @@ public class GetVideoInfoPage implements CommandListener{
 
 		}
 		private void displayErrorAlert(String error){
-			form=new Form(lang_res.getValue("findError"));
-			back=new Command(lang_res.getValue("back"),Command.BACK,1);
-			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
-			form.addCommand(back);
-			form.addCommand(exit);
-			form.setCommandListener(this);
-			Alert alert = new Alert("Error", error, null, AlertType.ERROR);
-            alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-            display.setCurrent(alert, form);
-            //ml.display.setCurrent(ml.form);
-		}
+			 Alert alert = new Alert("Error", error, null, AlertType.ERROR);
+		     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+		     back=new Command(lang_res.getValue("back"),Command.BACK,1);
+		     alert.addCommand(back);
+		     alert.setCommandListener(this);
+		     display.setCurrent(alert, form);	
+		 }
 }

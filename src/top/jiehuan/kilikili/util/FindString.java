@@ -35,7 +35,6 @@ public class FindString {
 		    }
 		 public static String[] extractContentsInt(String input, String keyword) {
 			    String[] resultArray = new String[100];
-		        int keywordLength = keyword.length()+1;
 		        int currentIndex = 0;
 		        int num=0;
 		        //input="\""+input+"\"";

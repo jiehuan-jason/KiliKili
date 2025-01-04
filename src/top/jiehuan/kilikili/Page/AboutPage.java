@@ -39,6 +39,9 @@ public class AboutPage implements CommandListener{
 		ml=page_info.getMainMIDletObject();
 		
 		loadMessages();
+
+	    display = Display.getDisplay(ml);
+		form=new Form(lang_res.getValue("about"));
 		initDisplayVars();
 		display();
 	}
@@ -53,8 +56,7 @@ public class AboutPage implements CommandListener{
 	        }
 	    }
 	 private void initDisplayVars(){
-		    display = Display.getDisplay(ml);
-		    form=new Form(lang_res.getValue("about"));
+		    
 			author = new StringItem("","软件作者：jiehuan\n" +
 					"电子邮箱：jiehuan233@outlook.com\n" +
 					"dospy.wang:@jiehuan\n" +

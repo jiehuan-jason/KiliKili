@@ -31,17 +31,17 @@ public class VideoInfo {
 	private int favorite;
 	private int videos;
 	
-	public VideoInfo(String bvid){
+	public VideoInfo(String bvid) throws Exception{
 		this(bvid,1);
 	}
-	public VideoInfo(String bvid, int pn){
+	public VideoInfo(String bvid, int pn) throws Exception{
 		this.bvid = bvid;
 		this.pn = pn;
 		initPartInfo(bvid, pn);
 		getBasicVideoInfo();
 	}
 	
-	private void initPartInfo(String bvid, int pn){
+	private void initPartInfo(String bvid, int pn) throws Exception{
 		try {
 			String content = URLget.BackWeb(URLget.GET_VIDEOS_PAGE_LIST_URL+"bvid="+bvid);
 			part_info = new PartInfo(bvid, pn, content);
@@ -50,6 +50,7 @@ public class VideoInfo {
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 			status = false;
+			throw e;
 		} 
 	}
 	
@@ -58,7 +59,7 @@ public class VideoInfo {
 		if(!status){
 			System.out.println("VideoInfo content is error");
 		}else{
-		System.out.println("VideoInfo content:"+content);
+			System.gc();
 		user_mid=FindString.findValueInt(content, "mid");
 		cover_url=FindString.findValue(content, "pic");
 		title=FindString.findValue(content,"title");
@@ -114,11 +115,11 @@ public class VideoInfo {
 		return bvid;
 	}
 	
-	public void setBVID(String bvid){
+	public void setBVID(String bvid) throws Exception{
 		setBVID(bvid,1);
 	}
 	
-	public void setBVID(String bvid, int pn){
+	public void setBVID(String bvid, int pn) throws Exception{
 		this.pn = pn;
 		this.bvid = bvid;
 		initPartInfo(bvid, pn);

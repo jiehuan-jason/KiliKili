@@ -31,7 +31,7 @@ public class PageInfo {
 		return ml;
 	}
 	
-	public void setVideoInfo(String bvid){
+	public void setVideoInfo(String bvid) throws Exception{
 		isBVIDSet = true;
 		BVID = bvid;
 		video_info = new VideoInfo(bvid);

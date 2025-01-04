@@ -60,6 +60,11 @@ public class UserInfoPage implements CommandListener {
 		this.page_info_list = page_info_list;
 		PageInfo page_info = (PageInfo) page_info_list.lastElement();
 		this.ml=page_info.getMainMIDletObject();
+
+		loadMessages();
+
+		display = Display.getDisplay(ml);
+		form=new Form(name+lang_res.getValue("user_info"));
 		try {
 			video_info = page_info.getVideoInfo();
 		} catch (PageInfoEmptyException e1) {
@@ -68,7 +73,6 @@ public class UserInfoPage implements CommandListener {
 			displayErrorAlert("获取错误");
 		}
 		
-		loadMessages();
 		
 		try{
 			initPageVars();
@@ -76,19 +80,10 @@ public class UserInfoPage implements CommandListener {
 			display();
 			
 		}catch(Exception e){
-			form=new Form("Error");
-			back=new Command(lang_res.getValue("back"),Command.BACK,1);
-			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
-			form.append(new StringItem("","获取错误"));
-			form.addCommand(back);
-			form.addCommand(exit);
-			form.setCommandListener(this);
-			Alert alert = new Alert("Error", "获取错误", null, AlertType.ERROR);
-            alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-            display.setCurrent(alert, form);
-            
+			displayErrorAlert(e.getMessage());          
 		}
 	}
+	
 	
 	public void commandAction(Command c, Displayable d) {
 	 	// 返回上级界面
@@ -158,8 +153,6 @@ public class UserInfoPage implements CommandListener {
 		System.out.println("/level_img/lv"+level+".png");
 		level_img = Image.createImage("/level_img/lv"+level+".png");
 		
-		display = Display.getDisplay(ml);
-		form=new Form(name+lang_res.getValue("user_info"));
 		back=new Command(lang_res.getValue("back"),Command.BACK,1);
 		exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
 		showUserFace = new Command(lang_res.getValue("show_user_face"),Command.OK,1);
@@ -181,15 +174,11 @@ public class UserInfoPage implements CommandListener {
 		display.setCurrent(form);
 	}
 	private void displayErrorAlert(String error){
-		form=new Form(lang_res.getValue("findError"));
-		back=new Command(lang_res.getValue("back"),Command.BACK,1);
-		exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
-		form.addCommand(back);
-		form.addCommand(exit);
-		form.setCommandListener(this);
-		Alert alert = new Alert("Error", error, null, AlertType.ERROR);
-        alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-        display.setCurrent(alert, form);
-        //ml.display.setCurrent(ml.form);
-	}
+		 Alert alert = new Alert("Error", error, null, AlertType.ERROR);
+	     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+	     back=new Command(lang_res.getValue("back"),Command.BACK,1);
+	     alert.addCommand(back);
+	     alert.setCommandListener(this);
+	     display.setCurrent(alert, form);	
+	 }
 }
