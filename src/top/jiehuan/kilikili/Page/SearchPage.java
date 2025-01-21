@@ -1,35 +1,23 @@
 package top.jiehuan.kilikili.Page;
 
-import java.io.IOException;
 import java.util.Vector;
 
-import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.List;
 
-import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.PageInfo;
 import top.jiehuan.kilikili.VideoInfo;
-import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
-import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
 import top.jiehuan.kilikili.util.*;
 
-public class SearchPage implements CommandListener{
+public class SearchPage extends Page implements CommandListener{
 	
 	public static final short PageID = 3;
 	
-	private MainMIDlet ml;
-	GetLangRes lang_res;
-	Display display;
 	List search_list;
-	Command back;
-	Command exit;
 	Command go;
 	Command view_cover;
 	Command last_page;
@@ -41,20 +29,11 @@ public class SearchPage implements CommandListener{
 	
 	private String keyword;
 	
-	private Vector page_info_list;
-	private PageInfo page_info;
 	private int page_num = 1;
 	
 	public SearchPage(Vector page_info_list){
 		//初始化变量和界面
-		
-		this.page_info_list = page_info_list;
-		page_info = (PageInfo) page_info_list.lastElement();
-		
-		ml=page_info.getMainMIDletObject();
-		display = Display.getDisplay(ml);
-		
-		loadMessages();
+		super(page_info_list);
 		
 		search_list=new List(lang_res.getValue("search_list"),List.IMPLICIT);
 		
@@ -79,7 +58,7 @@ public class SearchPage implements CommandListener{
 	 public void commandAction(Command c, Displayable d) {
 		 	// 返回主界面
 	        if (c == back) {
-	        	page_info.backMainPage();
+	        	backMainPage();
 	        }
 	        // 退出app
 	        else if(c==exit){
@@ -132,25 +111,26 @@ public class SearchPage implements CommandListener{
 	            int selectedIndex = search_list.getSelectedIndex();
 	            if (selectedIndex != -1) {
 	            	goToVideoListPage();
+	            }else{
+	            	displayErrorAlert("未选择！");
 	            }
 	        }
 	    }
-	 private void loadMessages() {
-	        // 根据系统语言加载相应的资源文件
-	        try {
-				lang_res = new GetLangRes(System.getProperty("microedition.locale"));
-				//System.out.println(lang_res.getLangFileContent());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-	    }
-	 private void initPageVars() throws IOException,WebReturnErrorCodeException, ErrorVideoStatusException{
+	 protected void initPageVars(){
 		
-		String web;
-		try {
-			web = page_info.getContent();
-		} catch (PageInfoEmptyException e) {
-			web = URLget.BackWeb(URLget.SEARCH_URL+keyword+"&page="+page_num);
+		String web="";
+		if(page_info.getIsContentSet())
+			try {
+				web = page_info.getContent();
+			} catch (PageInfoEmptyException e1) {
+				//TODO 肯定不为空
+			}
+		else {
+			try {
+				web = URLget.BackWeb(URLget.SEARCH_URL+keyword+"&page="+page_num);
+			} catch (Exception e) {
+				displayErrorAlert("SearchPage initPageVars Error:"+e.getMessage());
+			} 
 		}
 		
 		String[] list_str=FindString.FindTitle(web);
@@ -167,15 +147,14 @@ public class SearchPage implements CommandListener{
 		}
 
 	 }
-	 private void initDisplayVars(){
-		back=new Command(lang_res.getValue("back"),Command.BACK,1);
-		exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
+	 protected void initDisplayVars(){
+		initBackAndExitCommand();
 		go=new Command(lang_res.getValue("go"),Command.OK,1);
 		last_page=new Command(lang_res.getValue("last_page"),Command.OK,2);
 		next_page=new Command(lang_res.getValue("next_page"),Command.OK,2);
 		view_cover=new Command(lang_res.getValue("view_cover"),Command.ITEM,2);
 	 }
-	 private void display(){
+	 protected void display(){
 		search_list.addCommand(back);
 		search_list.addCommand(go);
 		search_list.addCommand(view_cover);
@@ -188,14 +167,6 @@ public class SearchPage implements CommandListener{
 		search_list.setCommandListener(this);
 		display.setCurrent(search_list);
 
-	 }
-	 private void displayErrorAlert(String error){
-		 Alert alert = new Alert("Error", error, null, AlertType.ERROR);
-	     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-	     back=new Command(lang_res.getValue("back"),Command.BACK,1);
-	     alert.addCommand(back);
-	     alert.setCommandListener(this);
-	     display.setCurrent(alert, form);	
 	 }
 	 private void goToVideoListPage(){
 		String bvid = list_bvid[search_list.getSelectedIndex()];

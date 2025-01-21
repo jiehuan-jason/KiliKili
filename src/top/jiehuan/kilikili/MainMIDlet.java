@@ -7,7 +7,8 @@ import top.jiehuan.kilikili.Page.MainPage;
 
 
 public class MainMIDlet extends MIDlet{
-
+	
+	
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
 		// TODO Auto-generated method stub
 		
@@ -19,6 +20,10 @@ public class MainMIDlet extends MIDlet{
 	}
 
 	protected void startApp() throws MIDletStateChangeException {
+		/*Vector page_info_list = new Vector();
+		PageInfo newpage = new PageInfo(MainPage.PageID,this);
+		newpage.setVideoInfo(TEST_BVID);
+		page_info_list.addElement(newpage);*/
 		new MainPage(this);
 	}
 	public void exitApp() {

@@ -1,29 +1,21 @@
 package top.jiehuan.kilikili.Page;
 
-import java.io.IOException;
 import java.util.Vector;
 
 import javax.microedition.lcdui.*;
 
-import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.PageInfo;
 import top.jiehuan.kilikili.VideoInfo;
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 import top.jiehuan.kilikili.util.*;
 
-public class RecommendPage implements CommandListener {
+public class RecommendPage extends Page implements CommandListener {
 	
 	public static final short PageID = 2;
 	
 	static int maxVideosNum = 20;
 	
-	// 定义需要的变量
-	private MainMIDlet ml;
-	GetLangRes lang_res;
 	List rcmd_list;
-	Display display;
-	Command back;
-	Command exit;
 	Command go;
 	Command view_cover;
 	Form form;
@@ -31,45 +23,24 @@ public class RecommendPage implements CommandListener {
 	String[] titles;
 	String[] bvids;
 	
-	PageInfo page_info;
-	Vector page_info_list;
-	
 	public RecommendPage(Vector page_info_list){
 		// 初始化变量和界面
-		
-		
-		this.page_info_list = page_info_list;
-		page_info = (PageInfo) page_info_list.lastElement();
-		
-		ml=page_info.getMainMIDletObject();
-		display = Display.getDisplay(ml);
-		
-		loadMessages();
+		super(page_info_list);
 
 		rcmd_list=new List(lang_res.getValue("rcmd_list"),List.IMPLICIT);
 		try{
 			initDisplayVars();
 			initPageVars();
-			
 			display();
 		}catch(Exception e){
 			displayErrorAlert(e.getMessage());
 		}
 	}
 	
-	private void displayErrorAlert(String error){
-		 Alert alert = new Alert("Error", error, null, AlertType.ERROR);
-	     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-	     back=new Command(lang_res.getValue("back"),Command.BACK,1);
-	     alert.addCommand(back);
-	     alert.setCommandListener(this);
-	     display.setCurrent(alert, rcmd_list);	
-	 }
-	
 	//命令的执行函数 详细内容请参考MainMIDlet文件
 	public void commandAction(Command c, Displayable d) {
         if (c == back) {
-        	page_info.backMainPage();
+        	backMainPage();
         }
         else if(c==exit){
         	ml.exitApp();
@@ -95,7 +66,6 @@ public class RecommendPage implements CommandListener {
                 	try {
 						newpage.setVideoInfo(bvid);
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						displayErrorAlert(e.getMessage());
 					}
                 	page_info_list.addElement(newpage);
@@ -106,40 +76,44 @@ public class RecommendPage implements CommandListener {
             // 检查是否是通过选择列表项触发的 OK 键
             int selectedIndex = rcmd_list.getSelectedIndex();
             if (selectedIndex != -1) {
-                String bvid = bvids[selectedIndex];
-                System.out.println("Selected BVID: " + bvid);
-                PageInfo newpage = new PageInfo(PartVideoListPage.PageID,ml);
-            	try {
-					newpage.setVideoInfo(bvid);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					displayErrorAlert(e.getMessage());
-				}
-            	page_info_list.addElement(newpage);
-                new PartVideoListPage(page_info_list); // 创建新的页面以显示视频信息
+            	new Thread(new Runnable() {
+                    public void run() {
+                    	goInfoPage();
+                    }
+            	}).start();
+            }else{
+            	displayErrorAlert("未选择！");
             }
         }
     }
-	private void loadMessages() {
-        // 根据系统语言加载相应的资源文件
-        try {
-        	System.out.println(System.getProperty("microedition.locale"));
-			lang_res = new GetLangRes(System.getProperty("microedition.locale"));
-			//System.out.println(lang_res.getLangFileContent());
-		} catch (IOException e) {
-			e.printStackTrace();
+	private void goInfoPage(){
+		String bvid = bvids[rcmd_list.getSelectedIndex()];
+    	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,ml);
+    	try {
+			newpage.setVideoInfo(bvid);
+		} catch (Exception e) {
+			displayErrorAlert(e.getMessage());
 		}
-    }	
+    	page_info_list.addElement(newpage);
+        new PartVideoListPage(page_info_list);
+	}
 	
-	private void initPageVars() throws Exception{
+	protected void initPageVars(){
 		
 		System.out.println("start to get rcmd data");
-		String rcmd_data;
-		try{
-			rcmd_data = page_info.getContent();
-		}catch(PageInfoEmptyException e){
-			//rcmd_data = URLget.BackWebHttps("https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd");
-			rcmd_data = URLget.BackWeb(URLget.RCMD_URL);
+		String rcmd_data = "";
+		if(page_info.getIsContentSet()){
+			try {
+				rcmd_data = page_info.getContent();
+			} catch (PageInfoEmptyException e) {
+				//TODO 这里绝对不为空 之后把定义改一下
+			}
+		}else{
+			try {
+				rcmd_data = URLget.BackWeb(URLget.RCMD_URL);
+			} catch(Exception e){
+				displayErrorAlert("RcmdPage Error:"+e.getMessage());
+			}
 		}
 		
 		page_info.setContent(rcmd_data);
@@ -154,20 +128,19 @@ public class RecommendPage implements CommandListener {
 			rcmd_list.append(titles[i], null);
 		}
 	}
-	private void initDisplayVars(){
+	protected void initDisplayVars(){
 		System.out.println("start to initDisplayVars");
 		view_cover=new Command(lang_res.getValue("view_cover"),Command.ITEM,2);
-		exit=new Command(lang_res.getValue("exit"),Command.EXIT,3);
-		back=new Command(lang_res.getValue("back"),Command.BACK,0);
+		initBackAndExitCommand();
 		go = new Command(lang_res.getValue("go"),Command.OK,1);
 	}
-	private void display(){
+	protected void display(){
 		System.out.println("start to display");
 		rcmd_list.addCommand(back);
-		rcmd_list.addCommand(exit);
 		rcmd_list.addCommand(go);
 		rcmd_list.setSelectCommand(go);
 		rcmd_list.addCommand(view_cover);
+		rcmd_list.addCommand(exit);
 		rcmd_list.setCommandListener(this);
 		display.setCurrent(rcmd_list);
 	}

@@ -1,32 +1,28 @@
 package top.jiehuan.kilikili.Page;
 
-import java.io.IOException;
 import java.util.Vector;
 
-import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.List;
 
 import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.PageInfo;
 import top.jiehuan.kilikili.PartInfo;
 import top.jiehuan.kilikili.VideoInfo;
+import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 import top.jiehuan.kilikili.util.GetLangRes;
 import top.jiehuan.kilikili.util.URLget;
 
-public class PartVideoListPage implements CommandListener{
+public class PartVideoListPage extends Page implements CommandListener{
 	public static final short PageID = 9;
 	private static final short PARTS_IN_PAGE = 20;
 	
 	GetLangRes lang_res;
 	private MainMIDlet ml;
 	Display display;
-	Form form;
 	List videos_list;
 	Command back;
 	Command exit;
@@ -45,34 +41,25 @@ public class PartVideoListPage implements CommandListener{
 	private VideoInfo video_info;
 	
 	public PartVideoListPage(Vector page_info_list){
-		try{
-			this.page_info_list = page_info_list;
-			page_info = (PageInfo) page_info_list.lastElement();
-			this.ml = page_info.getMainMIDletObject();
-			videos_list = new List("PartVideoListPage",List.IMPLICIT);
-			display = Display.getDisplay(ml);
-			video_info = page_info.getVideoInfo();
-			loadMessages();
-		}catch(Exception e){
-			e.printStackTrace();
-			displayErrorAlert(e.getMessage());
-		}
+		super(page_info_list);
 		videos_list = new List(video_info.getTitle(),List.IMPLICIT);
 		
 		try{
-			initPageVars();
-			initDisplayVars();
-			display();
-		}catch(Exception e){
-			e.printStackTrace();
-			displayErrorAlert(e.getMessage());
+			video_info = page_info.getVideoInfo();
+		}catch(PageInfoEmptyException e){
+			displayErrorAlert("Page is Empty:"+e.getMessage());
 		}
+		
+		initPageVars();
+		initDisplayVars();
+		display();
 	}
 	
 	public void commandAction(Command c, Displayable d) {
 		 	// 返回主界面
 	        if (c == back) {
-	        	page_info.backMainPage();
+	        	backMainPage();
+	        	//TODO 处理返回逻辑
 	        }
 	        // 退出app
 	        else if(c==exit){
@@ -80,21 +67,7 @@ public class PartVideoListPage implements CommandListener{
 	        }else if(c==go){
 	        	new Thread(new Runnable() {
 	                public void run() {
-	                	long cid = cid_list[videos_list.getSelectedIndex()];
-	                	int parts_base = (page_pn-1)*PARTS_IN_PAGE;
-	                	System.out.println(cid);
-	                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID,ml);
-	                	VideoInfo newvideo = video_info;
-	                	try {
-							newvideo.setBVID(video_info.getBVID(), videos_list.getSelectedIndex()+parts_base+1);
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							displayErrorAlert(e.getMessage());
-						}
-	                	newpage.setVideoInfo(newvideo);
-	                	page_info_list.addElement(newpage);
-	                	System.out.println("PartVideoPage call GetVideoInfoPage");
-	                    new GetVideoInfoPage(page_info_list);
+	                	goInfoPage();
 	                }
 	            }).start();
 	        }else if(c == last_page){
@@ -126,34 +99,36 @@ public class PartVideoListPage implements CommandListener{
 	            // 检查是否是通过选择列表项触发的 OK 键
 	            int selectedIndex = videos_list.getSelectedIndex();
 	            if (selectedIndex != -1) {
-	            	long cid = cid_list[videos_list.getSelectedIndex()];
-                	int parts_base = (page_pn-1)*PARTS_IN_PAGE;
-                	System.out.println(cid);
-                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID,ml);
-                	VideoInfo newvideo = video_info;
-                	try {
-						newvideo.setBVID(video_info.getBVID(), videos_list.getSelectedIndex()+parts_base+1);
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						displayErrorAlert(e.getMessage());
-					}
-                	newpage.setVideoInfo(newvideo);
-                	page_info_list.addElement(newpage);
-                	System.out.println("PartVideoPage call GetVideoInfoPage");
-                    new GetVideoInfoPage(page_info_list);
-	                }
+	            	new Thread(new Runnable() {
+	                    public void run() {
+	                    	goInfoPage();
+	                    }
+	            	}).start();
+	            }else{
+	            	displayErrorAlert("未选择！");
+	            }
 	        }
 	    }
-	 private void loadMessages() {
-	        // 根据系统语言加载相应的资源文件
-	        try {
-				lang_res = new GetLangRes(System.getProperty("microedition.locale"));
-				//System.out.println(lang_res.getLangFileContent());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-	 }
-	 private void initPageVars(){
+	private void goInfoPage(){
+		long cid = cid_list[videos_list.getSelectedIndex()];
+    	int parts_base = (page_pn-1)*PARTS_IN_PAGE;
+    	System.out.println(cid);
+    	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID,ml);
+    	VideoInfo newvideo = video_info;
+    	try {
+			newvideo.setBVID(video_info.getBVID(), videos_list.getSelectedIndex()+parts_base+1);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			displayErrorAlert(e.getMessage());
+		}
+    	newpage.setVideoInfo(newvideo);
+    	page_info_list.addElement(newpage);
+    	System.out.println("PartVideoPage call GetVideoInfoPage");
+        new GetVideoInfoPage(page_info_list);
+	}
+	
+	//TODO 重构此函数！！！！
+	 protected void initPageVars(){
 		 try {
 				parts = video_info.getVideoParts();
 				if(parts == 1){
@@ -210,7 +185,7 @@ public class PartVideoListPage implements CommandListener{
 		 
 	 }
 	 
-	 private void initDisplayVars(){
+	 protected void initDisplayVars(){
 		 System.out.println("initDisplayVars starts");
 		 for(int i=1;i<=PARTS_IN_PAGE;i++){
 			 System.out.println("for i="+i+" ptitle="+part_title_list[i-1]);
@@ -225,7 +200,7 @@ public class PartVideoListPage implements CommandListener{
 		 next_page=new Command(lang_res.getValue("next_page"),Command.OK,2);
 	 }
 	 
-	 private void display(){
+	 protected void display(){
 		 System.out.println("display starts");
 		 videos_list.addCommand(back);
 		 videos_list.addCommand(exit);
@@ -237,14 +212,5 @@ public class PartVideoListPage implements CommandListener{
 		 videos_list.setSelectCommand(go);
 		 videos_list.setCommandListener(this);
 		 display.setCurrent(videos_list);
-	 }
-	 
-	 private void displayErrorAlert(String error){
-		 Alert alert = new Alert("Error", error, null, AlertType.ERROR);
-	     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-	     back=new Command(lang_res.getValue("back"),Command.BACK,1);
-	     alert.addCommand(back);
-	     alert.setCommandListener(this);
-	     display.setCurrent(alert, videos_list);	
 	 }
 }

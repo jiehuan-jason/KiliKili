@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
+import javax.microedition.io.HttpsConnection;
 
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
@@ -46,54 +47,84 @@ public class URLget {
 		}
 	}
 	 public static String BackWeb(String url) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
-		 	HttpConnection connection = null;
-	        DataInputStream dis =null;
-	        
+		 	DataInputStream dis =null;
 	        InputStream inputStream = null;
-	        
-	        int num=0;
-	        String content="error";
 
-	        try {
-	        	System.gc();
-	        	System.out.println("before open connection,free memory is:"+Runtime.getRuntime().freeMemory());
-	        	System.out.println("open the connection :"+url);
-	            // 打开连接 设置请求方式和请求类型
-	            connection = (HttpConnection) Connector.open(url);
-	            connection.setRequestMethod(HttpConnection.GET);
-	            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
-	            // 连接
-	            num = connection.getResponseCode();
-	            
-	            // 输出返回的网页代码
-	            System.out.println("get now");
-	            System.out.println(num);
-	            
-	            
-	            if(num==200){
-	            	try{
-		            	content = getInfoFromHttpConnection(connection);
-	            	}catch(IOException e1){
-	            		e1.printStackTrace();
-	            		throw e1;
-	            	}
-	            } else{
-	            	throw new WebReturnErrorCodeException(num);
-	            }
+    		HttpConnection connection = null;
+    		HttpsConnection https_connection=null;
+    		
+    		String content="error";
+	        try{
+	        	if(url.startsWith("https")){
+	        		int num=0;
+
+	    	        System.gc();
+		        	System.out.println("before open connection,free memory is:"+Runtime.getRuntime().freeMemory());
+		        	System.out.println("open the connection :"+url);
+		            // 打开连接 设置请求方式和请求类型
+		        	https_connection = (HttpsConnection) Connector.open(url);
+		        	https_connection.setRequestMethod(HttpsConnection.GET);
+		        	https_connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
+		            // 连接
+		            num = https_connection.getResponseCode();
+		            
+		            // 输出返回的网页代码
+		            System.out.println("get now");
+		            System.out.println(num);
+		            
+		            
+		            if(num==200){
+		            	try{
+			            	content = getInfoFromHttpsConnection(https_connection);
+		            	}catch(IOException e1){
+		            		e1.printStackTrace();
+		            		throw e1;
+		            	}
+		            } else{
+		            	throw new WebReturnErrorCodeException(num);
+		            }
+	        	}else{
+	    	        int num=0;
+	    	        
+	    	        
+	    	        System.gc();
+		        	System.out.println("before open connection,free memory is:"+Runtime.getRuntime().freeMemory());
+		        	System.out.println("open the connection :"+url);
+		            // 打开连接 设置请求方式和请求类型
+		            connection = (HttpConnection) Connector.open(url);
+		            connection.setRequestMethod(HttpConnection.GET);
+		            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
+		            // 连接
+		            num = connection.getResponseCode();
+		            
+		            // 输出返回的网页代码
+		            System.out.println("get now");
+		            System.out.println(num);
+		            
+		            
+		            if(num==200){
+		            	try{
+			            	content = getInfoFromHttpConnection(connection);
+		            	}catch(IOException e1){
+		            		e1.printStackTrace();
+		            		throw e1;
+		            	}
+		            } else{
+		            	throw new WebReturnErrorCodeException(num);
+		            }
+	        	}
 	        }catch(IOException e){
 	        	throw e;
 	        }finally{
-	        	// 关闭连接
-	        	try {
-					connection.close();
-					if(inputStream!=null)
-						inputStream.close();
-					if(dis!=null)
-						dis.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-					throw e1;
-				}
+	        	if(inputStream!=null)
+					inputStream.close();
+				if(dis!=null)
+					dis.close();
+	        	if(url.startsWith("https"))
+		        	// 关闭连接
+					https_connection.close();
+	        	else
+	        		connection.close();
 	        }
 	        System.out.println("after open connection,free memory is:"+Runtime.getRuntime().freeMemory());
 	        if(!((getAPIBackCode(content) == 0 )||(getAPIBackCode(content) == 1 ))){
@@ -103,12 +134,17 @@ public class URLget {
 	        System.out.println("URLget:return successfully");
 	        return content;
 		}
-	 	private static String getInfoFromHttpConnection(HttpConnection connection) throws UnsupportedEncodingException, IOException{
-	 		DataInputStream dis =connection.openDataInputStream();
-        	int connectionLength = (int)connection.getLength();
-        	
-        	System.gc();
-        	
+	 private static String getInfoFromHttpConnection(HttpConnection connection) throws UnsupportedEncodingException, IOException{
+		 DataInputStream dis =connection.openDataInputStream();
+		 int connectionLength = (int)connection.getLength();
+		 return getInfoFromConnection(dis,connectionLength);
+	 }
+	 private static String getInfoFromHttpsConnection(HttpsConnection connection) throws UnsupportedEncodingException, IOException{
+		 DataInputStream dis =connection.openDataInputStream();
+		 int connectionLength = (int)connection.getLength();
+		 return getInfoFromConnection(dis,connectionLength);
+	 }
+	 	private static String getInfoFromConnection(DataInputStream dis, int connectionLength) throws UnsupportedEncodingException, IOException{ 	
         	if(connectionLength!=-1){
         		byte[] buffer = new byte[bufferZoneBytes]; // 缓冲区
                 int bytesRead = 0;

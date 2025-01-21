@@ -1,6 +1,5 @@
 package top.jiehuan.kilikili.Page;
 
-import java.io.IOException;
 import java.util.Vector;
 
 import javax.microedition.lcdui.Alert;
@@ -15,49 +14,26 @@ import javax.microedition.lcdui.TextField;
 
 import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.PageInfo;
-import top.jiehuan.kilikili.util.GetLangRes;
 
-public class MainPage implements CommandListener{
+public class MainPage extends Page implements CommandListener{
 	public static final short PageID = 0;
 	
-	GetLangRes lang_res;
-	Display display;
 	Form form;
 	StringItem tips;
 	TextField tf;
 	Command go;
-	Command exit;
 	Command about;
 	Command rcmd;
 	Command search;
 	Command back;
 	
-	public String lang;
-	
-	private MainMIDlet m;
-	private PageInfo page_info;
-	private Vector page_info_list;
-	
-	public MainPage(MainMIDlet m){
-		this.m=m;
-		lang = System.getProperty("microedition.locale");
-		
-		loadMessages();
+	public MainPage(MainMIDlet ml){
+		super(ml);
 		
 		initPageVars();
 		initDisplayVars();
 		display();
 	}
-	
-	private void displayErrorAlert(String error){
-		 Alert alert = new Alert("Error", error, null, AlertType.ERROR);
-	     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-	     back=new Command(lang_res.getValue("back"),Command.BACK,1);
-	     alert.addCommand(back);
-	     alert.setCommandListener(this);
-	     display.setCurrent(alert, form);	
-	 }
-
 	
 	public void commandAction(Command c, Displayable d) {
         if (c == go) //前往视频信息页面
@@ -66,7 +42,7 @@ public class MainPage implements CommandListener{
         		new Thread(new Runnable() {
                     public void run() {
                     	String bvid = tf.getString();
-                    	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,m);
+                    	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,ml);
                     	try {
 							newpage.setVideoInfo(bvid);
 						} catch (Exception e) {
@@ -81,7 +57,7 @@ public class MainPage implements CommandListener{
         		new Thread(new Runnable() {
                     public void run() {
                     	String bvid = "BV"+tf.getString();
-                    	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,m);
+                    	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,ml);
                     	try {
 							newpage.setVideoInfo(bvid);
 						} catch (Exception e) {
@@ -99,18 +75,18 @@ public class MainPage implements CommandListener{
                 display.setCurrent(alert, form);
         	}
         }else if(c==exit){
-        	m.exitApp();//退出app
+        	ml.exitApp();//退出app
         }else if(c==about){
         	new Thread(new Runnable() {
                 public void run() {
-                	page_info_list.addElement(new PageInfo(AboutPage.PageID,m));
+                	page_info_list.addElement(new PageInfo(AboutPage.PageID,ml));
                     new AboutPage(page_info_list); //打开关于界面
                 }
             }).start();
         }else if(c==rcmd){
         	new Thread(new Runnable() {
                 public void run() {
-                	page_info_list.addElement(new PageInfo(RecommendPage.PageID,m));
+                	page_info_list.addElement(new PageInfo(RecommendPage.PageID,ml));
                     new RecommendPage(page_info_list); //打开推荐界面
                 }
             }).start();
@@ -122,7 +98,7 @@ public class MainPage implements CommandListener{
                 public void run() {
                 	System.out.println("search button");
                 	System.out.println("keyword:"+tf.getString());
-                	PageInfo newpage = new PageInfo(SearchPage.PageID,m);
+                	PageInfo newpage = new PageInfo(SearchPage.PageID,ml);
                 	newpage.setSearchInfo(tf.getString(), 1);
                 	page_info_list.addElement(newpage);
                 	System.out.println("go to SearchPage");
@@ -133,27 +109,17 @@ public class MainPage implements CommandListener{
         	display.setCurrent(form);
         }
     }
-	private void loadMessages() {
-        // 根据系统语言加载相应的资源文件
-        try {
-			lang_res = new GetLangRes(lang);
-			//System.out.println(lang_res.getLangFileContent());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    }
 	
-	private void initPageVars(){
-		lang = System.getProperty("microedition.locale");
-		page_info = new PageInfo(PageID,m);
+	protected void initPageVars(){
+		page_info = new PageInfo(PageID,ml);
 		page_info_list = new Vector();
 		page_info_list.addElement(page_info);
 	}
 	
-	private void initDisplayVars(){
+	protected void initDisplayVars(){
 		System.out.println("Start init the display moudle");
 		
-		display = Display.getDisplay(m);
+		display = Display.getDisplay(ml);
 		go = new Command(lang_res.getValue("go"),Command.OK,0);
 		exit = new Command(lang_res.getValue("exit"),Command.EXIT,1);
 		about = new Command(lang_res.getValue("about"),Command.OK,1);
@@ -166,7 +132,7 @@ public class MainPage implements CommandListener{
 		System.out.println("Finish init the display moudle");
 	}
 	
-	private void display(){
+	protected void display(){
 		form.append(tf);
 		form.append(tips);
 		form.addCommand(go);

@@ -1,9 +1,6 @@
 package top.jiehuan.kilikili;
 
-import java.util.Vector;
-
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
-import top.jiehuan.kilikili.Page.*;
 public class PageInfo {
 	private VideoInfo video_info;
 	public short pageID;
@@ -100,14 +97,11 @@ public class PageInfo {
 		else
 			throw new PageInfoEmptyException();
 	}
-	
-	public void backMainPage(){
-		new Thread(new Runnable() {
-            public void run() {
-            	new MainPage(ml);
-            }
-        }).start();
+	public boolean getIsContentSet(){
+		return isContentSet;
 	}
+	
+
 	
 	/*public void displayErrorAlert(String error, Form form){
 		Alert alert = new Alert("Error", error, null, AlertType.INFO);
@@ -130,85 +124,5 @@ public class PageInfo {
         Display.getDisplay(ml).setCurrent(alert, form);
 	}*/
 	
-	/* page - 上一页的ID
-	 * 返回逻辑请先在类中处理list
-	 * 示例请见GetVideoInfoPage中的goLastPage()
-	 * 新Page也请在此处添加case
-	 * */
-	public void back(short page, final Vector page_info_list){
-		switch (page) {
-	    case RecommendPage.PageID:
-	        new Thread(new Runnable() {
-	            public void run() {
-	                new RecommendPage(page_info_list);
-	            }
-	        }).start();
-	        break;
 
-	    case SearchPage.PageID:
-	        new Thread(new Runnable() {
-	            public void run() {
-	                new SearchPage(page_info_list);
-	            }
-	        }).start();
-	        break;
-
-	    case UserVideoListPage.PageID:
-	        new Thread(new Runnable() {
-	            public void run() {
-	                new UserVideoListPage(page_info_list);
-	            }
-	        }).start();
-	        break;
-
-	    case PartVideoListPage.PageID:
-	        new Thread(new Runnable() {
-	            public void run() {
-	                new PartVideoListPage(page_info_list);
-	            }
-	        }).start();
-	        break;
-	        
-	    case GetVideoInfoPage.PageID:
-	        new Thread(new Runnable() {
-	            public void run() {
-	                new GetVideoInfoPage(page_info_list);
-	            }
-	        }).start();
-	        break;
-	        
-	    case AboutPage.PageID:
-	        new Thread(new Runnable() {
-	            public void run() {
-	                new AboutPage(page_info_list);
-	            }
-	        }).start();
-	        break;
-	        
-	    case DownloadPage.PageID:
-	        new Thread(new Runnable() {
-	            public void run() {
-	                new DownloadPage(page_info_list);
-	            }
-	        }).start();
-	        break;
-	        
-	    case UserInfoPage.PageID:
-	        new Thread(new Runnable() {
-	            public void run() {
-	                new UserInfoPage(page_info_list);
-	            }
-	        }).start();
-	        break;
-	        
-	        
-	    default:
-	        new Thread(new Runnable() {
-	            public void run() {
-	                backMainPage();
-	            }
-	        }).start();
-	        break;
-	}
-	}
 }

@@ -1,45 +1,28 @@
 package top.jiehuan.kilikili.Page;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 import javax.microedition.io.ConnectionNotFoundException;
-import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.StringItem;
 
-import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.PageInfo;
-import top.jiehuan.kilikili.VideoInfo;
-import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
-import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
 import top.jiehuan.kilikili.util.FindString;
-import top.jiehuan.kilikili.util.GetLangRes;
 import top.jiehuan.kilikili.util.URLget;
 
-public class GetVideoInfoPage implements CommandListener{
+public class GetVideoInfoPage extends Page implements CommandListener{
 	
 	public static final short PageID = 1;
 	
-	GetLangRes lang_res;
-	
-	Display display;
 	Form form;
 	StringItem title;
 	StringItem up_name=null;
-	StringItem view;
-	StringItem reply;
-	StringItem coin;
-	StringItem share;
-	StringItem like;
 	StringItem time;
 	StringItem part_title;
 	String desc;
@@ -51,37 +34,23 @@ public class GetVideoInfoPage implements CommandListener{
 	
 	public String bvid;
 	Image image;
-	Command back;
-	Command exit;
 	Command download;
 	Command view_cover;
 	Command author_info;
-	private MainMIDlet ml;
 	String video_url;
 	String cid;
 	
-	Vector page_info_list;
-	PageInfo page_info;
-	VideoInfo video_info;
 
 	public GetVideoInfoPage(Vector page_info_list){
 		//初始化需要用到的变量 
-		System.out.println("GetVideoInfoPage init");
-		this.page_info_list = page_info_list;
-		page_info = (PageInfo) page_info_list.lastElement();
-		ml=page_info.getMainMIDletObject();
-		display = Display.getDisplay(ml);
-		loadMessages();
+		super(page_info_list);
 		form=new Form(lang_res.getValue("videoDisplay"));
 		
-		try {
+		try{
 			video_info = page_info.getVideoInfo();
-		} catch (PageInfoEmptyException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		}catch(PageInfoEmptyException e){
+			displayErrorAlert("Page is Empty:"+e.getMessage());
 		}
-		
-
 		
 		// 初始化视频信息界面
 		System.out.println("init video info form");
@@ -140,8 +109,10 @@ public class GetVideoInfoPage implements CommandListener{
 							ml.platformRequest(new String(pic.getBytes("UTF-8"),"UTF-8"));
 						} catch (ConnectionNotFoundException e) {
 							e.printStackTrace();
+							displayErrorAlert(e.getMessage());
 						} catch (UnsupportedEncodingException e) {
 							e.printStackTrace();
+							displayErrorAlert(e.getMessage());
 						}
                     	
                     }
@@ -164,26 +135,7 @@ public class GetVideoInfoPage implements CommandListener{
 	        }
 	    }
 	 
-	 private void loadMessages() {
-	        // 根据系统语言加载相应的资源文件
-	        try {
-				lang_res = new GetLangRes(System.getProperty("microedition.locale"));
-				//System.out.println(lang_res.getLangFileContent());
-				System.out.println("GetVideoInfoPage:Get lang_res OK");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-	    }
-		private void goLastPage(){
-			
-			page_info_list.removeElementAt(page_info_list.size()-1);
-			PageInfo last_page = (PageInfo) page_info_list.lastElement();
-			System.out.println("call goLastPage.Page now is:"+last_page.pageID);
-			
-			short page = last_page.pageID;
-			page_info.back(page, page_info_list);
-		 }
-		private void initPageVars() throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
+		protected void initPageVars(){
 			
 			try {
 				this.bvid=page_info.getBVID();
@@ -206,9 +158,13 @@ public class GetVideoInfoPage implements CommandListener{
 			cid = Long.toString(video_info.getCID());
 			pic = video_info.getCoverURL();
 			mid = Long.toString(video_info.getUserMID());
-			video_url=URLget.BackVideoLink(bvid, cid);
+			try {
+				video_url=URLget.BackVideoLink(bvid, cid);
+			} catch(Exception e){
+				displayErrorAlert("GetVideoInfoPage initPageVars error"+e.getMessage());
+			}
 		}
-		private void initDisplayVars(){
+		protected void initDisplayVars(){
 			System.out.println("start initDisplayVars");
 			title=new StringItem(null, video_info.getTitle());
 			if(video_info.getVideoParts() != 1){
@@ -218,13 +174,12 @@ public class GetVideoInfoPage implements CommandListener{
 			info = new StringItem(null,"\n"+lang_res.getValue("view")+video_info.getView()+lang_res.getValue("ci")+"  "+lang_res.getValue("reply")+video_info.getReply()+lang_res.getValue("ci")+"  "+lang_res.getValue("coin")+video_info.getCoin()+lang_res.getValue("ge")+"  "+lang_res.getValue("share")+video_info.getShare()+lang_res.getValue("ci")+"  "+lang_res.getValue("like")+video_info.getLike()+lang_res.getValue("ci")+"  "+lang_res.getValue("favorite")+video_info.getFavorite()+lang_res.getValue("ci"));
 			time = new StringItem(null,"\n"+lang_res.getValue("public_time")+":"+video_info.getFormatPubTime());
 			download=new Command(lang_res.getValue("download"),Command.ITEM,1);
-			back=new Command(lang_res.getValue("back"),Command.BACK,1);
-			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
+			initBackAndExitCommand();
 			view_cover=new Command(lang_res.getValue("cover"),Command.ITEM,2);
 			author_info=new Command(lang_res.getValue("authorInfo"),Command.ITEM,2);
 
 		}
-		private void display(){
+		protected void display(){
 			System.out.println("start display");
 			form.append(title);
 			if(video_info.getVideoParts() != 1){
@@ -250,12 +205,4 @@ public class GetVideoInfoPage implements CommandListener{
 			display.setCurrent(form);
 
 		}
-		private void displayErrorAlert(String error){
-			 Alert alert = new Alert("Error", error, null, AlertType.ERROR);
-		     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
-		     back=new Command(lang_res.getValue("back"),Command.BACK,1);
-		     alert.addCommand(back);
-		     alert.setCommandListener(this);
-		     display.setCurrent(alert, form);	
-		 }
 }
