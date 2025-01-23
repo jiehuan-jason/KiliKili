@@ -13,7 +13,6 @@ import javax.microedition.lcdui.Displayable;
 import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.PageInfo;
 import top.jiehuan.kilikili.VideoInfo;
-import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 import top.jiehuan.kilikili.util.GetLangRes;
 
 abstract public class Page implements CommandListener{

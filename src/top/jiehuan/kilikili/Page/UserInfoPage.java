@@ -43,7 +43,7 @@ public class UserInfoPage extends Page implements CommandListener {
 	public UserInfoPage(Vector page_info_list){
 		super(page_info_list);
 		this.page_info_list = page_info_list;
-		form=new Form(name+lang_res.getValue("user_info"));
+		form=new Form(lang_res.getValue("user_info"));
 		
 		try{
 			video_info = page_info.getVideoInfo();
@@ -113,6 +113,8 @@ public class UserInfoPage extends Page implements CommandListener {
 	}
 	
 	protected void initDisplayVars(){
+		form=null;
+		form=new Form(name+lang_res.getValue("user_info"));
 		nameitem=new StringItem("",name+"  ");
 		signitem=new StringItem("",lang_res.getValue("introduction")+sign+"\n");
 		fansitem=new StringItem("",lang_res.getValue("fans")+fans+"\n");

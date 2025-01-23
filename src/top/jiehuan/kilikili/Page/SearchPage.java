@@ -85,26 +85,14 @@ public class SearchPage extends Page implements CommandListener{
 	            }).start();
 	        }else if(c == last_page){
 	        	page_num--;
+	        	System.out.println("now page is "+page_num);
 	        	page_info.setSearchInfo(keyword, page_num);
-	        	try {
-					initPageVars();
-					display();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					displayErrorAlert(e.getMessage());
-				} 
+	        	refreshPage();
 	        }else if(c == next_page){
 	        	page_num++;
+	        	System.out.println("now page is "+page_num);
 	        	page_info.setSearchInfo(keyword, page_num);
-	        	try {
-					initPageVars();
-					display();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					displayErrorAlert(e.getMessage());
-				} 
+	        	refreshPage();
 	        }
 	        else if (d == search_list) {
 	            // 检查是否是通过选择列表项触发的 OK 键
@@ -116,6 +104,23 @@ public class SearchPage extends Page implements CommandListener{
 	            }
 	        }
 	    }
+	 private void refreshPage(){
+		 page_info.emptyContent();
+		 search_list=null;
+		 search_list=new List(lang_res.getValue("search_list"),List.IMPLICIT);
+		 new Thread(new Runnable() {
+             public void run() {
+            	 try {
+         			initPageVars();
+         			display();
+         		 } catch (Exception e) {
+         			// TODO Auto-generated catch block
+         			e.printStackTrace();
+         			displayErrorAlert(e.getMessage());
+         		 } 
+             }
+         }).start();
+	 }
 	 protected void initPageVars(){
 		
 		String web="";
@@ -135,13 +140,16 @@ public class SearchPage extends Page implements CommandListener{
 		
 		String[] list_str=FindString.FindTitle(web);
 	    list_bvid=FindString.FindBVID(web);
-		
+	    String[] type_list=FindString.FindVideoType(web);
 		for(int i=0;i<maxVideosNum;i++){
 			if(!((list_str[i].equals(null))||(list_bvid[i].equals(null)))){//在列表内添加搜索到的视频的标题
 			System.out.println("str:"+list_str[i]);
 			System.out.println("bvid:"+list_bvid[i]);
-			search_list.append(list_str[i], null);}
-			else{
+			System.out.println("type:"+type_list[i]);
+			System.out.println();
+			if(type_list[i].equals("video"))
+				search_list.append(list_str[i], null);
+			}else{
 				break;
 			}
 		}

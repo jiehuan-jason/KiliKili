@@ -112,9 +112,8 @@ public class FindString {
 		        }
 		        return resultArray;
 		    }
-		 public static String[] FindBVID(String input) {
-			 	String keyword="\"bvid\"";
-			    String[] resultArray = new String[40];
+		 public static String[] FindTextArray(String keyword,String input){
+			 String[] resultArray = new String[40];
 		        //int keywordLength = keyword.length()+2;
 		        int currentIndex = 0;
 		        int num=0;
@@ -147,7 +146,17 @@ public class FindString {
 		            currentIndex = endQuote + 1;
 		        }
 		        return resultArray;
-		    }		//分割字符串 \n
+		 }
+		 public static String[] FindBVID(String input) {
+			 String keyword="\"bvid\"";
+			 return FindTextArray(keyword, input);
+		 }	
+		 
+		 public static String[] FindVideoType(String input){
+			 String keyword="\"type\"";
+			 return FindTextArray(keyword, input);
+		 }
+		 
 		 public static String[] Display_Desc(String str){
 			 
 			 	int count = 0;

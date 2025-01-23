@@ -4,28 +4,20 @@ import java.util.Vector;
 
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 
-import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.PageInfo;
 import top.jiehuan.kilikili.PartInfo;
 import top.jiehuan.kilikili.VideoInfo;
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
-import top.jiehuan.kilikili.util.GetLangRes;
 import top.jiehuan.kilikili.util.URLget;
 
 public class PartVideoListPage extends Page implements CommandListener{
 	public static final short PageID = 9;
 	private static final short PARTS_IN_PAGE = 20;
 	
-	GetLangRes lang_res;
-	private MainMIDlet ml;
-	Display display;
 	List videos_list;
-	Command back;
-	Command exit;
 	Command go;
 	Command last_page;
 	Command next_page;
@@ -36,19 +28,19 @@ public class PartVideoListPage extends Page implements CommandListener{
 	private int page_pn;
 	private int parts;
 	private int pages;
-	private Vector page_info_list;
-	private PageInfo page_info;
-	private VideoInfo video_info;
 	
 	public PartVideoListPage(Vector page_info_list){
 		super(page_info_list);
-		videos_list = new List(video_info.getTitle(),List.IMPLICIT);
 		
 		try{
 			video_info = page_info.getVideoInfo();
 		}catch(PageInfoEmptyException e){
 			displayErrorAlert("Page is Empty:"+e.getMessage());
 		}
+		
+		videos_list = new List(video_info.getTitle(),List.IMPLICIT);
+		
+		
 		
 		initPageVars();
 		initDisplayVars();

@@ -91,6 +91,11 @@ public class PageInfo {
 		this.content = content;
 	}
 	
+	public void emptyContent(){
+		isContentSet = false;
+		this.content = "";
+	}
+	
 	public String getContent() throws PageInfoEmptyException{
 		if(isContentSet)
 			return content;
