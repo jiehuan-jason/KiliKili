@@ -6,13 +6,13 @@ public class PageInfo {
 	public short pageID;
 	
 	private MainMIDlet ml;
-	private String BVID;
+	private String BVID = "";
 	private boolean isBVIDSet = false;
-	private String search_keyword;
+	private String search_keyword = "";
 	private boolean isPageSet = false;
-	private int page;
+	private int page = -1;
 	private boolean isSearchSet = false;
-	private String content;
+	private String content = "";
 	private boolean isContentSet = false;
 	
 	public PageInfo(short PageID, MainMIDlet ml){
@@ -60,28 +60,21 @@ public class PageInfo {
 		search_keyword = keyword;
 	}
 	
-	public void setPageInfo(int page){
+	public void setPage(int page){
 		isPageSet = true;
 		this.page = page;
 	}
 	
-	public int getPageInfo() throws PageInfoEmptyException{
-		if(isPageSet)
-			return page;
-		else
-			throw new PageInfoEmptyException();
+	public int getPage(){
+		return page;
+	}
+	public boolean getIsPageSet(){
+		return isPageSet;
 	}
 	
 	public String getSearchKeyword() throws PageInfoEmptyException{
 		if(isSearchSet)
 			return search_keyword;
-		else
-			throw new PageInfoEmptyException();
-	}
-	
-	public int getSearchPage() throws PageInfoEmptyException{
-		if(isSearchSet)
-			return page;
 		else
 			throw new PageInfoEmptyException();
 	}

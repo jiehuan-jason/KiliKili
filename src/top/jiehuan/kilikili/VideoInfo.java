@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
-import top.jiehuan.kilikili.Page.AboutPage;
 import top.jiehuan.kilikili.util.FindString;
 import top.jiehuan.kilikili.util.URLget;
 
@@ -82,7 +81,7 @@ public class VideoInfo {
 	
 	public String getVideoContent(){
 		try{
-			String s_info = URLget.BackWeb(URLget.GET_INFO_URL+"bvid="+bvid+"&version="+AboutPage.version);
+			String s_info = URLget.BackWeb(URLget.GET_INFO_URL+"bvid="+bvid);
 			System.out.println("VideoInfo:getVideoContent successfully");
 			status = true;
 			return s_info;

@@ -20,7 +20,7 @@ public class AboutPage extends Page implements CommandListener {
 	StringItem text;
 	StringItem thanks_list;
 	
-	public static String version = "0.3.5";
+	public static String version = "0.4.1";
 	
 	public AboutPage(Vector page_list_info){
 		//初始化变量和界面

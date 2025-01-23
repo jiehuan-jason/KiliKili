@@ -34,12 +34,13 @@ public class UserVideoListPage extends Page implements CommandListener {
 	
 	public UserVideoListPage(Vector page_info_list){
 		super(page_info_list);
-		video_list=new List(video_info.getUserName()+lang_res.getValue("video_list"),List.IMPLICIT);
 		try{
 			video_info = page_info.getVideoInfo();
 		}catch(PageInfoEmptyException e){
 			displayErrorAlert("Page is Empty:"+e.getMessage());
 		}
+		video_list=new List(video_info.getUserName()+lang_res.getValue("video_list"),List.IMPLICIT);
+		
 			initPageVars();
 			initDisplayVars();
 			display();
@@ -78,7 +79,7 @@ public class UserVideoListPage extends Page implements CommandListener {
             }).start();
         }else if(c == last_page){
         	page_num--;
-        	page_info.setPageInfo(page_num);
+        	page_info.setPage(page_num);
         	last_aid.removeElementAt(last_aid.size()-1);
         	last_aid.removeElementAt(last_aid.size()-1);
         	try {
@@ -91,7 +92,7 @@ public class UserVideoListPage extends Page implements CommandListener {
 			} 
         }else if(c == next_page){
         	page_num++;
-        	page_info.setPageInfo(page_num);
+        	page_info.setPage(page_num);
         	try {
 				refreshPage(last_aid.lastElement().toString());
 				display();

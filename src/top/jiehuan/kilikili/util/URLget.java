@@ -23,11 +23,13 @@ import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
 public class URLget {
 	static int maxHttpGetBytes = 60000;
 	static int bufferZoneBytes = 3072;
+	
+	//KiliKili Server
 	public static String IP_ADDRESS="localhost";
 	public static String DOWNLOAD_ADDRESS=IP_ADDRESS;
 	public static String SEARCH_URL="http://"+IP_ADDRESS+":3000/search?keyword=";
 	public static String USER_INFO_URL="http://"+IP_ADDRESS+":3000/user?mid=";
-	public static String RCMD_URL="http://"+IP_ADDRESS+":3232";
+	//public static String RCMD_URL="http://"+IP_ADDRESS+":3232";
 	public static String GET_INFO_URL="http://"+IP_ADDRESS+":3000/view?";
 	public static String GET_VIDEO_DOWNLOAD_LINK_URL="http://"+IP_ADDRESS+":2121/api/playurl?";
 	public static String GET_USER_VIDEOS_URL="http://"+IP_ADDRESS+":3000/user/video?";
@@ -36,8 +38,14 @@ public class URLget {
 	public static String GET_TRANSCODING_STATUS_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/status?";
 	public static String DOWNLOAD_TRANSCODING_VIDEO_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/output/";
 	
+	//BiliBili Server
+	public static String RCMD_URL = "http://localhost:3232/test";
+	//public static String RCMD_URL="https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd";
+	//public static String GET_INFO_URL="https://api.bilibili.com/x/web-interface/view?";
+	//public static String GET_VIDEO_DOWNLOAD_LINK_URL="https://api.bilibili.com/x/player/playurl?"; //&qn=6&platform=html5&high_quality=1
+	
 	public static String BackVideoLink(String bvid,String cid) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
-		String url = GET_VIDEO_DOWNLOAD_LINK_URL+"bvid="+bvid+"&cid="+cid;
+		String url = GET_VIDEO_DOWNLOAD_LINK_URL+"bvid="+bvid+"&cid="+cid+"&qn=6&platform=html5&high_quality=1";
 		String content = BackWeb(url);
 		System.out.println(content);
 		if(content.startsWith("error")){

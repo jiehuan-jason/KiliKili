@@ -18,16 +18,23 @@ public class RecommendPage extends Page implements CommandListener {
 	List rcmd_list;
 	Command go;
 	Command view_cover;
+	Command refresh;
+	Command last_page;
+	Command next_page;
 	Form form;
 	
 	String[] titles;
 	String[] bvids;
+	
+	private int page_num=1;
 	
 	public RecommendPage(Vector page_info_list){
 		// 初始化变量和界面
 		super(page_info_list);
 
 		rcmd_list=new List(lang_res.getValue("rcmd_list"),List.IMPLICIT);
+		if(page_info.getIsPageSet()) 
+			page_num=page_info.getPage();
 		try{
 			initDisplayVars();
 			initPageVars();
@@ -58,6 +65,26 @@ public class RecommendPage extends Page implements CommandListener {
                 	
                 }
             }).start();
+        }else if(c==refresh){
+        	rcmd_list = null;
+        	rcmd_list=new List(lang_res.getValue("rcmd_list"),List.IMPLICIT);
+        	page_info.emptyContent();
+        	new Thread(new Runnable() {
+                public void run() {
+                	initPageVars();
+                	display();
+                }
+            }).start();
+        }else if(c == last_page){
+        	page_num--;
+        	System.out.println("now page is "+page_num);
+        	page_info.setPage(page_num);
+        	refreshPage();
+        }else if(c == next_page){
+        	page_num++;
+        	System.out.println("now page is "+page_num);
+        	page_info.setPage(page_num);
+        	refreshPage();
         }else if(c==go){
         	new Thread(new Runnable() {
                 public void run() {
@@ -86,6 +113,25 @@ public class RecommendPage extends Page implements CommandListener {
             }
         }
     }
+	
+	private void refreshPage(){
+		 page_info.emptyContent();
+		 rcmd_list=null;
+		 rcmd_list=new List(lang_res.getValue("rcmd_list"),List.IMPLICIT);
+		 new Thread(new Runnable() {
+            public void run() {
+           	 try {
+        			initPageVars();
+        			display();
+        		 } catch (Exception e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        			displayErrorAlert(e.getMessage());
+        		 } 
+            }
+        }).start();
+	 }
+	
 	private void goInfoPage(){
 		String bvid = bvids[rcmd_list.getSelectedIndex()];
     	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,ml);
@@ -110,7 +156,7 @@ public class RecommendPage extends Page implements CommandListener {
 			}
 		}else{
 			try {
-				rcmd_data = URLget.BackWeb(URLget.RCMD_URL);
+				rcmd_data = URLget.BackWeb(URLget.RCMD_URL+"?fresh_idx="+page_num);
 			} catch(Exception e){
 				displayErrorAlert("RcmdPage Error:"+e.getMessage());
 			}
@@ -130,15 +176,23 @@ public class RecommendPage extends Page implements CommandListener {
 	}
 	protected void initDisplayVars(){
 		System.out.println("start to initDisplayVars");
-		view_cover=new Command(lang_res.getValue("view_cover"),Command.ITEM,2);
+		view_cover=new Command(lang_res.getValue("view_cover"), Command.ITEM,2);
 		initBackAndExitCommand();
-		go = new Command(lang_res.getValue("go"),Command.OK,1);
+		go = new Command(lang_res.getValue("go"), Command.OK,1);
+		//refresh = new Command(lang_res.getValue("refresh"),Command.ITEM,1);
+		last_page=new Command(lang_res.getValue("last_page"),Command.OK,2);
+		next_page=new Command(lang_res.getValue("next_page"),Command.OK,2);
 	}
 	protected void display(){
 		System.out.println("start to display");
 		rcmd_list.addCommand(back);
 		rcmd_list.addCommand(go);
 		rcmd_list.setSelectCommand(go);
+		//rcmd_list.addCommand(refresh);
+		if(!(page_num==1))
+			rcmd_list.addCommand(last_page);
+		if(page_num<=100)
+			rcmd_list.addCommand(next_page);
 		rcmd_list.addCommand(view_cover);
 		rcmd_list.addCommand(exit);
 		rcmd_list.setCommandListener(this);

@@ -72,13 +72,16 @@ abstract public class Page implements CommandListener{
      }
 	
 	public void goLastPage(){
+		if(page_info_list.size()==1)
+			backMainPage();
+		else{
+			page_info_list.removeElementAt(page_info_list.size()-1);
+			PageInfo last_page = (PageInfo) page_info_list.lastElement();
+			System.out.println("call goLastPage.Page now is:"+last_page.pageID);
 		
-		page_info_list.removeElementAt(page_info_list.size()-1);
-		PageInfo last_page = (PageInfo) page_info_list.lastElement();
-		System.out.println("call goLastPage.Page now is:"+last_page.pageID);
-		
-		short page = last_page.pageID;
-		back(page, page_info_list);
+			short page = last_page.pageID;
+			back(page, page_info_list);
+		}
 	}
 	
 	protected void initBackAndExitCommand(){

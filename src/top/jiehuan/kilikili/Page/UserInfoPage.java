@@ -116,7 +116,8 @@ public class UserInfoPage extends Page implements CommandListener {
 		form=null;
 		form=new Form(name+lang_res.getValue("user_info"));
 		nameitem=new StringItem("",name+"  ");
-		signitem=new StringItem("",lang_res.getValue("introduction")+sign+"\n");
+		signitem=new StringItem("",lang_res.getValue("introduction"));
+		
 		fansitem=new StringItem("",lang_res.getValue("fans")+fans+"\n");
 		attentionsitem=new StringItem("",lang_res.getValue("attentions")+attentions+"\n");
 	
@@ -137,6 +138,10 @@ public class UserInfoPage extends Page implements CommandListener {
 		//form.append(levelitem);
 		form.append(level_img);
 		form.append(signitem);
+		String[] items=FindString.Display_Desc(sign);
+		for(int i=0;i<items.length;i++){
+			form.append(new StringItem(null,items[i]));
+		}
 		form.append(fansitem);
 		form.append(attentionsitem);
 		form.addCommand(back);

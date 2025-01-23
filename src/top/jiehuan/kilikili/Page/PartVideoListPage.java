@@ -64,28 +64,12 @@ public class PartVideoListPage extends Page implements CommandListener{
 	            }).start();
 	        }else if(c == last_page){
 	        	page_pn--;
-	        	page_info.setPageInfo(page_pn);
-	        	try {
-					initPageVars();
-					initDisplayVars();
-					display();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					displayErrorAlert(e.getMessage());
-				} 
+	        	page_info.setPage(page_pn);
+	        	refresh();
 	        }else if(c == next_page){
 	        	page_pn++;
-	        	page_info.setPageInfo(page_pn);
-	        	try {
-					initPageVars();
-					initDisplayVars();
-					display();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					displayErrorAlert(e.getMessage());
-				} 
+	        	page_info.setPage(page_pn);
+	        	refresh();
 	        }
 	        else if (d == videos_list) {
 	            // 检查是否是通过选择列表项触发的 OK 键
@@ -101,6 +85,24 @@ public class PartVideoListPage extends Page implements CommandListener{
 	            }
 	        }
 	    }
+	private void refresh(){
+		page_info.emptyContent();
+		videos_list = null;
+		videos_list = new List(video_info.getTitle(),List.IMPLICIT);
+		new Thread(new Runnable() {
+            public void run() {
+            	try {
+        			initPageVars();
+        			initDisplayVars();
+        			display();
+        		} catch (Exception e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        			displayErrorAlert(e.getMessage());
+        		} 
+            }
+        }).start();
+	}
 	private void goInfoPage(){
 		long cid = cid_list[videos_list.getSelectedIndex()];
     	int parts_base = (page_pn-1)*PARTS_IN_PAGE;
@@ -146,12 +148,11 @@ public class PartVideoListPage extends Page implements CommandListener{
 				System.out.println(e.getMessage());
 				displayErrorAlert(e.getMessage());
 			}
-		 try{
-			 page_pn = page_info.getPageInfo();
-			 
-		 }catch(Exception e){
+		 if(page_info.getIsPageSet())
+			 page_pn = page_info.getPage();
+		 else{
 			 page_pn = 1;
-			 page_info.setPageInfo(page_pn);
+			 page_info.setPage(page_pn);
 		 }
 		 
 		 try{

@@ -39,7 +39,8 @@ public class SearchPage extends Page implements CommandListener{
 		
 		try {
 			keyword = URLget.urlEncode(page_info.getSearchKeyword());
-			page_num = page_info.getSearchPage();
+			if(page_info.getIsPageSet())
+				page_num = page_info.getPage();
 		} catch (PageInfoEmptyException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -137,10 +138,12 @@ public class SearchPage extends Page implements CommandListener{
 				displayErrorAlert("SearchPage initPageVars Error:"+e.getMessage());
 			} 
 		}
-		
-		String[] list_str=FindString.FindTitle(web);
-	    list_bvid=FindString.FindBVID(web);
-	    String[] type_list=FindString.FindVideoType(web);
+		String[] list_str=FindString.extractContents(web,"\"title\"");
+		list_bvid=FindString.extractContents(web,"\"bvid\"");
+		String[] type_list=FindString.extractContents(web,"\"type\"");
+		//String[] list_str=FindString.FindTitle(web);
+	    //list_bvid=FindString.FindBVID(web);
+	    //String[] type_list=FindString.FindVideoType(web);
 		for(int i=0;i<maxVideosNum;i++){
 			if(!((list_str[i].equals(null))||(list_bvid[i].equals(null)))){//在列表内添加搜索到的视频的标题
 			System.out.println("str:"+list_str[i]);
