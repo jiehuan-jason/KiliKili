@@ -10,6 +10,7 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 import javax.microedition.io.HttpsConnection;
 
+import top.jiehuan.kilikili.WebModel;
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
 
@@ -21,8 +22,8 @@ import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
  *
  */
 public class URLget {
-	static int maxHttpGetBytes = 60000;
-	static int bufferZoneBytes = 3072;
+	final static int MAX_HTTP_GET_BYTES = 1024*1024;
+	final static int bufferZoneBytes = 4096;
 	
 	//KiliKili Server
 	public static String IP_ADDRESS="localhost";
@@ -37,12 +38,17 @@ public class URLget {
 	public static String SEND_TRANSCODING_REQUEST_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/download?";
 	public static String GET_TRANSCODING_STATUS_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/status?";
 	public static String DOWNLOAD_TRANSCODING_VIDEO_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/output/";
+	//public static String GET_QRCODE_URL="http://"+IP_ADDRESS+":3232/login";
+	//public static String GET_QRCODE_LOGIN_STATUS="http://"+IP_ADDRESS+":3232/lstatus?";
 	
 	//BiliBili Server
-	public static String RCMD_URL = "http://localhost:3232/test";
-	//public static String RCMD_URL="https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd";
+	//public static String RCMD_URL = "http://localhost:3232/test";
+	public static String RCMD_URL="https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd";
 	//public static String GET_INFO_URL="https://api.bilibili.com/x/web-interface/view?";
 	//public static String GET_VIDEO_DOWNLOAD_LINK_URL="https://api.bilibili.com/x/player/playurl?"; //&qn=6&platform=html5&high_quality=1
+	public static String GET_QRCODE_URL="https://passport.bilibili.com/x/passport-login/web/qrcode/generate";
+	public static String GET_QRCODE_LOGIN_STATUS="https://passport.bilibili.com/x/passport-login/web/qrcode/poll?";
+	public static String GET_PERSONAL_INFO_URL = "https://api.bilibili.com/x/member/web/account";
 	
 	public static String BackVideoLink(String bvid,String cid) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
 		String url = GET_VIDEO_DOWNLOAD_LINK_URL+"bvid="+bvid+"&cid="+cid+"&qn=6&platform=html5&high_quality=1";
@@ -53,6 +59,102 @@ public class URLget {
 		}else{
 			return FindString.findValue(content,"url");
 		}
+	}
+	public static WebModel BackWebAndCookies(String url) throws ErrorVideoStatusException, WebReturnErrorCodeException, IOException{
+		DataInputStream dis =null;
+        InputStream inputStream = null;
+
+		HttpsConnection https_connection=null;
+		HttpConnection connection = null;
+		
+		String content="error";
+		WebModel web = new WebModel();
+        try{
+        	if(url.startsWith("https")){
+        		int num=0;
+
+    	        System.gc();
+	        	System.out.println("before open connection,free memory is:"+Runtime.getRuntime().freeMemory());
+	        	System.out.println("open the connection :"+url);
+	            // 打开连接 设置请求方式和请求类型
+	        	https_connection = (HttpsConnection) Connector.open(url);
+	        	https_connection.setRequestMethod(HttpsConnection.GET);
+	        	https_connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
+	            // 连接
+	            num = https_connection.getResponseCode();
+	            
+	            // 输出返回的网页代码
+	            System.out.println("get now");
+	            System.out.println(num);
+	
+	            if(num==200){
+	            	String cookie = https_connection.getHeaderField("Set-Cookie");  // 获取响应头中的 Cookie
+	                if (cookie != null) {
+	                    web.cookies = cookie;
+	                    System.out.println("Stored cookie: " + content);
+	                }
+	                try{
+		            	content = getInfoFromHttpsConnection(https_connection);
+		            	web.content = content;
+	            	}catch(IOException e1){
+	            		e1.printStackTrace();
+	            		throw e1;
+	            	}
+	                
+	            } else{
+	            	throw new WebReturnErrorCodeException(num);
+	            }
+        	}else{
+    	        //return "This method needs HTTPS!";
+        		int num=0;
+    	        
+    	        
+    	        System.gc();
+	        	System.out.println("before open connection,free memory is:"+Runtime.getRuntime().freeMemory());
+	        	System.out.println("open the connection :"+url);
+	            // 打开连接 设置请求方式和请求类型
+	            connection = (HttpConnection) Connector.open(url);
+	            connection.setRequestMethod(HttpConnection.GET);
+	            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
+	            // 连接
+	            num = connection.getResponseCode();
+	            
+	            // 输出返回的网页代码
+	            System.out.println("get now");
+	            System.out.println(num);
+	            
+	            
+	            if(num==200){
+	            	String cookie = connection.getHeaderField("Set-Cookie");  // 获取响应头中的 Cookie
+	                if (cookie != null) {
+	                    web.cookies = cookie;
+	                    System.out.println("Stored cookie: " + content);
+	                }
+	                try{
+		            	content = getInfoFromHttpConnection(connection);
+		            	web.content = content;
+	            	}catch(IOException e1){
+	            		e1.printStackTrace();
+	            		throw e1;
+	            	}
+	            } else{
+	            	throw new WebReturnErrorCodeException(num);
+	            }
+        	}
+        }catch(IOException e){
+        	throw e;
+        }finally{
+        	if(inputStream!=null)
+				inputStream.close();
+			if(dis!=null)
+				dis.close();
+        	if(url.startsWith("https")&&https_connection!=null)
+	        	// 关闭连接
+				https_connection.close();
+        }
+        System.out.println("after open connection,free memory is:"+Runtime.getRuntime().freeMemory());
+        System.out.println("URLget:return successfully");
+        return web;
 	}
 	 public static String BackWeb(String url) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
 		 	DataInputStream dis =null;
@@ -73,6 +175,15 @@ public class URLget {
 		        	https_connection = (HttpsConnection) Connector.open(url);
 		        	https_connection.setRequestMethod(HttpsConnection.GET);
 		        	https_connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
+		        	try{
+		        		CookiesUtils cookies_util = new CookiesUtils();
+		        		if(cookies_util.isTokenStored())
+		        			https_connection.setRequestProperty("Cookie", cookies_util.loadToken());
+		        	}catch(Exception e){
+		        		//什么都不做
+		        	}
+		        	
+		        	
 		            // 连接
 		            num = https_connection.getResponseCode();
 		            
@@ -102,6 +213,13 @@ public class URLget {
 		            connection = (HttpConnection) Connector.open(url);
 		            connection.setRequestMethod(HttpConnection.GET);
 		            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
+		            try{
+		        		CookiesUtils cookies_util = new CookiesUtils();
+		        		if(cookies_util.isTokenStored())
+		        			connection.setRequestProperty("Cookie", cookies_util.loadToken());
+		        	}catch(Exception e){
+		        		//什么都不做
+		        	}
 		            // 连接
 		            num = connection.getResponseCode();
 		            
@@ -128,10 +246,10 @@ public class URLget {
 					inputStream.close();
 				if(dis!=null)
 					dis.close();
-	        	if(url.startsWith("https"))
+	        	if(url.startsWith("https")&&https_connection!=null)
 		        	// 关闭连接
 					https_connection.close();
-	        	else
+	        	else if(connection!=null)
 	        		connection.close();
 	        }
 	        System.out.println("after open connection,free memory is:"+Runtime.getRuntime().freeMemory());
@@ -152,39 +270,30 @@ public class URLget {
 		 int connectionLength = (int)connection.getLength();
 		 return getInfoFromConnection(dis,connectionLength);
 	 }
-	 	private static String getInfoFromConnection(DataInputStream dis, int connectionLength) throws UnsupportedEncodingException, IOException{ 	
-        	if(connectionLength!=-1){
-        		byte[] buffer = new byte[bufferZoneBytes]; // 缓冲区
-                int bytesRead = 0;
-                int totalBytesRead = 0;
-                StringBuffer webPageBuffer = new StringBuffer();
-                System.out.println("begin to read data");
-                // 逐块读取数据
-                while ((bytesRead = dis.read(buffer)) != -1) {
-                    if (totalBytesRead + bytesRead > maxHttpGetBytes) {
-                        bytesRead = maxHttpGetBytes - totalBytesRead; // 只读取剩余的字节
-                        System.out.println("reading...");
-                    }
-                    webPageBuffer.append(new String(buffer, 0, bytesRead,"UTF-8"));
-                    totalBytesRead += bytesRead;
-                    
-                    if (totalBytesRead >= maxHttpGetBytes) {
-                        break; // 达到最大字节数，停止读取
-                    }
-                }
-                System.out.println(webPageBuffer.toString()); 
-                return webPageBuffer.toString();    // 输出获取到的内容
-        	}else{
-        		System.out.println("length==-1");
-        		ByteArrayOutputStream bs=new ByteArrayOutputStream();
-        		int ch = 0;
-        		while((ch=dis.read())!=-1){
-        			bs.write(ch);
-        		}
-        		bs.close();        	
-        		return new String(bs.toByteArray(),"UTF-8");
-        	}
-	 	}
+	 private static String getInfoFromConnection(DataInputStream dis, int connectionLength) 
+		        throws IOException {
+		    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		    byte[] buffer = new byte[bufferZoneBytes]; // 缓冲区大小建议为1KB或4KB
+		    int bytesRead;
+		    int totalBytesRead = 0;
+
+		    while ((bytesRead = dis.read(buffer)) != -1) {
+		        // 检查是否超过最大限制
+		        if (totalBytesRead + bytesRead > MAX_HTTP_GET_BYTES) {
+		            bytesRead = MAX_HTTP_GET_BYTES - totalBytesRead;
+		            if (bytesRead <= 0) {
+		                break; // 达到限制，停止读取
+		            }
+		        }
+		        baos.write(buffer, 0, bytesRead);
+		        totalBytesRead += bytesRead;
+		        if (totalBytesRead >= MAX_HTTP_GET_BYTES) {
+		            break; // 防止最后一次读取后超出限制
+		        }
+		    }
+		    // 使用正确的字符编码转换字节数据
+		    return new String(baos.toByteArray(), "UTF-8");
+		}
 	    static public String urlEncode(String text) {
 	        StringBuffer encoded = new StringBuffer();
 	        try {

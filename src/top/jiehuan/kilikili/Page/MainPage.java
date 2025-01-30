@@ -26,6 +26,7 @@ public class MainPage extends Page implements CommandListener{
 	Command rcmd;
 	Command search;
 	Command back;
+	Command mine;
 	
 	public MainPage(MainMIDlet ml){
 		super(ml);
@@ -107,6 +108,13 @@ public class MainPage extends Page implements CommandListener{
             }).start();
         }else if(c==back){
         	display.setCurrent(form);
+        }else if(c==mine){
+        	new Thread(new Runnable() {
+                public void run() {
+                	page_info_list.addElement(new PageInfo(MyInfoPage.PageID,ml));
+                    new MyInfoPage(page_info_list); //打开我的界面
+                }
+            }).start();
         }
     }
 	
@@ -125,6 +133,7 @@ public class MainPage extends Page implements CommandListener{
 		about = new Command(lang_res.getValue("about"),Command.OK,1);
 		rcmd = new Command(lang_res.getValue("rcmd_list"),Command.OK,1);
 		search = new Command(lang_res.getValue("search"),Command.OK,1);
+		mine = new Command(lang_res.getValue("mine"),Command.OK,1);
 		form = new Form(lang_res.getValue("main_page"));
 		tf = new TextField(lang_res.getValue("input"),"",20,TextField.ANY);
 		tips = new StringItem("","\n"+lang_res.getValue("tips"));
@@ -139,6 +148,7 @@ public class MainPage extends Page implements CommandListener{
 		form.addCommand(exit);
 		form.addCommand(search);
 		form.addCommand(rcmd);
+		form.addCommand(mine);
 		form.addCommand(about);
 		form.setCommandListener(this);
 		display.setCurrent(form);

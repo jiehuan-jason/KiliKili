@@ -54,6 +54,11 @@ abstract public class Page implements CommandListener{
 	    	});
 	     display.setCurrent(alert);	
 	 }
+	protected void displayInfoAlert(String info){
+		 Alert alert = new Alert("Info", info, null, AlertType.INFO);
+	     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+	     display.setCurrent(alert);	
+	 }
 	abstract protected void initPageVars();
 	abstract protected void initDisplayVars();
 	abstract protected void display();
