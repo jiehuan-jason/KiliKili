@@ -8,6 +8,7 @@
 
 * [SocialSisterYi/bilibili-API-collect: 哔哩哔哩-API收集整理【不断更新中....】](https://github.com/SocialSisterYi/bilibili-API-collect)
 * [有关bilibili免登录获取高画质mp4直链的研究 - 赵苦瓜のBlog](https://blog.jixiaob.cn/?post=113)
+* [jiehuan-jason/QRCode-Lib-J2ME](https://github.com/jiehuan-jason/QRCode-Lib-J2ME)
 
 希望各位给出建议，可以在dospy论坛上找到我：[jiehuan的个人资料 - DOSPY论坛 诺亚方舟号 - 塞班论坛|固件下载|hmd诺基亚安卓|智能手机|数码科技 -](https://www.dospy.wang/space-uid-45511.html)
 或者给我发邮件：jiehuan233[AT]outlook.com jiehuan233[AT]gmail.com
@@ -82,7 +83,13 @@ Nokia E7 功能完全正常 v0.2正式版 感谢dospy@肆玖叁拾陆
 
 经dospy@lisiqi2021测试：
 
-UC影音似乎可以播放声音和图像，略微卡顿（该项目前不确定）
+~~UC影音似乎可以播放声音和图像，略微卡顿~~
+
+经一位匿名用户的测试：
+
+UC影音直接下载的视频无法播放，转码后视频能播放，较卡顿
+
+RushPlayer均可播放，较卡顿
 
 #### Symbian^3
 
