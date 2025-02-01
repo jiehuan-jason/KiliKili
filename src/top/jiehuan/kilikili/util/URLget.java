@@ -31,8 +31,8 @@ public class URLget {
 	public static String SEARCH_URL="http://"+IP_ADDRESS+":3000/search?keyword=";
 	public static String USER_INFO_URL="http://"+IP_ADDRESS+":3000/user?mid=";
 	//public static String RCMD_URL="http://"+IP_ADDRESS+":3232";
-	public static String GET_INFO_URL="http://"+IP_ADDRESS+":3000/view?";
-	public static String GET_VIDEO_DOWNLOAD_LINK_URL="http://"+IP_ADDRESS+":2121/api/playurl?";
+	//public static String GET_INFO_URL="http://"+IP_ADDRESS+":3000/view?";
+	//public static String GET_VIDEO_DOWNLOAD_LINK_URL="http://"+IP_ADDRESS+":2121/api/playurl?";
 	public static String GET_USER_VIDEOS_URL="http://"+IP_ADDRESS+":3000/user/video?";
 	public static String GET_VIDEOS_PAGE_LIST_URL="http://"+IP_ADDRESS+":3000/list?";
 	public static String SEND_TRANSCODING_REQUEST_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/download?";
@@ -44,8 +44,8 @@ public class URLget {
 	//BiliBili Server
 	//public static String RCMD_URL = "http://localhost:3232/test";
 	public static String RCMD_URL="https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd";
-	//public static String GET_INFO_URL="https://api.bilibili.com/x/web-interface/view?";
-	//public static String GET_VIDEO_DOWNLOAD_LINK_URL="https://api.bilibili.com/x/player/playurl?"; //&qn=6&platform=html5&high_quality=1
+	public static String GET_INFO_URL="https://api.bilibili.com/x/web-interface/view?";
+	public static String GET_VIDEO_DOWNLOAD_LINK_URL="https://api.bilibili.com/x/player/playurl?"; //&qn=6&platform=html5&high_quality=1
 	public static String GET_QRCODE_URL="https://passport.bilibili.com/x/passport-login/web/qrcode/generate";
 	public static String GET_QRCODE_LOGIN_STATUS="https://passport.bilibili.com/x/passport-login/web/qrcode/poll?";
 	public static String GET_PERSONAL_INFO_URL = "https://api.bilibili.com/x/member/web/account";
