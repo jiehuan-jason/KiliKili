@@ -66,6 +66,52 @@ public class FindString {
 		        }
 		        return resultArray;
 		    }
+		 public static String[] FindTitleAndDeleteHtmlCode(String input) {
+			 	String keyword="\"title\"";
+			    String[] resultArray = new String[40];
+		        //int keywordLength = keyword.length()+2;
+		        int currentIndex = 0;
+		        int num=0;
+		        //input="\""+input+"\"";
+
+		        // 循环查找字符串
+		        while ((currentIndex = input.indexOf(keyword, currentIndex)) != -1) {
+		            // 查找冒号
+		            int startQuote = input.indexOf(":", currentIndex);
+		            if (startQuote == -1) {
+		                break;  // 如果没有找到双引号，退出循环
+		            }
+
+		            // 查找逗号
+		            int endQuote = input.indexOf(",", startQuote + 1);
+		            if (endQuote == -1) {
+		                break;  // 如果没有找到结束双引号，退出循环
+		            }
+
+		            // 提取双引号内的内容
+		            String content = input.substring(startQuote + 1, endQuote);
+		            if(!content.equals("\"\"")){
+		            	if (content.indexOf("<em class=\\\"keyword\\\">") != -1) {
+		                    // 替换子串
+		                    content = replace(content,"<em class=\\\"keyword\\\">", "");
+		                    
+		                }
+		            	if (content.indexOf("</em>") != -1) {
+		                    // 替换子串
+		                    content = replace(content,"</em>", "");
+		                    
+		                }
+		            	resultArray[num]=content.substring(1, content.length()-1);// 将内容存入数组
+		            	num++;
+		            }
+		            
+		            
+
+		            // 更新currentIndex以查找下一个字符串
+		            currentIndex = endQuote + 1;
+		        }
+		        return resultArray;
+		    }
 		 public static String[] Display_Desc(String str){
 			 
 			 	int count = 0;

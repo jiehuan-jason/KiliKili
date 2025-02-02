@@ -138,7 +138,7 @@ public class SearchPage extends Page implements CommandListener{
 				displayErrorAlert("SearchPage initPageVars Error:"+e.getMessage());
 			} 
 		}
-		String[] list_str=FindString.extractContents(web,"\"title\"");
+		String[] list_str=FindString.FindTitleAndDeleteHtmlCode(web);
 		list_bvid=FindString.extractContents(web,"\"bvid\"");
 		String[] type_list=FindString.extractContents(web,"\"type\"");
 		//String[] list_str=FindString.FindTitle(web);
