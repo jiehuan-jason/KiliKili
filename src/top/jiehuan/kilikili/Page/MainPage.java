@@ -148,7 +148,7 @@ public class MainPage extends Page implements CommandListener{
 		form.addCommand(exit);
 		form.addCommand(search);
 		form.addCommand(rcmd);
-		//form.addCommand(mine);
+		form.addCommand(mine);
 		form.addCommand(about);
 		form.setCommandListener(this);
 		display.setCurrent(form);

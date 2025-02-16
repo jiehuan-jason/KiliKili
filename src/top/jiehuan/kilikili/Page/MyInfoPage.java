@@ -29,6 +29,7 @@ public class MyInfoPage extends Page {
 	Command refresh;
 	Command delete;
 	StringItem tips;
+	StringItem personal_info;
 	
 	String[] info;
 	String cookies;
@@ -52,9 +53,10 @@ public class MyInfoPage extends Page {
 		} 
 		if(token_utils.isTokenStored()){
 			try{
-				displayInfoAlert("你已经登录！");
-				String webpage = URLget.BackWeb(URLget.GET_PERSONAL_INFO_URL);
-				displayInfoAlert(webpage);
+				//displayInfoAlert("你已经登录！cookies:"+token_utils.loadToken());
+				//String webpage = URLget.BackWeb(URLget.GET_PERSONAL_INFO_URL);
+				//displayInfoAlert(webpage);
+				personal_info = new StringItem("",URLget.BackWeb(URLget.GET_PERSONAL_INFO_URL));
 			}catch(Exception e){
 				e.printStackTrace();
 				displayErrorAlert(e.getMessage());
@@ -79,13 +81,15 @@ public class MyInfoPage extends Page {
 	}
 
 	protected void display() {
-		form.append(imageItem);
-		form.addCommand(back);
-		if(!token_utils.isTokenStored())
+		if(!token_utils.isTokenStored()){
+			form.append(imageItem);
 			form.addCommand(refresh);
+		}
 		else {
+			form.append(personal_info);
 			form.addCommand(delete);
 		}
+		form.addCommand(back);
 		form.addCommand(exit);
 		form.setCommandListener(this);
 		display.setCurrent(form);
@@ -107,7 +111,10 @@ public class MyInfoPage extends Page {
 					displayInfoAlert("Login Successfully!Cookies:"+content.cookies);
 					new CookiesUtils().updateToken(content.cookies);
 					String webpage = URLget.BackWeb(URLget.GET_PERSONAL_INFO_URL);
+					personal_info = new StringItem("",URLget.BackWeb(URLget.GET_PERSONAL_INFO_URL));
+					display();
 					displayInfoAlert(webpage);
+					
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -116,6 +123,7 @@ public class MyInfoPage extends Page {
         }else if(c==delete){
         	try{
         		new CookiesUtils().deleteToken();
+        		backMainPage();
         	}catch(Exception e){
         		//TODO
         	}
