@@ -3,6 +3,9 @@ package top.jiehuan.kilikili.Page;
 import java.util.Vector;
 
 import javax.microedition.lcdui.*;
+import javax.microedition.rms.RecordStoreException;
+import javax.microedition.rms.RecordStoreFullException;
+import javax.microedition.rms.RecordStoreNotFoundException;
 
 import top.jiehuan.kilikili.PageInfo;
 import top.jiehuan.kilikili.VideoInfo;
@@ -179,8 +182,8 @@ public class RecommendPage extends Page implements CommandListener {
 		view_cover=new Command(lang_res.getValue("view_cover"), Command.ITEM,2);
 		initBackAndExitCommand();
 		go = new Command(lang_res.getValue("go"), Command.OK,1);
-		//refresh = new Command(lang_res.getValue("refresh"),Command.ITEM,1);
 		last_page=new Command(lang_res.getValue("last_page"),Command.OK,2);
+		refresh = new Command(lang_res.getValue("refresh"),Command.ITEM,1);
 		next_page=new Command(lang_res.getValue("next_page"),Command.OK,2);
 	}
 	protected void display(){
@@ -188,7 +191,12 @@ public class RecommendPage extends Page implements CommandListener {
 		rcmd_list.addCommand(back);
 		rcmd_list.addCommand(go);
 		rcmd_list.setSelectCommand(go);
-		//rcmd_list.addCommand(refresh);
+		try {
+			if(new CookiesUtils().isTokenStored())
+				rcmd_list.addCommand(refresh);
+		} catch (Exception e) {
+			displayErrorAlert(e.getMessage());
+		}
 		if(!(page_num==1))
 			rcmd_list.addCommand(last_page);
 		if(page_num<=100)
