@@ -55,9 +55,9 @@ public class URLget {
 		String content = BackWeb(url);
 		System.out.println(content);
 		if(content.startsWith("error")){
-			return content;
+			throw new ErrorVideoStatusException(-1,content);
 		}else{
-			return FindString.findValue(content,"url");
+			return decodeUnicode(FindString.findValue(content,"url"));
 		}
 	}
 	public static WebModel BackWebAndCookies(String url) throws ErrorVideoStatusException, WebReturnErrorCodeException, IOException{
@@ -318,6 +318,39 @@ public class URLget {
 	        }
 	        return encoded.toString();
 	    }
+	    
+	    //Deepseek编写
+	    public static String decodeUnicode(String encodedUrl) {
+	        StringBuffer decodedUrl = new StringBuffer();
+	        char[] chars = encodedUrl.toCharArray();
+	        int length = chars.length;
+	        int i = 0;
+
+	        while (i < length) {
+	            // 检查当前字符是否为转义起始符
+	            if (chars[i] == '\\' && (i + 1 < length) && chars[i + 1] == 'u') {
+	                try {
+	                    // 提取十六进制编码部分（4位）
+	                    String hex = new String(chars, i + 2, 4);
+	                    // 将十六进制转换为字符
+	                    char decodedChar = (char) Integer.parseInt(hex, 16);
+	                    decodedUrl.append(decodedChar);
+	                    // 跳过已处理的6个字符
+	                    i += 6;
+	                } catch (Exception e) {
+	                    // 格式错误时保留原始字符
+	                    decodedUrl.append(chars[i]);
+	                    i++;
+	                }
+	            } else {
+	                // 直接追加非转义字符
+	                decodedUrl.append(chars[i]);
+	                i++;
+	            }
+	        }
+	        return decodedUrl.toString();
+	    }
+
 	    
 	    
 	     private static int getAPIBackCode(String content){
