@@ -31,7 +31,7 @@ public class AboutPage implements CommandListener{
 	StringItem thanks_list;
 	PageInfo page_info;
 	
-	public static String version = "0.3.5";
+	public static String version = "0.5.1";
 	
 	public AboutPage(Vector page_list_info){
 		//初始化变量和界面
@@ -62,15 +62,17 @@ public class AboutPage implements CommandListener{
 					"dospy.wang:@jiehuan\n" +
 					"github:@jiehuan-jason\n" +
 					"网盘:jiehuan233.ysepan.com\n");
-			text = new StringItem("","软件版本：V0.3正式版\n" +
-					"更新日期：2025.1.4\n" +
-					"更新内容：修复了部分错误弹窗\n" +
+			text = new StringItem("","软件版本：V0.5alpha\n" +
+					"更新日期：2025.2.23\n" +
+					"更新内容：\n" +
 					"修复了一些bug\n");
 			thanks_list = new StringItem("","感谢列表（截至更新时，排名不分先后）：" +
 					"爱发电用户_898f2\n" +
 					"爱发电用户_wnJK\n" +
 					"爱发电用户_7ebbe\n" +
 					"爱发电用户_kMRv\n" +
+					"jjbvfggggjj\n" +
+					"皓哥\n" +
 					"欢迎用智能手机/PC访问 https://afdian.com/a/jiehuan233 赞助本项目");
 			back=new Command(lang_res.getValue("back"),Command.BACK,1);
 			exit=new Command(lang_res.getValue("exit"),Command.EXIT,0);
