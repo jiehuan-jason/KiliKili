@@ -3,9 +3,6 @@ package top.jiehuan.kilikili.Page;
 import java.util.Vector;
 
 import javax.microedition.lcdui.*;
-import javax.microedition.rms.RecordStoreException;
-import javax.microedition.rms.RecordStoreFullException;
-import javax.microedition.rms.RecordStoreNotFoundException;
 
 import top.jiehuan.kilikili.PageInfo;
 import top.jiehuan.kilikili.VideoInfo;

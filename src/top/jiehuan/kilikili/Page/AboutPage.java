@@ -26,7 +26,7 @@ public class AboutPage extends Page implements CommandListener {
 	Image qrcode;
 	ImageItem imageItem;
 	
-	public static String version = "0.4.2";
+	public static String version = "0.4.3";
 	
 	public AboutPage(Vector page_list_info){
 		//初始化变量和界面
@@ -52,10 +52,10 @@ public class AboutPage extends Page implements CommandListener {
 					"dospy.wang:@jiehuan\n" +
 					"github:@jiehuan-jason\n" +
 					"网盘:jiehuan233.ysepan.com\n");
-			text = new StringItem("","软件版本：V0.4beta1\n" +
-					"更新日期：2025.2.2\n" +
+			text = new StringItem("","软件版本：V0.4beta2\n" +
+					"更新日期：2025.2.23\n" +
 					"更新内容：\n" +
-					//"替换部分API为官方API\n" +
+					"添加了登录功能 目前暂时仅支持登陆后个性化推荐列表\n" +
 					"修复了部分bug\n");
 			thanks_list = new StringItem("","捐赠感谢列表（截至更新时，排名不分先后）：\n" +
 					"爱发电用户_898f2\n" +
@@ -63,6 +63,7 @@ public class AboutPage extends Page implements CommandListener {
 					"爱发电用户_7ebbe\n" +
 					"爱发电用户_kMRv\n" +
 					"jjbvfggggjj\n" +
+					"皓哥\n" +
 					"欢迎用智能手机/PC访问 https://afdian.com/a/jiehuan233 赞助本项目\n" +
 					"扫描二维码访问项目dospy论坛地址\n");
 			initBackAndExitCommand();

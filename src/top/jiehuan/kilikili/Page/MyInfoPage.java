@@ -56,7 +56,11 @@ public class MyInfoPage extends Page {
 				//displayInfoAlert("你已经登录！cookies:"+token_utils.loadToken());
 				//String webpage = URLget.BackWeb(URLget.GET_PERSONAL_INFO_URL);
 				//displayInfoAlert(webpage);
-				personal_info = new StringItem("",URLget.BackWeb(URLget.GET_PERSONAL_INFO_URL));
+				String personal_info_content = URLget.BackWeb(URLget.GET_PERSONAL_INFO_URL);
+				String name = FindString.findValue(personal_info_content, "uname");
+				String sign = FindString.findValue(personal_info_content, "sign");
+				form = new Form(name);
+				personal_info = new StringItem("",name+"\n"+sign);
 			}catch(Exception e){
 				e.printStackTrace();
 				displayErrorAlert(e.getMessage());
@@ -67,6 +71,7 @@ public class MyInfoPage extends Page {
 				info = getQRCodeURLandKey();
 				qrcode = TextToQRcodeImage.encode(info[0]);
 				imageItem = new ImageItem("Login QRCode", qrcode, ImageItem.LAYOUT_CENTER, "Login QRCode");
+				tips = new StringItem("","\n扫码后请点击刷新命令");
 			} catch (Exception e) {
 				e.printStackTrace();
 				displayErrorAlert(e.getMessage());
@@ -78,10 +83,12 @@ public class MyInfoPage extends Page {
 		initBackAndExitCommand();
 		refresh = new Command(lang_res.getValue("refresh"),Command.ITEM,1);
 		delete = new Command(lang_res.getValue("delete_token"), Command.ITEM, 1);
+		
 	}
 
 	protected void display() {
 		if(!token_utils.isTokenStored()){
+			form.append(tips);
 			form.append(imageItem);
 			form.addCommand(refresh);
 		}
@@ -110,10 +117,9 @@ public class MyInfoPage extends Page {
 				if(code[1].equals("0")){
 					displayInfoAlert("Login Successfully!Cookies:"+content.cookies);
 					new CookiesUtils().updateToken(content.cookies);
-					String webpage = URLget.BackWeb(URLget.GET_PERSONAL_INFO_URL);
-					personal_info = new StringItem("",URLget.BackWeb(URLget.GET_PERSONAL_INFO_URL));
+					initPageVars();
+					initDisplayVars();
 					display();
-					displayInfoAlert(webpage);
 					
 				}
 			} catch (Exception e) {

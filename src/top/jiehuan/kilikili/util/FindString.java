@@ -143,16 +143,16 @@ public class FindString {
 		        return result;
 
 		 }
-		 public static String findValue(String jsonString, String findText) {
+		 public static String findValue(String jsonString, String findKey) {
 			    // 找到指定字段的索引
-			    int titleIndex = jsonString.indexOf("\"" + findText + "\"");
+			    int titleIndex = jsonString.indexOf("\"" + findKey + "\"");
 			    if (titleIndex == -1) {
-			        System.out.println("No Find Text:"+findText);
+			        System.out.println("No Find Text:"+findKey);
 			        return null; // 如果没有找到指定字段，返回 null
 			    }
 
 			    // 找到第一个双引号的位置
-			    int firstQuoteIndex = jsonString.indexOf("\"", titleIndex + findText.length() + 2); // +2 是为了跳过字段名和后面的引号
+			    int firstQuoteIndex = jsonString.indexOf("\"", titleIndex + findKey.length() + 2); // +2 是为了跳过字段名和后面的引号
 			    if (firstQuoteIndex == -1) {
 			        System.out.println("No Find first");
 			        return null; // 如果没有找到下一个双引号，返回 null
