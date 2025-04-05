@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 import javax.microedition.io.Connector;
@@ -40,6 +41,7 @@ public class URLget {
 	public static String DOWNLOAD_TRANSCODING_VIDEO_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/output/";
 	//public static String GET_QRCODE_URL="http://"+IP_ADDRESS+":3232/login";
 	//public static String GET_QRCODE_LOGIN_STATUS="http://"+IP_ADDRESS+":3232/lstatus?";
+	public static String GET_CorrespondPath_TIMESTAMP_URL = "http://"+DOWNLOAD_ADDRESS+":3000/timestamp";
 	
 	//BiliBili Server
 	//public static String RCMD_URL = "http://localhost:3232/test";
@@ -49,6 +51,22 @@ public class URLget {
 	public static String GET_QRCODE_URL="https://passport.bilibili.com/x/passport-login/web/qrcode/generate";
 	public static String GET_QRCODE_LOGIN_STATUS="https://passport.bilibili.com/x/passport-login/web/qrcode/poll?";
 	public static String GET_PERSONAL_INFO_URL = "https://api.bilibili.com/x/member/web/account";
+	public static String GET_LOGIN_COOKIES_STATUS_URL = "https://passport.bilibili.com/x/passport-login/web/cookie/info";
+	public static String GET_CSRF_REFRESH_TOKEN_STATUTS_URL = "https://passport.bilibili.com/x/passport-login/web/cookie/info";
+	public static String GET_REFRESH_CSRF_URL="https://www.bilibili.com/correspond/1/";
+	public static String GET_VIDEO_LIKE_STATUS_URL="https://api.bilibili.com/x/web-interface/archive/has/like";
+	public static String GET_VIDEO_FAVORITE_STATUS_URL="https://api.bilibili.com/x/v2/fav/video/favoured";
+	public static String GET_VIDEO_COIN_STATUS_URL="https://api.bilibili.com/x/web-interface/archive/coins";
+	public static String GET_BUVID3_URL="https://api.bilibili.com/x/frontend/finger/spi";
+	
+	//BILIBILI Server Post
+	public static String REFRESH_COOKIES_URL = "https://passport.bilibili.com/x/passport-login/web/cookie/refresh";
+	public static String REFRESH_COOKIES_COMFIRM_URL = "https://passport.bilibili.com/x/passport-login/web/confirm/refresh";
+	public static String LIKE_URL = "https://api.bilibili.com/x/web-interface/archive/like";
+	public static String COIN_URL = "https://api.bilibili.com/x/web-interface/coin/add";
+	public static String FAVORITE_URL = "https://api.bilibili.com/medialist/gateway/coll/resource/deal";
+	
+	
 	
 	public static String BackVideoLink(String bvid,String cid) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
 		String url = GET_VIDEO_DOWNLOAD_LINK_URL+"bvid="+bvid+"&cid="+cid+"&qn=6&platform=html5&high_quality=1";
@@ -60,6 +78,8 @@ public class URLget {
 			return decodeUnicode(FindString.findValue(content,"url"));
 		}
 	}
+	
+	//这个函数只返回了Cookies，没有带Cookies请求
 	public static WebModel BackWebAndCookies(String url) throws ErrorVideoStatusException, WebReturnErrorCodeException, IOException{
 		DataInputStream dis =null;
         InputStream inputStream = null;
@@ -86,6 +106,7 @@ public class URLget {
 	            // 输出返回的网页代码
 	            System.out.println("get now");
 	            System.out.println(num);
+	            web.code = num;
 	
 	            if(num==200){
 	            	String cookie = https_connection.getHeaderField("Set-Cookie");  // 获取响应头中的 Cookie
@@ -122,6 +143,7 @@ public class URLget {
 	            // 输出返回的网页代码
 	            System.out.println("get now");
 	            System.out.println(num);
+	            web.code = num;
 	            
 	            
 	            if(num==200){
@@ -156,120 +178,239 @@ public class URLget {
         System.out.println("URLget:return successfully");
         return web;
 	}
-	 public static String BackWeb(String url) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
-		 	DataInputStream dis =null;
-	        InputStream inputStream = null;
+	
+	//Data Example : username=test&password=123456
+	public static WebModel BackWebAndCookiesPost(String url, String postData) throws WebReturnErrorCodeException, IOException {
+	    DataInputStream dis = null;
+	    InputStream inputStream = null;
 
-    		HttpConnection connection = null;
-    		HttpsConnection https_connection=null;
-    		
-    		String content="error";
-	        try{
-	        	if(url.startsWith("https")){
-	        		int num=0;
+	    HttpsConnection https_connection = null;
+	    HttpConnection connection = null;
 
-	    	        System.gc();
-		        	System.out.println("before open connection,free memory is:"+Runtime.getRuntime().freeMemory());
-		        	System.out.println("open the connection :"+url);
-		            // 打开连接 设置请求方式和请求类型
-		        	https_connection = (HttpsConnection) Connector.open(url);
-		        	https_connection.setRequestMethod(HttpsConnection.GET);
-		        	https_connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
-		        	try{
-		        		CookiesUtils cookies_util = new CookiesUtils();
-		        		if(cookies_util.isTokenStored())
-		        			https_connection.setRequestProperty("Cookie", cookies_util.loadToken());
-		        	}catch(Exception e){
-		        		//什么都不做
-		        	}
-		        	
-		        	
-		            // 连接
-		            num = https_connection.getResponseCode();
-		            
-		            // 输出返回的网页代码
-		            System.out.println("get now");
-		            System.out.println(num);
-		            
-		            
-		            if(num==200){
-		            	try{
-			            	content = getInfoFromHttpsConnection(https_connection);
-		            	}catch(IOException e1){
-		            		e1.printStackTrace();
-		            		throw e1;
-		            	}
-		            } else{
-		            	throw new WebReturnErrorCodeException(num);
-		            }
-	        	}else{
-	    	        int num=0;
-	    	        
-	    	        
-	    	        System.gc();
-		        	System.out.println("before open connection,free memory is:"+Runtime.getRuntime().freeMemory());
-		        	System.out.println("open the connection :"+url);
-		            // 打开连接 设置请求方式和请求类型
-		            connection = (HttpConnection) Connector.open(url);
-		            connection.setRequestMethod(HttpConnection.GET);
-		            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
-		            try{
-		        		CookiesUtils cookies_util = new CookiesUtils();
-		        		if(cookies_util.isTokenStored())
-		        			connection.setRequestProperty("Cookie", cookies_util.loadToken());
-		        	}catch(Exception e){
-		        		//什么都不做
-		        	}
-		            // 连接
-		            num = connection.getResponseCode();
-		            
-		            // 输出返回的网页代码
-		            System.out.println("get now");
-		            System.out.println(num);
-		            
-		            
-		            if(num==200){
-		            	try{
-			            	content = getInfoFromHttpConnection(connection);
-		            	}catch(IOException e1){
-		            		e1.printStackTrace();
-		            		throw e1;
-		            	}
-		            } else{
-		            	throw new WebReturnErrorCodeException(num);
-		            }
+	    String content = "error";
+	    WebModel web = new WebModel();
+	    try {
+	        System.gc();
+	        System.out.println("before open connection, free memory is: " + Runtime.getRuntime().freeMemory());
+	        System.out.println("open the connection: " + url);
+
+	        if (url.startsWith("https")) {
+	            https_connection = (HttpsConnection) Connector.open(url);
+	            https_connection.setRequestMethod(HttpsConnection.POST);
+	            https_connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+	            https_connection.setRequestProperty("Content-Length", String.valueOf(postData.length()));
+	            https_connection.setRequestProperty("Referer", "https://www.bilibili.com/");
+
+	            try{
+	        		CookiesUtils cookies_util = new CookiesUtils();
+	        		if(cookies_util.isTokenStored())
+	        			https_connection.setRequestProperty("Cookie", cookies_util.loadToken());
+	        	}catch(Exception e){
+	        		//什么都不做
 	        	}
-	        }catch(IOException e){
-	        	throw e;
-	        }finally{
-	        	if(inputStream!=null)
-					inputStream.close();
-				if(dis!=null)
-					dis.close();
-	        	if(url.startsWith("https")&&https_connection!=null)
-		        	// 关闭连接
-					https_connection.close();
-	        	else if(connection!=null)
-	        		connection.close();
+	            
+	            // 发送POST数据
+	            OutputStream os = https_connection.openOutputStream();
+	            os.write(postData.getBytes());
+	            os.flush();
+
+	            int num = https_connection.getResponseCode();
+	            System.out.println("post now");
+	            System.out.println(num);
+	            web.code = num;
+
+	            if (num == 200) {
+	                String cookie = https_connection.getHeaderField("Set-Cookie");
+	                if (cookie != null) {
+	                    web.cookies = cookie;
+	                    System.out.println("Stored cookie: " + cookie);
+	                }
+	                content = getInfoFromHttpsConnection(https_connection);
+	                web.content = content;
+	            } else {
+	                throw new WebReturnErrorCodeException(num);
+	            }
+	        } else {
+	            connection = (HttpConnection) Connector.open(url);
+	            connection.setRequestMethod(HttpConnection.POST);
+	            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+	            connection.setRequestProperty("Content-Length", String.valueOf(postData.length()));
+	            connection.setRequestProperty("Referer", "https://www.bilibili.com/");
+
+	            // 发送POST数据
+	            OutputStream os = connection.openOutputStream();
+	            os.write(postData.getBytes());
+	            os.flush();
+
+	            int num = connection.getResponseCode();
+	            System.out.println("post now");
+	            System.out.println(num);
+	            web.code = num;
+	            
+	            try{
+	        		CookiesUtils cookies_util = new CookiesUtils();
+	        		if(cookies_util.isTokenStored())
+	        			connection.setRequestProperty("Cookie", cookies_util.loadToken());
+	        	}catch(Exception e){
+	        		//什么都不做
+	        	}
+
+	            if (num == 200) {
+	                String cookie = connection.getHeaderField("Set-Cookie");
+	                if (cookie != null) {
+	                    web.cookies = cookie;
+	                    System.out.println("Stored cookie: " + cookie);
+	                }
+	                content = getInfoFromHttpConnection(connection);
+	                web.content = content;
+	            } else {
+	                throw new WebReturnErrorCodeException(num);
+	            }
 	        }
-	        System.out.println("after open connection,free memory is:"+Runtime.getRuntime().freeMemory());
-	        if(!((getAPIBackCode(content) == 0 )||(getAPIBackCode(content) == 1 ))){
-	        	System.out.println("URLget: get api code error = "+getAPIBackCode(content));
-	        	throw new ErrorVideoStatusException(getAPIBackCode(content),content);
-	        }
-	        System.out.println("URLget:return successfully");
-	        return content;
-		}
+	    } catch (IOException e) {
+	        throw e;
+	    } finally {
+	        if (inputStream != null) inputStream.close();
+	        if (dis != null) dis.close();
+	        if (url.startsWith("https") && https_connection != null) https_connection.close();
+	        if (!url.startsWith("https") && connection != null) connection.close();
+	    }
+
+	    System.out.println("after post connection, free memory is: " + Runtime.getRuntime().freeMemory());
+	    System.out.println("URL POST:return successfully");
+	    return web;
+	}
+
+	public static WebModel BackWebWithMoreInfo(String url)throws WebReturnErrorCodeException, IOException{
+		DataInputStream dis =null;
+        InputStream inputStream = null;
+
+		HttpConnection connection = null;
+		HttpsConnection https_connection=null;
+		
+		WebModel web = new WebModel();
+		
+        try{
+        	if(url.startsWith("https")){
+        		int num=0;
+
+    	        System.gc();
+	        	System.out.println("before open connection,free memory is:"+Runtime.getRuntime().freeMemory());
+	        	System.out.println("open the connection :"+url);
+	            // 打开连接 设置请求方式和请求类型
+	        	https_connection = (HttpsConnection) Connector.open(url);
+	        	https_connection.setRequestMethod(HttpsConnection.GET);
+	        	https_connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
+	        	try{
+	        		CookiesUtils cookies_util = new CookiesUtils();
+	        		if(cookies_util.isTokenStored())
+	        			https_connection.setRequestProperty("Cookie", cookies_util.loadToken());
+	        	}catch(Exception e){
+	        		//什么都不做
+	        	}
+	        	
+	        	
+	            // 连接
+	            num = https_connection.getResponseCode();
+	            
+	            // 输出返回的网页代码
+	            System.out.println("get now");
+	            System.out.println(num);
+	            web.code = num;
+	            
+	            
+	            if(num==200){
+	            	try{
+	            		String cookie = https_connection.getHeaderField("Set-Cookie");
+		                if (cookie != null) {
+		                    web.cookies = cookie;
+		                    System.out.println("Stored cookie: " + cookie);
+		                }
+	            		web.content = getInfoFromHttpsConnection(https_connection);
+	            	}catch(IOException e1){
+	            		e1.printStackTrace();
+	            		throw e1;
+	            	}
+	            } else{
+	            	throw new WebReturnErrorCodeException(num);
+	            }
+        	}else{
+    	        int num=0;
+    	        
+    	        
+    	        System.gc();
+	        	System.out.println("before open connection,free memory is:"+Runtime.getRuntime().freeMemory());
+	        	System.out.println("open the connection :"+url);
+	            // 打开连接 设置请求方式和请求类型
+	            connection = (HttpConnection) Connector.open(url);
+	            connection.setRequestMethod(HttpConnection.GET);
+	            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
+	            try{
+	        		CookiesUtils cookies_util = new CookiesUtils();
+	        		if(cookies_util.isTokenStored())
+	        			connection.setRequestProperty("Cookie", cookies_util.loadToken());
+	        	}catch(Exception e){
+	        		//什么都不做
+	        	}
+	            // 连接
+	            num = connection.getResponseCode();
+	            
+	            // 输出返回的网页代码
+	            System.out.println("get now");
+	            System.out.println(num);
+	            web.code = num;
+	            
+	            if(num==200){
+	            	try{
+	            		String cookie = connection.getHeaderField("Set-Cookie");
+		                if (cookie != null) {
+		                    web.cookies = cookie;
+		                    System.out.println("Stored cookie: " + cookie);
+		                }
+		            	web.content = getInfoFromHttpConnection(connection);
+	            	}catch(IOException e1){
+	            		e1.printStackTrace();
+	            		throw e1;
+	            	}
+	            } else{
+	            	throw new WebReturnErrorCodeException(num);
+	            }
+        	}
+        }catch(IOException e){
+        	throw e;
+        }finally{
+        	if(inputStream!=null)
+				inputStream.close();
+			if(dis!=null)
+				dis.close();
+        	if(url.startsWith("https")&&https_connection!=null)
+	        	// 关闭连接
+				https_connection.close();
+        	else if(connection!=null)
+        		connection.close();
+        }
+        System.out.println("after open connection,free memory is:"+Runtime.getRuntime().freeMemory());
+        System.out.println("URLget:return successfully");
+        return web;
+	}
+	
+	//GET
+	 public static String BackWeb(String url) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
+		 	return BackWebWithMoreInfo(url).content;
+	}
+	 
 	 private static String getInfoFromHttpConnection(HttpConnection connection) throws UnsupportedEncodingException, IOException{
 		 DataInputStream dis =connection.openDataInputStream();
 		 int connectionLength = (int)connection.getLength();
 		 return getInfoFromConnection(dis,connectionLength);
 	 }
+	 
 	 private static String getInfoFromHttpsConnection(HttpsConnection connection) throws UnsupportedEncodingException, IOException{
 		 DataInputStream dis =connection.openDataInputStream();
 		 int connectionLength = (int)connection.getLength();
 		 return getInfoFromConnection(dis,connectionLength);
 	 }
+	 
 	 private static String getInfoFromConnection(DataInputStream dis, int connectionLength) 
 		        throws IOException {
 		    ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -350,10 +491,8 @@ public class URLget {
 	        }
 	        return decodedUrl.toString();
 	    }
-
 	    
-	    
-	     private static int getAPIBackCode(String content){
+	     public static int getAPIBackCode(String content){
 	    	return Integer.parseInt(FindString.findValueInt(content, "code"));
 	    }
 }

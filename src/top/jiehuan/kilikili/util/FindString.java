@@ -197,6 +197,54 @@ public class FindString {
 			    // 提取并返回指定字段的值
 			    return jsonString.substring(firstQuoteIndex + 1, secondQuoteIndex);
 			}
+			
+			public static String findValueBool(String jsonString, String findText){
+				return findValueInt(jsonString, findText);
+			}
+			
+			public static String findValueInCookies(String jsonString, String findText){
+				int titleIndex = jsonString.indexOf(findText);
+			    if (titleIndex == -1) {
+			        System.out.println("No Find Text:"+findText);
+			        return null; // 如果没有找到指定字段，返回 null
+			    }
+
+			    int firstQuoteIndex = jsonString.indexOf("=", titleIndex + findText.length());
+			    if (firstQuoteIndex == -1) {
+			        System.out.println("No Find first");
+			        return null; 
+			    }
+
+			    int secondQuoteIndex = jsonString.indexOf(";", firstQuoteIndex + 1);
+			    if (secondQuoteIndex == -1) {
+			    	System.out.println("No Find Second");
+		    		return null; // 如果没有找到分号，返回 null
+			    }
+
+			    return jsonString.substring(firstQuoteIndex + 1, secondQuoteIndex);
+			}
+			public static String findValueInHTMLLabel(String htmlString){
+				String findText = "<div id=\"1-name\">";
+				int titleIndex = htmlString.indexOf(findText);
+			    if (titleIndex == -1) {
+			        System.out.println("No Find Text:"+findText);
+			        return null; // 如果没有找到指定字段，返回 null
+			    }
+
+			    int firstQuoteIndex = htmlString.indexOf(">", titleIndex + findText.length()-1);
+			    if (firstQuoteIndex == -1) {
+			        System.out.println("No Find first");
+			        return null; 
+			    }
+
+			    int secondQuoteIndex = htmlString.indexOf("<", firstQuoteIndex + 1);
+			    if (secondQuoteIndex == -1) {
+			    	System.out.println("No Find Second");
+		    		return null; 
+			    }
+
+			    return htmlString.substring(firstQuoteIndex + 1, secondQuoteIndex);
+			}
 			public static String replace(String original, String toReplace, String replacement) {
 			    StringBuffer result = new StringBuffer();
 			    int index = 0;

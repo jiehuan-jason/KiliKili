@@ -11,6 +11,8 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.ImageItem;
 import javax.microedition.lcdui.StringItem;
 
+import top.jiehuan.kilikili.util.CookiesUtils;
+
 import com.google.zxing.*;
 
 
@@ -25,8 +27,9 @@ public class AboutPage extends Page implements CommandListener {
 	StringItem thanks_list;
 	Image qrcode;
 	ImageItem imageItem;
+	Command get_cookies;
 	
-	public static String version = "0.4.3";
+	public static String version = "0.4.4";
 	
 	public AboutPage(Vector page_list_info){
 		//初始化变量和界面
@@ -43,6 +46,15 @@ public class AboutPage extends Page implements CommandListener {
 	        // 退出app
 	        if(c==exit){
 	        	ml.exitApp();
+	        }if(c == get_cookies){
+	        	String cookies;
+				try {
+					cookies = new CookiesUtils().loadToken();
+					displayInfoAlert(cookies);
+				} catch (Exception e) {
+					displayErrorAlert(e.getMessage());
+				} 
+	        	
 	        }
 	    }
 	 protected void initDisplayVars(){
@@ -52,10 +64,10 @@ public class AboutPage extends Page implements CommandListener {
 					"dospy.wang:@jiehuan\n" +
 					"github:@jiehuan-jason\n" +
 					"网盘:jiehuan233.ysepan.com\n");
-			text = new StringItem("","软件版本：V0.4beta2\n" +
-					"更新日期：2025.2.23\n" +
+			text = new StringItem("","软件版本：V0.4beta3\n" +
+					"更新日期：2025.4.x\n" +
 					"更新内容：\n" +
-					"添加了登录功能 目前暂时仅支持登陆后个性化推荐列表\n" +
+					"添加了点赞功能 添加了登录过期提醒\n" +
 					"修复了部分bug\n");
 			thanks_list = new StringItem("","捐赠感谢列表（截至更新时，排名不分先后）：\n" +
 					"爱发电用户_898f2\n" +
@@ -70,7 +82,7 @@ public class AboutPage extends Page implements CommandListener {
 			
 			qrcode = TextToQRcodeImage.encode("https://www.dospy.wang/thread-22464-1-1.html");
 			imageItem = new ImageItem(null, qrcode, ImageItem.LAYOUT_CENTER, "QRCode");
-			
+			get_cookies = new Command("Cookies", Command.ITEM, 2);
 	 }
 	 protected void display(){
 		form.addCommand(back);
@@ -79,6 +91,7 @@ public class AboutPage extends Page implements CommandListener {
 		form.append(text);
 		form.append(thanks_list);
 		form.append(imageItem);
+		form.addCommand(get_cookies);
 		form.setCommandListener(this);
 		display.setCurrent(form);
 	 }

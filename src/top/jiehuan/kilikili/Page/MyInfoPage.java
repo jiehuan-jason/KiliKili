@@ -28,6 +28,8 @@ public class MyInfoPage extends Page {
 	ImageItem imageItem;
 	Command refresh;
 	Command delete;
+	Command token_status;
+	Command token_refresh;
 	StringItem tips;
 	StringItem personal_info;
 	
@@ -83,7 +85,8 @@ public class MyInfoPage extends Page {
 		initBackAndExitCommand();
 		refresh = new Command(lang_res.getValue("refresh"),Command.ITEM,1);
 		delete = new Command(lang_res.getValue("delete_token"), Command.ITEM, 1);
-		
+		token_status = new Command("Token Status", Command.ITEM, 2);
+		token_refresh = new Command("Refresh Token", Command.ITEM, 2);
 	}
 
 	protected void display() {
@@ -95,6 +98,8 @@ public class MyInfoPage extends Page {
 		else {
 			form.append(personal_info);
 			form.addCommand(delete);
+			//form.addCommand(token_status);
+			//form.addCommand(token_refresh);
 		}
 		form.addCommand(back);
 		form.addCommand(exit);
@@ -116,11 +121,14 @@ public class MyInfoPage extends Page {
 				System.out.println("code:"+code[1]);
 				if(code[1].equals("0")){
 					displayInfoAlert("Login Successfully!Cookies:"+content.cookies);
-					new CookiesUtils().updateToken(content.cookies);
+					CookiesUtils utils = new CookiesUtils();
+					utils.updateToken(content.cookies);
+					new CookiesUtils("refresh_token").updateToken(FindString.findValue(content.content, "refresh_token"));
+					cookies = getBUVIDAndAddToCookies(content.cookies);
+					utils.updateToken(cookies);
 					initPageVars();
 					initDisplayVars();
 					display();
-					
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -133,6 +141,10 @@ public class MyInfoPage extends Page {
         	}catch(Exception e){
         		//TODO
         	}
+        }else if(c==token_status){
+        	display_token_status();
+        }else if(c==token_refresh){
+        	refresh_token();
         }
 	}
 	
@@ -146,5 +158,52 @@ public class MyInfoPage extends Page {
 		System.out.println("url:"+result[0]);
 		System.out.println("key:"+result[1]);
 		return result;
+	}
+	
+	private void display_token_status(){
+		try{
+			String content = URLget.BackWeb(URLget.GET_CSRF_REFRESH_TOKEN_STATUTS_URL);
+			displayInfoAlert(content);
+		}catch(Exception e){
+			displayErrorAlert(e.getMessage());
+		}
+	}
+	
+	public static void refresh_token(){
+		try{
+			CookiesUtils cookies_utils = new CookiesUtils();
+			if(cookies_utils.isTokenStored()){
+				String cookies = cookies_utils.loadToken();
+				CookiesUtils refresh_util = new CookiesUtils("refresh_token");
+				String refresh_token = refresh_util.loadToken();
+				String csrf = FindString.findValueInCookies(cookies, "bili_jct");
+				String content = URLget.BackWeb(URLget.GET_CSRF_REFRESH_TOKEN_STATUTS_URL);
+				//if(FindString.findValueBool(content, "refresh").equals("true")){
+					
+				//}
+				long time = System.currentTimeMillis();
+				content = URLget.BackWeb(URLget.GET_CorrespondPath_TIMESTAMP_URL+"?t="+String.valueOf(time));
+				String hash = FindString.findValue(content, "hash");
+				WebModel web = URLget.BackWebWithMoreInfo(URLget.GET_REFRESH_CSRF_URL+hash);
+				String refresh_csrf = FindString.findValueInHTMLLabel(web.content);
+				web = URLget.BackWebAndCookiesPost(URLget.REFRESH_COOKIES_URL, "csrf="+csrf+"&refresh_csrf="+refresh_csrf+"&source=main_web&refresh_token="+refresh_token);
+				//refresh_token = FindString.findValue(web.content, "refresh_token");
+				//refresh_token保持旧值 后面post将会用到
+				refresh_util.updateToken(FindString.findValue(web.content, "refresh_token"));
+				cookies_utils.updateToken(web.cookies);
+				csrf = FindString.findValueInCookies(web.cookies, "bili_jct");
+				web = URLget.BackWebAndCookiesPost(URLget.REFRESH_COOKIES_COMFIRM_URL,"csrf="+csrf+"&refresh_token="+refresh_token);
+			}	
+		}catch(Exception e){
+			
+		}
+	}
+	
+	private String getBUVIDAndAddToCookies(String cookies) throws WebReturnErrorCodeException, IOException{
+		WebModel web = URLget.BackWebWithMoreInfo(URLget.GET_BUVID3_URL);
+		//displayInfoAlert(web.content);
+		String buvid3 = FindString.findValue(web.content, "b_3");
+		//String buvid4 = FindString.findValue(web.content, "b_4");
+		return "buvid3="+buvid3+"; "+cookies;
 	}
 }

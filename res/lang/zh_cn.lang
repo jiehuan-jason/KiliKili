@@ -21,7 +21,7 @@
 "like":"赞"
 "view":"看"
 "reply":"回"
-"coin":"币"
+"coin":"投币"
 "share":"转"
 "part_title":"Part标题:"
 "introduction":"简介:"
@@ -48,3 +48,4 @@
 "ci":"次"
 "ge":"个"
 "mine":"我的"
+"cancel":"取消"

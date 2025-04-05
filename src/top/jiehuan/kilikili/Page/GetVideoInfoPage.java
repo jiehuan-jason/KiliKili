@@ -1,5 +1,6 @@
 package top.jiehuan.kilikili.Page;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
@@ -10,9 +11,17 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.StringItem;
+import javax.microedition.rms.InvalidRecordIDException;
+import javax.microedition.rms.RecordStoreException;
+import javax.microedition.rms.RecordStoreFullException;
+import javax.microedition.rms.RecordStoreNotFoundException;
 
 import top.jiehuan.kilikili.PageInfo;
+import top.jiehuan.kilikili.WebModel;
+import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
+import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
+import top.jiehuan.kilikili.util.CookiesUtils;
 import top.jiehuan.kilikili.util.FindString;
 import top.jiehuan.kilikili.util.URLget;
 
@@ -37,8 +46,15 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	Command download;
 	Command view_cover;
 	Command author_info;
+	Command like; //点赞
+	Command coin;
+	Command favorite; //收藏
 	String video_url;
 	String cid;
+	
+	
+	
+	boolean is_login = false;
 	
 
 	public GetVideoInfoPage(Vector page_info_list){
@@ -132,8 +148,71 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	                	new UserInfoPage(page_info_list);
 	                }
 	            }).start();
+	        }if (c==like){
+	        	try{
+	        		pressLike();
+	        	}catch(Exception e){
+	        		displayErrorAlert(e.getMessage());
+	        	}
+	        }if (c==coin){
+	        	
+	        }if (c==favorite){
+	        	
 	        }
 	    }
+	 
+	 	private void pressLike() throws InvalidRecordIDException, RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException, IOException, WebReturnErrorCodeException{
+	 		String cookiesString = new CookiesUtils().loadToken();
+    		String csrf = FindString.findValueInCookies(cookiesString, "bili_jct");
+    		
+    		if(video_info.isLike){
+    			WebModel web = URLget.BackWebAndCookiesPost(URLget.LIKE_URL,"bvid="+bvid+"&like=2&csrf="+csrf);
+        		int bili_code = URLget.getAPIBackCode(web.content);
+        		if(bili_code!=0)
+        			displayErrorAlert(FindString.findValue(web.content, "message"));
+        		else
+        			refresh();
+        			
+    		}else{
+    			WebModel web = URLget.BackWebAndCookiesPost(URLget.LIKE_URL,"bvid="+bvid+"&like=1&csrf="+csrf);
+        		int bili_code = URLget.getAPIBackCode(web.content);
+        		if(bili_code!=0)
+        			displayErrorAlert(bili_code+" "+FindString.findValue(web.content, "message"));
+        		else
+        			refresh();
+    		}
+    		
+	 	}
+	 	
+	 	/*private void pressFavorite() throws InvalidRecordIDException, RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException, IOException, WebReturnErrorCodeException{
+	 		String cookiesString = new CookiesUtils().loadToken();
+    		String csrf = FindString.findValueInCookies(cookiesString, "bili_jct");
+    		
+    		if(video_info.isLike){
+    			WebModel web = URLget.BackWebAndCookiesPost(URLget.LIKE_URL,"bvid="+bvid+"&like=2&csrf="+csrf);
+        		int bili_code = URLget.getAPIBackCode(web.content);
+        		if(bili_code!=0)
+        			displayErrorAlert(FindString.findValue(web.content, "message"));
+        		else
+        			refresh();
+        			
+    		}else{
+    			WebModel web = URLget.BackWebAndCookiesPost(URLget.LIKE_URL,"bvid="+bvid+"&like=1&csrf="+csrf);
+        		int bili_code = URLget.getAPIBackCode(web.content);
+        		if(bili_code!=0)
+        			displayErrorAlert(bili_code+" "+FindString.findValue(web.content, "message"));
+        		else
+        			refresh();
+    		}
+    		
+	 	}*/
+	 	
+	 	private void refresh(){
+	 		form=new Form(lang_res.getValue("videoDisplay"));
+	 		initPageVars();
+			initDisplayVars();
+			display();
+	 	}
 	 
 		protected void initPageVars(){
 			
@@ -163,6 +242,11 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 			} catch(Exception e){
 				displayErrorAlert("GetVideoInfoPage initPageVars error"+e.getMessage());
 			}
+			try{
+				is_login = new CookiesUtils().isTokenStored();
+			}catch(Exception e){
+				displayErrorAlert(e.getMessage());
+			}
 		}
 		protected void initDisplayVars(){
 			System.out.println("start initDisplayVars");
@@ -177,6 +261,17 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 			initBackAndExitCommand();
 			view_cover=new Command(lang_res.getValue("cover"),Command.ITEM,2);
 			author_info=new Command(lang_res.getValue("authorInfo"),Command.ITEM,2);
+			if(is_login){
+				if(video_info.isLike)
+					like = new Command(lang_res.getValue("cancel")+lang_res.getValue("like"),Command.OK,3);
+				else
+					like = new Command(lang_res.getValue("like"),Command.OK,3);
+				if(video_info.isFavorite)
+					favorite = new Command(lang_res.getValue("cancel")+lang_res.getValue("favorite"),Command.OK,3);
+				else
+					favorite = new Command(lang_res.getValue("favorite"),Command.OK,3);
+				coin = new Command(lang_res.getValue("coin"),Command.ITEM,3);
+			}
 
 		}
 		protected void display(){
@@ -201,6 +296,11 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 			form.addCommand(download);
 			form.addCommand(view_cover);
 			form.addCommand(exit);
+			if(is_login){
+				form.addCommand(like);
+				//form.addCommand(coin);
+				//form.addCommand(favorite);
+			}
 			form.setCommandListener(this);
 			display.setCurrent(form);
 

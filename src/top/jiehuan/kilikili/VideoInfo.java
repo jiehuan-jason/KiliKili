@@ -22,6 +22,10 @@ public class VideoInfo {
 	private String search_keyword;
 	private PartInfo part_info;
 	
+	public boolean isLike = false;
+	public boolean isCoin = false;
+	public boolean isFavorite = false;
+	
 	private int like;
 	private int view;
 	private int reply;
@@ -75,7 +79,25 @@ public class VideoInfo {
 		share=Integer.parseInt(FindString.findValueInt(content,"share"));
 		favorite = Integer.parseInt(FindString.findValueInt(content,"favorite"));
 		videos = Integer.parseInt(FindString.findValueInt(content, "videos"));
+		
+		initUserDataInVideo();
+		
 		System.out.println("getBasicVideoInfo successfully");
+		}
+	}
+	
+	public void initUserDataInVideo(){
+		try{
+			WebModel web = URLget.BackWebWithMoreInfo(URLget.GET_VIDEO_LIKE_STATUS_URL+"?bvid="+bvid);
+			if(FindString.findValueInt(web.content, "data").equals("1")) isLike=true;
+			web = URLget.BackWebWithMoreInfo(URLget.GET_VIDEO_COIN_STATUS_URL+"?bvid="+bvid);
+			/*if(!FindString.findValueInt(web.content, "data").equals("0")) isCoin=true;
+			web = URLget.BackWebWithMoreInfo(URLget.GET_VIDEO_COIN_STATUS_URL+"?aid="+bvid);
+			if(!FindString.findValueBool(web.content, "favoured").equals("true")) isFavorite=true;
+			web = null;*/
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+			status = false;
 		}
 	}
 	

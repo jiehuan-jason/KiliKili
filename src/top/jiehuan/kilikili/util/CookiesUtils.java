@@ -11,7 +11,10 @@ import javax.microedition.rms.RecordStoreNotOpenException;
 public class CookiesUtils {
 	private RecordStore recordStore;
 	public CookiesUtils() throws RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException{
-		recordStore = RecordStore.openRecordStore("TokenStore", true);
+		this("TokenStore");
+	}
+	public CookiesUtils(String storeName) throws RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException{
+		recordStore = RecordStore.openRecordStore(storeName, true);
 	}
 	public void saveToken(String token) throws RecordStoreNotOpenException, RecordStoreFullException, RecordStoreException {
         byte[] tokenBytes = token.getBytes();  // 将 Token 转为字节数组

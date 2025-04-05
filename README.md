@@ -2,7 +2,7 @@
 
 ## J2ME平台的哔哩哔哩客户端
 
-使用JDK1.8+Eclipse2.2开发，实机为Nokia E72测试，目前仍处于开发阶段
+使用JDK1.8+Eclipse4.3开发，实机为Nokia E72测试，目前仍处于开发阶段
 
 ### 感谢
 
@@ -99,6 +99,6 @@ UC影音正常播放图像和声音；自带播放器只有音频
 
 ## 开发环境部署
 
-采用的JAVA版本为JDK1.8_202，采用的IDE是Eclipse，版本为Juno Service Release 2，配合EclipseME1.7.9使用，模拟器采用的是WTK2.2和S60 FP2 SDK中的模拟器，具体开发环境的安装和配置请参阅[Windows系统搭建塞班Java开发环境教程 - 塞班论坛 (独立讨论区) - DOSPY论坛 诺亚方舟号 - 塞班论坛|固件下载|hmd诺基亚安卓|智能手机|数码科技 -](https://www.dospy.wang/thread-15819-1-1.html)
+采用的JAVA版本为JDK1.8_202，采用的IDE是Eclipse，版本为Kepler R，配合EclipseME1.7.9使用，模拟器采用的是WTK2.2和S60 FP2 SDK中的模拟器，具体开发环境的安装和配置请参阅[Windows系统搭建塞班Java开发环境教程 - 塞班论坛 (独立讨论区) - DOSPY论坛 诺亚方舟号 - 塞班论坛|固件下载|hmd诺基亚安卓|智能手机|数码科技 -](https://www.dospy.wang/thread-15819-1-1.html)
 
-该教程中的eclipse版本与本项目采用的不同，本项目的Eclipse下载地址为[Juno R | Eclipse Packages](https://www.eclipse.org/downloads/packages/release/juno/r)中的Eclipse classic
+该教程中的eclipse版本与本项目采用的不同，本项目的Eclipse下载地址为[[Kepler R | Eclipse Packages](https://www.eclipse.org/downloads/packages/release/kepler/r)中的Eclipse IDE for Java Developers

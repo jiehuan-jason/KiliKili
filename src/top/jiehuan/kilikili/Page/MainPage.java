@@ -11,9 +11,14 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
+import javax.microedition.rms.InvalidRecordIDException;
+import javax.microedition.rms.RecordStoreException;
 
 import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.PageInfo;
+import top.jiehuan.kilikili.util.CookieDateParser;
+import top.jiehuan.kilikili.util.CookiesUtils;
+import top.jiehuan.kilikili.util.FindString;
 
 public class MainPage extends Page implements CommandListener{
 	public static final short PageID = 0;
@@ -31,6 +36,11 @@ public class MainPage extends Page implements CommandListener{
 	public MainPage(MainMIDlet ml){
 		super(ml);
 		
+		try{
+			getTheCookiesExpiresAndCompare();
+		}catch(Exception e){
+			displayErrorAlert(e.getMessage());
+		}
 		initPageVars();
 		initDisplayVars();
 		display();
@@ -152,5 +162,17 @@ public class MainPage extends Page implements CommandListener{
 		form.addCommand(about);
 		form.setCommandListener(this);
 		display.setCurrent(form);
+	}
+	
+	private void getTheCookiesExpiresAndCompare() throws InvalidRecordIDException, RecordStoreException{
+		CookiesUtils util = new CookiesUtils();
+		String cookies = util.loadToken();
+		String expires = FindString.findValueInCookies(cookies, "Expires");
+		long expireTime = CookieDateParser.parseCookieDate(expires);
+		//displayErrorAlert(String.valueOf(expireTime));
+		if(expireTime < System.currentTimeMillis() / 1000 - 3600){
+			util.deleteToken();
+			displayErrorAlert("你的登录已过期，请重新登录！");
+		}
 	}
 }
