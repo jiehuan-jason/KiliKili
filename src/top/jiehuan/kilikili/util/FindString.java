@@ -217,8 +217,11 @@ public class FindString {
 
 			    int secondQuoteIndex = jsonString.indexOf(";", firstQuoteIndex + 1);
 			    if (secondQuoteIndex == -1) {
-			    	System.out.println("No Find Second");
-		    		return null; // 如果没有找到分号，返回 null
+			    	secondQuoteIndex = jsonString.indexOf(",", firstQuoteIndex + 1);
+			    	if (secondQuoteIndex == -1){
+			    		System.out.println("No Find Second");
+			    		return null; // 如果没有找到分号，返回 null
+			    	}
 			    }
 
 			    return jsonString.substring(firstQuoteIndex + 1, secondQuoteIndex);

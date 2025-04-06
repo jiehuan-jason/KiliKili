@@ -91,9 +91,9 @@ public class VideoInfo {
 			WebModel web = URLget.BackWebWithMoreInfo(URLget.GET_VIDEO_LIKE_STATUS_URL+"?bvid="+bvid);
 			if(FindString.findValueInt(web.content, "data").equals("1")) isLike=true;
 			web = URLget.BackWebWithMoreInfo(URLget.GET_VIDEO_COIN_STATUS_URL+"?bvid="+bvid);
-			/*if(!FindString.findValueInt(web.content, "data").equals("0")) isCoin=true;
+			if(!FindString.findValueInt(web.content, "data").equals("0")) isCoin=true;
 			web = URLget.BackWebWithMoreInfo(URLget.GET_VIDEO_COIN_STATUS_URL+"?aid="+bvid);
-			if(!FindString.findValueBool(web.content, "favoured").equals("true")) isFavorite=true;
+			/*if(!FindString.findValueBool(web.content, "favoured").equals("true")) isFavorite=true;
 			web = null;*/
 		}catch(Exception e){
 			System.out.println(e.getMessage());

@@ -9,6 +9,7 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Form;
 
 import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.PageInfo;
@@ -54,6 +55,20 @@ abstract public class Page implements CommandListener{
 	    	});
 	     display.setCurrent(alert);	
 	 }
+	
+	protected void displayErrorAlertCanCancel(String error, final Form form){
+		 Alert alert = new Alert("Error", error, null, AlertType.ERROR);
+	     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+	     Command ok=new Command("OK",Command.OK,1);
+	     alert.addCommand(ok);
+	     alert.setCommandListener(new CommandListener() {
+	    	    public void commandAction(Command c, Displayable d) {
+	    	    	display.setCurrent(form);	
+	    	    }
+	    	});
+	     display.setCurrent(alert);	
+	 }
+	
 	protected void displayInfoAlert(String info){
 		 Alert alert = new Alert("Info", info, null, AlertType.INFO);
 	     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作

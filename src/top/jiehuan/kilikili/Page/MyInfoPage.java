@@ -123,6 +123,7 @@ public class MyInfoPage extends Page {
 					displayInfoAlert("Login Successfully!Cookies:"+content.cookies);
 					CookiesUtils utils = new CookiesUtils();
 					utils.updateToken(content.cookies);
+					cookies=content.cookies;
 					new CookiesUtils("refresh_token").updateToken(FindString.findValue(content.content, "refresh_token"));
 					cookies = getBUVIDAndAddToCookies(content.cookies);
 					utils.updateToken(cookies);
@@ -204,6 +205,6 @@ public class MyInfoPage extends Page {
 		//displayInfoAlert(web.content);
 		String buvid3 = FindString.findValue(web.content, "b_3");
 		//String buvid4 = FindString.findValue(web.content, "b_4");
-		return "buvid3="+buvid3+"; "+cookies;
+		return cookies+" bili_jct="+FindString.findValueInCookies(cookies, "bili_jct")+",buvid3="+buvid3+";";
 	}
 }

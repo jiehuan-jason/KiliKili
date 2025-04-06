@@ -5,6 +5,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 import javax.microedition.io.ConnectionNotFoundException;
+import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -155,12 +157,18 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	        		displayErrorAlert(e.getMessage());
 	        	}
 	        }if (c==coin){
-	        	
+	        	pressCoin();
 	        }if (c==favorite){
-	        	
+	        	displayErrorAlertCanCancel("test", form);
 	        }
 	    }
 	 
+	 	/*
+	 	 * TODO:
+	 	 * 目前存在的已知问题：成功后不显示弹窗，不会刷新界面
+	 	 * 待观察的问题：有的时候Cookies疑似会失效，code为-403
+	 	 * 投币问题同上
+	 	 * */
 	 	private void pressLike() throws InvalidRecordIDException, RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException, IOException, WebReturnErrorCodeException{
 	 		String cookiesString = new CookiesUtils().loadToken();
     		String csrf = FindString.findValueInCookies(cookiesString, "bili_jct");
@@ -168,20 +176,76 @@ public class GetVideoInfoPage extends Page implements CommandListener{
     		if(video_info.isLike){
     			WebModel web = URLget.BackWebAndCookiesPost(URLget.LIKE_URL,"bvid="+bvid+"&like=2&csrf="+csrf);
         		int bili_code = URLget.getAPIBackCode(web.content);
-        		if(bili_code!=0)
-        			displayErrorAlert(FindString.findValue(web.content, "message"));
-        		else
+        		if(bili_code!=1)
+        			displayErrorAlertCanCancel(FindString.findValue(web.content, "message"), form);
+        		else{
+        			displayInfoAlert("点赞成功！");
         			refresh();
+        		}
         			
     		}else{
     			WebModel web = URLget.BackWebAndCookiesPost(URLget.LIKE_URL,"bvid="+bvid+"&like=1&csrf="+csrf);
         		int bili_code = URLget.getAPIBackCode(web.content);
         		if(bili_code!=0)
-        			displayErrorAlert(bili_code+" "+FindString.findValue(web.content, "message"));
-        		else
+        			displayErrorAlertCanCancel(FindString.findValue(web.content, "message"), form);
+        		else{
+        			displayInfoAlert("取消点赞成功！");
         			refresh();
+        		}
     		}
     		
+	 	}
+	 	
+	 	private void pressCoin(){
+	 		choossCoinCounts();
+	 	}
+	 	
+	 	private void choossCoinCounts(){
+	 		Alert alert = new Alert("投币数量", "请使用下方命令选择投币数量", null, AlertType.INFO);
+	        alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+	        final Command closeCommand = new Command("关闭", Command.EXIT, 0);
+	        final Command oneCoinCommand = new Command("一个币", Command.OK, 1);
+	        final Command twoCoinCommand = new Command("两个币", Command.OK, 1);
+	        alert.addCommand(closeCommand);
+	        alert.addCommand(oneCoinCommand);
+	        alert.addCommand(twoCoinCommand);
+
+	        alert.setCommandListener(new CommandListener() {
+	            public void commandAction(Command c, Displayable d) {
+	            	display.setCurrent(form);
+	            	if (c == oneCoinCommand) {
+	            		postCoinRequest(1);
+	                }else if (c == twoCoinCommand) {
+	                	postCoinRequest(2);
+	                } else if (c == closeCommand) {
+	                    // 关闭按钮被按下，返回到之前的界面
+	                    
+	                }
+	            }
+	        });
+	        display.setCurrent(alert, form);
+	 	}
+	 	
+	 	private void postCoinRequest(int num){
+	 		//if(num>2||num<=0)
+	 			//return;
+	 		
+	 		
+    		try{
+    			String cookiesString = new CookiesUtils().loadToken();
+        		String csrf = FindString.findValueInCookies(cookiesString, "bili_jct");
+        		
+    	 		WebModel web = URLget.BackWebAndCookiesPost(URLget.COIN_URL,"bvid="+bvid+"&multiply="+num+"&csrf="+csrf);
+        		int bili_code = URLget.getAPIBackCode(web.content);
+        		if(bili_code!=0)
+        			displayErrorAlertCanCancel(FindString.findValue(web.content, "message"), form);
+        		else{
+        			refresh();
+        			displayInfoAlert("投币成功！");
+        		}
+    	 	}catch(Exception e){
+    	 		displayErrorAlert(e.getMessage());
+    	 	}
 	 	}
 	 	
 	 	/*private void pressFavorite() throws InvalidRecordIDException, RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException, IOException, WebReturnErrorCodeException{
@@ -298,8 +362,8 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 			form.addCommand(exit);
 			if(is_login){
 				form.addCommand(like);
-				//form.addCommand(coin);
-				//form.addCommand(favorite);
+				form.addCommand(coin);
+				form.addCommand(favorite);
 			}
 			form.setCommandListener(this);
 			display.setCurrent(form);
