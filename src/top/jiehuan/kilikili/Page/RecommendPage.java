@@ -4,9 +4,9 @@ import java.util.Vector;
 
 import javax.microedition.lcdui.*;
 
-import top.jiehuan.kilikili.PageInfo;
-import top.jiehuan.kilikili.VideoInfo;
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
+import top.jiehuan.kilikili.Model.PageInfo;
+import top.jiehuan.kilikili.Model.VideoInfo;
 import top.jiehuan.kilikili.util.*;
 
 public class RecommendPage extends Page implements CommandListener {

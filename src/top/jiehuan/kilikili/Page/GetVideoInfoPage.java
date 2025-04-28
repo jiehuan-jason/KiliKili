@@ -18,11 +18,11 @@ import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 
-import top.jiehuan.kilikili.PageInfo;
-import top.jiehuan.kilikili.WebModel;
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
+import top.jiehuan.kilikili.Model.PageInfo;
+import top.jiehuan.kilikili.Model.WebModel;
 import top.jiehuan.kilikili.util.CookiesUtils;
 import top.jiehuan.kilikili.util.FindString;
 import top.jiehuan.kilikili.util.URLget;
@@ -44,6 +44,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	String ctime;
 	
 	public String bvid;
+	String aid;
 	Image image;
 	Command download;
 	Command view_cover;
@@ -168,33 +169,84 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	 	 * 目前存在的已知问题：成功后不显示弹窗，不会刷新界面
 	 	 * 待观察的问题：有的时候Cookies疑似会失效，code为-403
 	 	 * 投币问题同上
+	 	 * 
+	 	 * 4.28 此为旧版，由于接口问题无法解决，已经换用动态的点赞接口
 	 	 * */
-	 	private void pressLike() throws InvalidRecordIDException, RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException, IOException, WebReturnErrorCodeException{
+	 	/*private void pressLike() throws InvalidRecordIDException, RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException, IOException, WebReturnErrorCodeException{
 	 		String cookiesString = new CookiesUtils().loadToken();
     		String csrf = FindString.findValueInCookies(cookiesString, "bili_jct");
     		
     		if(video_info.isLike){
-    			WebModel web = URLget.BackWebAndCookiesPost(URLget.LIKE_URL,"bvid="+bvid+"&like=2&csrf="+csrf);
+    			WebModel web = URLget.BackWebAndUserCookiesPost(URLget.LIKE_URL,"aid="+aid+"&like=2&from_spmid=333.1007.tianma.1-1-1.click&spmid=333.788.0.0&source=web_normal&csrf="+csrf);
         		int bili_code = URLget.getAPIBackCode(web.content);
         		if(bili_code!=1)
-        			displayErrorAlertCanCancel(FindString.findValue(web.content, "message"), form);
-        		else{
-        			displayInfoAlert("点赞成功！");
-        			refresh();
-        		}
-        			
-    		}else{
-    			WebModel web = URLget.BackWebAndCookiesPost(URLget.LIKE_URL,"bvid="+bvid+"&like=1&csrf="+csrf);
-        		int bili_code = URLget.getAPIBackCode(web.content);
-        		if(bili_code!=0)
-        			displayErrorAlertCanCancel(FindString.findValue(web.content, "message"), form);
+        			//displayErrorAlertCanCancel(FindString.findValue(web.content, "message"), form);
+        			displayErrorAlertCanCancel(web.content+"aid="+aid+"&like=2&from_spmid=333.1007.tianma.1-1-1.click&spmid=333.788.0.0&source=web_normal&csrf="+csrf,form);
         		else{
         			displayInfoAlert("取消点赞成功！");
         			refresh();
         		}
+        			
+    		}else{
+    			WebModel web = URLget.BackWebAndUserCookiesPost(URLget.LIKE_URL,"aid="+aid+"&like=1&from_spmid=333.1007.tianma.1-1-1.click&spmid=333.788.0.0&source=web_normal&csrf="+csrf);
+        		int bili_code = URLget.getAPIBackCode(web.content);
+        		if(bili_code!=0)
+        			//displayErrorAlertCanCancel(FindString.findValue(web.content, "message"), form);
+        			displayErrorAlertCanCancel(web.content+"aid="+aid+"&like=1&from_spmid=333.1007.tianma.1-1-1.click&spmid=333.788.0.0&source=web_normal&csrf="+csrf,form);
+        		else{
+        			displayInfoAlert("点赞成功！");
+        			refresh();
+        		}
     		}
     		
-	 	}
+	 	}*/
+	 
+	 private void pressLike() throws InvalidRecordIDException, RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException, IOException, WebReturnErrorCodeException{
+	 	
+ 		
+ 		if(!video_info.isLike){
+ 			postLikeRequestAndRefresh(1);
+     			
+ 		}else{
+ 			postLikeRequestAndRefresh(2);
+ 		}
+	 }
+	 
+	 
+	 //mode = 1 点赞
+	 //mode = 2 取消点赞
+	 private void postLikeRequestAndRefresh(int mode) throws InvalidRecordIDException, RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException, WebReturnErrorCodeException, IOException{
+		if(mode!=1||mode!=2){
+			displayErrorAlert("postLikeRequestAndRefresh函数参数错误");
+			return;
+		}
+		 
+		String cookiesString = new CookiesUtils().loadToken();
+	 	String csrf = FindString.findValueInCookies(cookiesString, "bili_jct");
+	 	WebModel web = URLget.BackWebAndUserCookiesPost(URLget.LIKE_DYNAMIC_URL+"?csrf="+csrf,"{\"dyn_id_str\":\""+video_info.getDynamicID()+"\",\"up\":"+mode+",\"spmid\":\"333.1365.0.0\"}",2);
+ 		int bili_code = URLget.getAPIBackCode(web.content);
+ 		if(bili_code!=0)
+ 			//displayErrorAlertCanCancel(FindString.findValue(web.content, "message"), form);
+ 			displayErrorAlertCanCancel(web.content,form);
+ 		else{
+ 			refresh();
+ 			if(mode == 1){
+ 				video_info.setLikeStatus(true);
+ 				page_info.setVideoInfo(video_info);
+ 				page_info_list.removeElement(page_info_list.lastElement());
+ 				page_info_list.addElement(page_info);
+ 				displayInfoAlert("点赞成功！", form);
+ 			}
+ 			else{
+ 				video_info.setLikeStatus(false);
+ 				page_info.setVideoInfo(video_info);
+ 				page_info_list.removeElement(page_info_list.lastElement());
+ 				page_info_list.addElement(page_info);
+ 				displayInfoAlert("取消成功！", form);
+ 			}
+ 			
+ 		}
+	 }
 	 	
 	 	private void pressCoin(){
 	 		choossCoinCounts();
@@ -235,13 +287,13 @@ public class GetVideoInfoPage extends Page implements CommandListener{
     			String cookiesString = new CookiesUtils().loadToken();
         		String csrf = FindString.findValueInCookies(cookiesString, "bili_jct");
         		
-    	 		WebModel web = URLget.BackWebAndCookiesPost(URLget.COIN_URL,"bvid="+bvid+"&multiply="+num+"&csrf="+csrf);
+    	 		WebModel web = URLget.BackWebAndUserCookiesPost(URLget.COIN_URL,"bvid="+bvid+"&multiply="+num+"&csrf="+csrf);
         		int bili_code = URLget.getAPIBackCode(web.content);
         		if(bili_code!=0)
         			displayErrorAlertCanCancel(FindString.findValue(web.content, "message"), form);
         		else{
         			refresh();
-        			displayInfoAlert("投币成功！");
+        			displayInfoAlert("投币成功！", form);
         		}
     	 	}catch(Exception e){
     	 		displayErrorAlert(e.getMessage());
@@ -270,6 +322,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
     		}
     		
 	 	}*/
+	 
 	 	
 	 	private void refresh(){
 	 		form=new Form(lang_res.getValue("videoDisplay"));
@@ -282,7 +335,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 			
 			try {
 				this.bvid=page_info.getBVID();
-				
+				this.aid = video_info.getAID();
 			} catch (PageInfoEmptyException e1) {
 				// TODO Auto-generated catch block
 				displayErrorAlert(video_info.getVideoContent());

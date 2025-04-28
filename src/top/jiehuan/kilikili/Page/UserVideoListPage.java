@@ -8,11 +8,11 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 
-import top.jiehuan.kilikili.PageInfo;
-import top.jiehuan.kilikili.VideoInfo;
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
+import top.jiehuan.kilikili.Model.PageInfo;
+import top.jiehuan.kilikili.Model.VideoInfo;
 import top.jiehuan.kilikili.util.*;
 
 public class UserVideoListPage extends Page implements CommandListener {

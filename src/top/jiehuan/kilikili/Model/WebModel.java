@@ -1,4 +1,4 @@
-package top.jiehuan.kilikili;
+package top.jiehuan.kilikili.Model;
 
 public class WebModel {
 	public String content;

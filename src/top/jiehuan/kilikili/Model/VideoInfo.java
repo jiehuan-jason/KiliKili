@@ -1,4 +1,4 @@
-package top.jiehuan.kilikili;
+package top.jiehuan.kilikili.Model;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -10,6 +10,8 @@ import top.jiehuan.kilikili.util.URLget;
 
 public class VideoInfo {
 	private String bvid;
+	private String aid;
+	private String dynamic_id;
 	private int pn;
 	private String cover_url;
 	private String user_mid;
@@ -63,6 +65,7 @@ public class VideoInfo {
 			System.out.println("VideoInfo content is error");
 		}else{
 			System.gc();
+		aid=FindString.findValueInt(content, "aid");
 		user_mid=FindString.findValueInt(content, "mid");
 		cover_url=FindString.findValue(content, "pic");
 		title=FindString.findValue(content,"title");
@@ -80,6 +83,8 @@ public class VideoInfo {
 		favorite = Integer.parseInt(FindString.findValueInt(content,"favorite"));
 		videos = Integer.parseInt(FindString.findValueInt(content, "videos"));
 		
+		
+		getVideoDynamicAndInitVars();
 		initUserDataInVideo();
 		
 		System.out.println("getBasicVideoInfo successfully");
@@ -90,11 +95,37 @@ public class VideoInfo {
 		try{
 			WebModel web = URLget.BackWebWithMoreInfo(URLget.GET_VIDEO_LIKE_STATUS_URL+"?bvid="+bvid);
 			if(FindString.findValueInt(web.content, "data").equals("1")) isLike=true;
+			
 			web = URLget.BackWebWithMoreInfo(URLget.GET_VIDEO_COIN_STATUS_URL+"?bvid="+bvid);
 			if(!FindString.findValueInt(web.content, "data").equals("0")) isCoin=true;
+			
 			web = URLget.BackWebWithMoreInfo(URLget.GET_VIDEO_COIN_STATUS_URL+"?aid="+bvid);
-			/*if(!FindString.findValueBool(web.content, "favoured").equals("true")) isFavorite=true;
-			web = null;*/
+			if(!FindString.findValueBool(web.content, "favoured").equals("true")) isFavorite=true;
+			web = null;
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+			status = false;
+		}
+	}
+	
+	public void setLikeStatus(boolean status){
+		isLike = status;
+	}
+	
+	public void setCoinStatus(boolean status){
+		isCoin = status;
+	}
+	
+	public void setFavoriteStatus(boolean status){
+		isFavorite = status;
+	}
+	
+	private void getVideoDynamicAndInitVars(){
+		try{
+			WebModel web = URLget.BackWebWithMoreInfo(URLget.GET_DYNAMIC_INFO_URL+"?rid="+aid+"&type=8");
+			dynamic_id = FindString.findValueInt(web.content, "id_str");
+			if(dynamic_id.startsWith("\""))
+				dynamic_id = dynamic_id.substring(1, dynamic_id.length()-1);
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 			status = false;
@@ -134,6 +165,14 @@ public class VideoInfo {
 	
 	public String getBVID(){
 		return bvid;
+	}
+	
+	public String getAID(){
+		return aid;
+	}
+	
+	public String getDynamicID(){
+		return dynamic_id;
 	}
 	
 	public void setBVID(String bvid) throws Exception{
@@ -245,5 +284,41 @@ public class VideoInfo {
         // 格式化为字符串
         return year+"-"+month+"-"+day+" "+hour+":"+min;
     }
+	
+	
+	// 作者 @8192Bit
+	/*private static long power(int a, int b) {
+	    long result = 1L;
+	    for (int i = 0; i < b; i++)
+	        result *= a;
+	    return result;
+	}*/
+
+	// 修改自 https://www.zhihu.com/question/381784377/answer/1099438784
+	// 作者 @8192Bit
+	/*private static String avidToBvid(String avid) { //不带av两个字母
+	    try {
+	        String table = "fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF";
+
+	        long xor = 177451812L;
+	        long add = 8728348608L;
+	        int[] s = { 11, 10, 3, 8, 4, 6 };
+
+	        long av = Long.parseLong(avid);
+	        av = (av ^ xor) + add;
+
+	        char[] r = { 'B', 'V', '1', ' ', ' ', '4', ' ', '1', ' ', '7', ' ', ' ' };
+
+	        for (int i = 0; i < 6; i++) {
+	            r[s[i]] = table.charAt((int) (Math.floor(av / power(58, i)) % 58));
+	        }
+
+	        return String.valueOf(r);
+	    } catch (NumberFormatException e) {
+	        e.printStackTrace();
+	        return "";
+	    }
+	}*/
+
 	
 }

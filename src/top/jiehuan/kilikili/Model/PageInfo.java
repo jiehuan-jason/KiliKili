@@ -1,5 +1,6 @@
-package top.jiehuan.kilikili;
+package top.jiehuan.kilikili.Model;
 
+import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 public class PageInfo {
 	private VideoInfo video_info;

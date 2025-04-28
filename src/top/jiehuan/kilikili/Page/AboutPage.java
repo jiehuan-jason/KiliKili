@@ -50,7 +50,7 @@ public class AboutPage extends Page implements CommandListener {
 	        	String cookies;
 				try {
 					cookies = new CookiesUtils().loadToken();
-					displayInfoAlert(cookies);
+					displayInfoAlert(cookies, form);
 				} catch (Exception e) {
 					displayErrorAlert(e.getMessage());
 				} 

@@ -10,10 +10,12 @@ import java.io.UnsupportedEncodingException;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 import javax.microedition.io.HttpsConnection;
+import javax.microedition.rms.InvalidRecordIDException;
+import javax.microedition.rms.RecordStoreException;
 
-import top.jiehuan.kilikili.WebModel;
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
+import top.jiehuan.kilikili.Model.WebModel;
 
 /**
  * URLget is a class about get the WEB pages code(info) and deal with the info.
@@ -27,44 +29,50 @@ public class URLget {
 	final static int bufferZoneBytes = 4096;
 	
 	//KiliKili Server
-	public static String IP_ADDRESS="localhost";
-	public static String DOWNLOAD_ADDRESS=IP_ADDRESS;
-	public static String SEARCH_URL="http://"+IP_ADDRESS+":3000/search?keyword=";
-	public static String USER_INFO_URL="http://"+IP_ADDRESS+":3000/user?mid=";
-	//public static String RCMD_URL="http://"+IP_ADDRESS+":3232";
-	//public static String GET_INFO_URL="http://"+IP_ADDRESS+":3000/view?";
-	//public static String GET_VIDEO_DOWNLOAD_LINK_URL="http://"+IP_ADDRESS+":2121/api/playurl?";
-	public static String GET_USER_VIDEOS_URL="http://"+IP_ADDRESS+":3000/user/video?";
-	public static String GET_VIDEOS_PAGE_LIST_URL="http://"+IP_ADDRESS+":3000/list?";
-	public static String SEND_TRANSCODING_REQUEST_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/download?";
-	public static String GET_TRANSCODING_STATUS_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/status?";
-	public static String DOWNLOAD_TRANSCODING_VIDEO_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/output/";
-	//public static String GET_QRCODE_URL="http://"+IP_ADDRESS+":3232/login";
-	//public static String GET_QRCODE_LOGIN_STATUS="http://"+IP_ADDRESS+":3232/lstatus?";
-	public static String GET_CorrespondPath_TIMESTAMP_URL = "http://"+DOWNLOAD_ADDRESS+":3000/timestamp";
+	public static final String IP_ADDRESS="localhost";
+	public static final String DOWNLOAD_ADDRESS=IP_ADDRESS;
+	public static final String SEARCH_URL="http://"+IP_ADDRESS+":3000/search?keyword=";
+	public static final String USER_INFO_URL="http://"+IP_ADDRESS+":3000/user?mid=";
+	//public static final String RCMD_URL="http://"+IP_ADDRESS+":3232";
+	//public static final String GET_INFO_URL="http://"+IP_ADDRESS+":3000/view?";
+	//public static final String GET_VIDEO_DOWNLOAD_LINK_URL="http://"+IP_ADDRESS+":2121/api/playurl?";
+	public static final String GET_USER_VIDEOS_URL="http://"+IP_ADDRESS+":3000/user/video?";
+	public static final String GET_VIDEOS_PAGE_LIST_URL="http://"+IP_ADDRESS+":3000/list?";
+	public static final String SEND_TRANSCODING_REQUEST_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/download?";
+	public static final String GET_TRANSCODING_STATUS_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/status?";
+	public static final String DOWNLOAD_TRANSCODING_VIDEO_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/output/";
+	//public static final String GET_QRCODE_URL="http://"+IP_ADDRESS+":3232/login";
+	//public static final String GET_QRCODE_LOGIN_STATUS="http://"+IP_ADDRESS+":3232/lstatus?";
+	public static final String GET_CorrespondPath_TIMESTAMP_URL = "http://"+DOWNLOAD_ADDRESS+":3000/timestamp";
+	public static final String GET_UUID_URL = "http://"+DOWNLOAD_ADDRESS+":3000/uuid";
 	
 	//BiliBili Server
 	//public static String RCMD_URL = "http://localhost:3232/test";
-	public static String RCMD_URL="https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd";
-	public static String GET_INFO_URL="https://api.bilibili.com/x/web-interface/view?";
-	public static String GET_VIDEO_DOWNLOAD_LINK_URL="https://api.bilibili.com/x/player/playurl?"; //&qn=6&platform=html5&high_quality=1
-	public static String GET_QRCODE_URL="https://passport.bilibili.com/x/passport-login/web/qrcode/generate";
-	public static String GET_QRCODE_LOGIN_STATUS="https://passport.bilibili.com/x/passport-login/web/qrcode/poll?";
-	public static String GET_PERSONAL_INFO_URL = "https://api.bilibili.com/x/member/web/account";
-	public static String GET_LOGIN_COOKIES_STATUS_URL = "https://passport.bilibili.com/x/passport-login/web/cookie/info";
-	public static String GET_CSRF_REFRESH_TOKEN_STATUTS_URL = "https://passport.bilibili.com/x/passport-login/web/cookie/info";
-	public static String GET_REFRESH_CSRF_URL="https://www.bilibili.com/correspond/1/";
-	public static String GET_VIDEO_LIKE_STATUS_URL="https://api.bilibili.com/x/web-interface/archive/has/like";
-	public static String GET_VIDEO_FAVORITE_STATUS_URL="https://api.bilibili.com/x/v2/fav/video/favoured";
-	public static String GET_VIDEO_COIN_STATUS_URL="https://api.bilibili.com/x/web-interface/archive/coins";
-	public static String GET_BUVID3_URL="https://api.bilibili.com/x/frontend/finger/spi";
+	public static final String RCMD_URL="https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd";
+	public static final String GET_INFO_URL="https://api.bilibili.com/x/web-interface/view?";
+	public static final String GET_VIDEO_DOWNLOAD_LINK_URL="https://api.bilibili.com/x/player/playurl?"; //&qn=6&platform=html5&high_quality=1
+	public static final String GET_QRCODE_URL="https://passport.bilibili.com/x/passport-login/web/qrcode/generate";
+	public static final String GET_QRCODE_LOGIN_STATUS="https://passport.bilibili.com/x/passport-login/web/qrcode/poll?";
+	public static final String GET_PERSONAL_INFO_URL = "https://api.bilibili.com/x/member/web/account";
+	public static final String GET_LOGIN_COOKIES_STATUS_URL = "https://passport.bilibili.com/x/passport-login/web/cookie/info";
+	public static final String GET_CSRF_REFRESH_TOKEN_STATUTS_URL = "https://passport.bilibili.com/x/passport-login/web/cookie/info";
+	public static final String GET_REFRESH_CSRF_URL="https://www.bilibili.com/correspond/1/";
+	public static final String GET_VIDEO_LIKE_STATUS_URL="https://api.bilibili.com/x/web-interface/archive/has/like";
+	public static final String GET_VIDEO_FAVORITE_STATUS_URL="https://api.bilibili.com/x/v2/fav/video/favoured";
+	public static final String GET_VIDEO_COIN_STATUS_URL="https://api.bilibili.com/x/web-interface/archive/coins";
+	public static final String GET_BUVID3_URL="https://api.bilibili.com/x/frontend/finger/spi";
+	public static final String GET_BUVID_FP_URL="https://api.bilibili.com/x/frontend/finger/fpfmc";
+	public static final String GET_DYNAMIC_INFO_URL="https://api.bilibili.com/x/polymer/web-dynamic/v1/detail";
+	public static final String GET_FAV_FOLDER_INFO_URL="https://api.bilibili.com/x/v3/fav/folder/info";
 	
 	//BILIBILI Server Post
-	public static String REFRESH_COOKIES_URL = "https://passport.bilibili.com/x/passport-login/web/cookie/refresh";
-	public static String REFRESH_COOKIES_COMFIRM_URL = "https://passport.bilibili.com/x/passport-login/web/confirm/refresh";
-	public static String LIKE_URL = "https://api.bilibili.com/x/web-interface/archive/like";
-	public static String COIN_URL = "https://api.bilibili.com/x/web-interface/coin/add";
-	public static String FAVORITE_URL = "https://api.bilibili.com/medialist/gateway/coll/resource/deal";
+	public static final String REFRESH_COOKIES_URL = "https://passport.bilibili.com/x/passport-login/web/cookie/refresh";
+	public static final String REFRESH_COOKIES_COMFIRM_URL = "https://passport.bilibili.com/x/passport-login/web/confirm/refresh";
+	public static final String EXCLIMBWUZHI_URL = "https://api.bilibili.com/x/internal/gaia-gateway/ExClimbWuzhi";
+	//public static final String LIKE_URL = "https://api.bilibili.com/x/web-interface/archive/like"; //由于接口问题，此URL暂时不被使用
+	public static final String COIN_URL = "https://api.bilibili.com/x/web-interface/coin/add";
+	public static final String FAVORITE_URL = "https://api.bilibili.com/medialist/gateway/coll/resource/deal";
+	public static final String LIKE_DYNAMIC_URL = "https://api.bilibili.com/x/dynamic/feed/dyn/thumb";
 	
 	
 	
@@ -79,108 +87,28 @@ public class URLget {
 		}
 	}
 	
-	//这个函数只返回了Cookies，没有带Cookies请求
-	public static WebModel BackWebAndCookies(String url) throws ErrorVideoStatusException, WebReturnErrorCodeException, IOException{
-		DataInputStream dis =null;
-        InputStream inputStream = null;
-
-		HttpsConnection https_connection=null;
-		HttpConnection connection = null;
-		
-		String content="error";
-		WebModel web = new WebModel();
-        try{
-        	if(url.startsWith("https")){
-        		int num=0;
-
-    	        System.gc();
-	        	System.out.println("before open connection,free memory is:"+Runtime.getRuntime().freeMemory());
-	        	System.out.println("open the connection :"+url);
-	            // 打开连接 设置请求方式和请求类型
-	        	https_connection = (HttpsConnection) Connector.open(url);
-	        	https_connection.setRequestMethod(HttpsConnection.GET);
-	        	https_connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
-	            // 连接
-	            num = https_connection.getResponseCode();
-	            
-	            // 输出返回的网页代码
-	            System.out.println("get now");
-	            System.out.println(num);
-	            web.code = num;
-	
-	            if(num==200){
-	            	String cookie = https_connection.getHeaderField("Set-Cookie");  // 获取响应头中的 Cookie
-	                if (cookie != null) {
-	                    web.cookies = cookie;
-	                    System.out.println("Stored cookie: " + content);
-	                }
-	                try{
-		            	content = getInfoFromHttpsConnection(https_connection);
-		            	web.content = content;
-	            	}catch(IOException e1){
-	            		e1.printStackTrace();
-	            		throw e1;
-	            	}
-	                
-	            } else{
-	            	throw new WebReturnErrorCodeException(num);
-	            }
-        	}else{
-    	        //return "This method needs HTTPS!";
-        		int num=0;
-    	        
-    	        
-    	        System.gc();
-	        	System.out.println("before open connection,free memory is:"+Runtime.getRuntime().freeMemory());
-	        	System.out.println("open the connection :"+url);
-	            // 打开连接 设置请求方式和请求类型
-	            connection = (HttpConnection) Connector.open(url);
-	            connection.setRequestMethod(HttpConnection.GET);
-	            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
-	            // 连接
-	            num = connection.getResponseCode();
-	            
-	            // 输出返回的网页代码
-	            System.out.println("get now");
-	            System.out.println(num);
-	            web.code = num;
-	            
-	            
-	            if(num==200){
-	            	String cookie = connection.getHeaderField("Set-Cookie");  // 获取响应头中的 Cookie
-	                if (cookie != null) {
-	                    web.cookies = cookie;
-	                    System.out.println("Stored cookie: " + content);
-	                }
-	                try{
-		            	content = getInfoFromHttpConnection(connection);
-		            	web.content = content;
-	            	}catch(IOException e1){
-	            		e1.printStackTrace();
-	            		throw e1;
-	            	}
-	            } else{
-	            	throw new WebReturnErrorCodeException(num);
-	            }
-        	}
-        }catch(IOException e){
-        	throw e;
-        }finally{
-        	if(inputStream!=null)
-				inputStream.close();
-			if(dis!=null)
-				dis.close();
-        	if(url.startsWith("https")&&https_connection!=null)
-	        	// 关闭连接
-				https_connection.close();
-        }
-        System.out.println("after open connection,free memory is:"+Runtime.getRuntime().freeMemory());
-        System.out.println("URLget:return successfully");
-        return web;
+	//Data Example : username=test&password=123456
+	//Content-Type, application/x-www-form-urlencoded
+	public static WebModel BackWebAndUserCookiesPost(String url, String postData) throws WebReturnErrorCodeException, IOException, InvalidRecordIDException, RecordStoreException {
+    		CookiesUtils cookies_util = new CookiesUtils();
+    		if(cookies_util.isTokenStored())
+    			return BackWebAndUserCookiesPost(url, postData, cookies_util.loadToken());
+    		else throw new WebReturnErrorCodeException(-1);
 	}
 	
-	//Data Example : username=test&password=123456
-	public static WebModel BackWebAndCookiesPost(String url, String postData) throws WebReturnErrorCodeException, IOException {
+	//Content-Type, application/x-www-form-urlencoded
+	public static WebModel BackWebAndUserCookiesPost(String url, String postData, String cookies) throws WebReturnErrorCodeException, IOException {
+		return BackWebAndUserCookiesPost(url,postData,cookies,1);
+	}
+	
+	public static WebModel BackWebAndUserCookiesPost(String url, String postData, int content_type) throws WebReturnErrorCodeException, IOException, InvalidRecordIDException, RecordStoreException {
+		CookiesUtils cookies_util = new CookiesUtils();
+		if(cookies_util.isTokenStored())
+			return BackWebAndUserCookiesPost(url, postData, cookies_util.loadToken(), content_type);
+		else throw new WebReturnErrorCodeException(-1);
+}
+	
+	public static WebModel BackWebAndUserCookiesPost(String url, String postData, String cookies, int content_type) throws WebReturnErrorCodeException, IOException {
 	    DataInputStream dis = null;
 	    InputStream inputStream = null;
 
@@ -197,17 +125,13 @@ public class URLget {
 	        if (url.startsWith("https")) {
 	            https_connection = (HttpsConnection) Connector.open(url);
 	            https_connection.setRequestMethod(HttpsConnection.POST);
-	            https_connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+	            if(content_type == 1)
+	            	https_connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+	            else if(content_type == 2)
+	            	https_connection.setRequestProperty("Content-Type", "application/json");
 	            https_connection.setRequestProperty("Content-Length", String.valueOf(postData.length()));
 	            https_connection.setRequestProperty("Referer", "https://www.bilibili.com/");
-
-	            try{
-	        		CookiesUtils cookies_util = new CookiesUtils();
-	        		if(cookies_util.isTokenStored())
-	        			https_connection.setRequestProperty("Cookie", cookies_util.loadToken());
-	        	}catch(Exception e){
-	        		//什么都不做
-	        	}
+	            https_connection.setRequestProperty("Cookie", cookies);
 	            
 	            // 发送POST数据
 	            OutputStream os = https_connection.openOutputStream();
@@ -233,7 +157,10 @@ public class URLget {
 	        } else {
 	            connection = (HttpConnection) Connector.open(url);
 	            connection.setRequestMethod(HttpConnection.POST);
-	            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+	            if(content_type == 1)
+	            	connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+	            else
+	            	connection.setRequestProperty("Content-Type", "application/json");
 	            connection.setRequestProperty("Content-Length", String.valueOf(postData.length()));
 	            connection.setRequestProperty("Referer", "https://www.bilibili.com/");
 

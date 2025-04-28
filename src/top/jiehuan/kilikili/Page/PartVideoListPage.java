@@ -7,10 +7,10 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 
-import top.jiehuan.kilikili.PageInfo;
-import top.jiehuan.kilikili.PartInfo;
-import top.jiehuan.kilikili.VideoInfo;
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
+import top.jiehuan.kilikili.Model.PageInfo;
+import top.jiehuan.kilikili.Model.PartInfo;
+import top.jiehuan.kilikili.Model.VideoInfo;
 import top.jiehuan.kilikili.util.URLget;
 
 public class PartVideoListPage extends Page implements CommandListener{

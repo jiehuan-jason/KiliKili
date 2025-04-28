@@ -11,8 +11,8 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.StringItem;
 
-import top.jiehuan.kilikili.PageInfo;
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
+import top.jiehuan.kilikili.Model.PageInfo;
 import top.jiehuan.kilikili.util.FindString;
 import top.jiehuan.kilikili.util.URLget;
 

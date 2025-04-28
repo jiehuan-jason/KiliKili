@@ -15,7 +15,7 @@ import javax.microedition.rms.InvalidRecordIDException;
 import javax.microedition.rms.RecordStoreException;
 
 import top.jiehuan.kilikili.MainMIDlet;
-import top.jiehuan.kilikili.PageInfo;
+import top.jiehuan.kilikili.Model.PageInfo;
 import top.jiehuan.kilikili.util.CookieDateParser;
 import top.jiehuan.kilikili.util.CookiesUtils;
 import top.jiehuan.kilikili.util.FindString;

@@ -1,4 +1,4 @@
-package top.jiehuan.kilikili;
+package top.jiehuan.kilikili.Model;
 
 import top.jiehuan.kilikili.util.FindString;
 

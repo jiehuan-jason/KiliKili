@@ -12,8 +12,8 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 
 import top.jiehuan.kilikili.MainMIDlet;
-import top.jiehuan.kilikili.PageInfo;
-import top.jiehuan.kilikili.VideoInfo;
+import top.jiehuan.kilikili.Model.PageInfo;
+import top.jiehuan.kilikili.Model.VideoInfo;
 import top.jiehuan.kilikili.util.GetLangRes;
 
 abstract public class Page implements CommandListener{
@@ -69,9 +69,16 @@ abstract public class Page implements CommandListener{
 	     display.setCurrent(alert);	
 	 }
 	
-	protected void displayInfoAlert(String info){
+	protected void displayInfoAlert(String info, final Form form){
 		 Alert alert = new Alert("Info", info, null, AlertType.INFO);
 	     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+	     Command ok=new Command("OK",Command.OK,1);
+	     alert.addCommand(ok);
+	     alert.setCommandListener(new CommandListener() {
+	    	    public void commandAction(Command c, Displayable d) {
+	    	    	display.setCurrent(form);	
+	    	    }
+	    	});
 	     display.setCurrent(alert);	
 	 }
 	abstract protected void initPageVars();
