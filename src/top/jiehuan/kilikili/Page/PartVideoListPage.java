@@ -85,6 +85,9 @@ public class PartVideoListPage extends Page implements CommandListener{
 	            }
 	        }
 	    }
+	public short getPageID() {
+        return PageID;
+ }
 	private void refresh(){
 		page_info.emptyContent();
 		videos_list = null;

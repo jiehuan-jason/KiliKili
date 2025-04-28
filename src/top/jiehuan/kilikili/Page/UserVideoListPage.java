@@ -46,6 +46,10 @@ public class UserVideoListPage extends Page implements CommandListener {
 			display();
 	}
 	
+	public short getPageID() {
+        return PageID;
+ }
+	
 	public void commandAction(Command c, Displayable d) {
         if (c == back) {
             new Thread(new Runnable() {

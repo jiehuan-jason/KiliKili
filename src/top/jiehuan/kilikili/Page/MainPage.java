@@ -175,4 +175,8 @@ public class MainPage extends Page implements CommandListener{
 			displayErrorAlert("你的登录已过期，请重新登录！");
 		}
 	}
+	
+	public short getPageID() {
+        return PageID;
+ }
 }

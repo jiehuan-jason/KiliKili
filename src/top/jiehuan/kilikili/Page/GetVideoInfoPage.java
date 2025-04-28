@@ -94,6 +94,11 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 		}
 		
 	}
+	
+	public short getPageID() {
+        return PageID;
+ }
+	
 	 public void commandAction(Command c, Displayable d) {
 		 //返回主界面
 	        if (c == back) {

@@ -17,6 +17,7 @@ import com.google.zxing.TextToQRcodeImage;
 
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
+import top.jiehuan.kilikili.Model.PageInfo;
 import top.jiehuan.kilikili.Model.WebModel;
 import top.jiehuan.kilikili.util.CookiesUtils;
 import top.jiehuan.kilikili.util.FindString;
@@ -33,6 +34,7 @@ public class MyInfoPage extends Page {
 	Command delete;
 	Command token_status;
 	Command token_refresh;
+	Command fav_folder_list;
 	StringItem tips;
 	StringItem personal_info;
 	
@@ -88,9 +90,10 @@ public class MyInfoPage extends Page {
 	protected void initDisplayVars() {
 		initBackAndExitCommand();
 		refresh = new Command(lang_res.getValue("refresh"),Command.ITEM,1);
-		delete = new Command(lang_res.getValue("delete_token"), Command.ITEM, 1);
-		token_status = new Command("Token Status", Command.ITEM, 2);
-		token_refresh = new Command("Refresh Token", Command.ITEM, 2);
+		delete = new Command(lang_res.getValue("delete_token"), Command.ITEM, 2);
+		//token_status = new Command("Token Status", Command.ITEM, 2);
+		//token_refresh = new Command("Refresh Token", Command.ITEM, 2);
+		fav_folder_list = new Command(lang_res.getValue("fav_folder_list"),Command.ITEM,1);
 	}
 
 	protected void display() {
@@ -101,6 +104,7 @@ public class MyInfoPage extends Page {
 		}
 		else {
 			form.append(personal_info);
+			form.addCommand(fav_folder_list);
 			form.addCommand(delete);
 			//form.append(new StringItem("","\n"+enable_content));
 			//form.addCommand(token_status);
@@ -152,6 +156,13 @@ public class MyInfoPage extends Page {
         	display_token_status();
         }else if(c==token_refresh){
         	//refresh_token();
+        }else if(c==fav_folder_list){
+        	new Thread(new Runnable() {
+                public void run() {
+                	page_info_list.addElement(new PageInfo(FavFolderListPage.PageID,ml));
+                    new FavFolderListPage(page_info_list); //打开关于界面
+                }
+            }).start();
         }
 	}
 	
@@ -175,6 +186,10 @@ public class MyInfoPage extends Page {
 			displayErrorAlert(e.getMessage());
 		}
 	}
+	
+	public short getPageID() {
+        return PageID;
+ }
 	
 	/*public static void refresh_token(){
 		try{

@@ -57,6 +57,9 @@ public class AboutPage extends Page implements CommandListener {
 	        	
 	        }
 	    }
+	 public short getPageID() {
+	        return PageID;
+	 }
 	 protected void initDisplayVars(){
 		    
 			author = new StringItem("","软件作者：jiehuan\n" +

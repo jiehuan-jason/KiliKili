@@ -48,6 +48,9 @@ public class DownloadPage extends Page implements CommandListener{
 		initDisplayVars();
 		display();
 	}
+	public short getPageID() {
+        return PageID;
+ }
 	
 	 public void commandAction(Command c, Displayable d) {
 		 	// 返回上一级

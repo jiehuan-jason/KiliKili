@@ -44,6 +44,10 @@ public class RecommendPage extends Page implements CommandListener {
 		}
 	}
 	
+	public short getPageID() {
+        return PageID;
+ }
+	
 	//命令的执行函数 详细内容请参考MainMIDlet文件
 	public void commandAction(Command c, Displayable d) {
         if (c == back) {

@@ -84,6 +84,7 @@ abstract public class Page implements CommandListener{
 	abstract protected void initPageVars();
 	abstract protected void initDisplayVars();
 	abstract protected void display();
+	public abstract short getPageID();
 	
 	public abstract void commandAction(Command c, Displayable d);
 	
@@ -185,6 +186,22 @@ abstract public class Page implements CommandListener{
 	        }).start();
 	        break;
 	        
+	    case FavFolderListPage.PageID:
+	    	new Thread(new Runnable() {
+	            public void run() {
+	                new FavFolderListPage(page_info_list);
+	            }
+	        }).start();
+	        break;
+	    
+	    case MyInfoPage.PageID:
+	    	new Thread(new Runnable() {
+	            public void run() {
+	                new MyInfoPage(page_info_list);
+	            }
+	        }).start();
+	        break;
+	        
 	        
 	    default:
 	        new Thread(new Runnable() {
@@ -194,6 +211,10 @@ abstract public class Page implements CommandListener{
 	        }).start();
 	        break;
 	}
+	}
+	public void back(final Vector page_info_list){
+		PageInfo page = (PageInfo) page_info_list.lastElement();
+		back(page.pageID, page_info_list);
 	}
 	public void backMainPage(){
 		new Thread(new Runnable() {

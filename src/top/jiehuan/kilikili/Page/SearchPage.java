@@ -56,6 +56,11 @@ public class SearchPage extends Page implements CommandListener{
 			displayErrorAlert(e.getMessage());
 		}
 	}
+	
+	public short getPageID() {
+        return PageID;
+ }
+	
 	 public void commandAction(Command c, Displayable d) {
 		 	// 返回主界面
 	        if (c == back) {
