@@ -1,9 +1,11 @@
 package top.jiehuan.kilikili.Model;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
+import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
 import top.jiehuan.kilikili.util.FindString;
 import top.jiehuan.kilikili.util.URLget;
 
@@ -19,7 +21,8 @@ public class VideoInfo {
 	private String title;
 	private String pubtime;
 	private String description;
-	private boolean status;
+	private boolean status = true;
+	private String error_message;
 	private String content;
 	private String search_keyword;
 	private PartInfo part_info;
@@ -35,6 +38,7 @@ public class VideoInfo {
 	private int share;
 	private int favorite;
 	private int videos;
+	
 	
 	public VideoInfo(String bvid) throws Exception{
 		this(bvid,1);
@@ -55,6 +59,7 @@ public class VideoInfo {
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 			status = false;
+			error_message = "initPartInfo"+e.getClass().toString()+" "+e.getMessage();
 			throw e;
 		} 
 	}
@@ -99,11 +104,13 @@ public class VideoInfo {
 			web = URLget.BackWebWithMoreInfo(URLget.GET_VIDEO_COIN_STATUS_URL+"?bvid="+bvid);
 			if(!FindString.findValueInt(web.content, "data").equals("0")) isCoin=true;
 			
-			web = URLget.BackWebWithMoreInfo(URLget.GET_VIDEO_COIN_STATUS_URL+"?aid="+bvid);
-			if(!FindString.findValueBool(web.content, "favoured").equals("true")) isFavorite=true;
+			web = URLget.BackWebWithMoreInfo(URLget.GET_VIDEO_FAVORITE_STATUS_URL+"?aid="+bvid);
+			if(FindString.findValueBool(web.content, "favoured").equals("true")) isFavorite=true;
 			web = null;
+			status = true;
 		}catch(Exception e){
 			System.out.println(e.getMessage());
+			error_message = "initUserDataInVideo"+e.getClass().toString()+" "+e.getMessage();
 			status = false;
 		}
 	}
@@ -126,9 +133,11 @@ public class VideoInfo {
 			dynamic_id = FindString.findValueInt(web.content, "id_str");
 			if(dynamic_id.startsWith("\""))
 				dynamic_id = dynamic_id.substring(1, dynamic_id.length()-1);
+			status = true;
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 			status = false;
+			error_message = "getVideoDynamicAndInitVars"+e.getClass().toString()+" "+e.getMessage();
 		}
 	}
 	
@@ -145,6 +154,7 @@ public class VideoInfo {
 		}
 		catch(Exception e){
 			status = false;
+			error_message = "getVideoContent"+e.getClass().toString()+" "+e.getMessage();
 			return "error";
 		}
 	}
@@ -155,6 +165,7 @@ public class VideoInfo {
 		}catch(Exception e){
 			System.out.println("BackVideoLink is error");
 			status = false;
+			error_message = "getVideoURL"+e.getClass().toString()+" "+e.getMessage();
 			throw e;
 		}
 	}
@@ -228,6 +239,10 @@ public class VideoInfo {
 		//return true;
 	}
 	
+	public String getErrorMessage(){
+		return error_message;
+	}
+	
 	public String getDescription(){
 		return description.substring(1, description.length() - 1);
 	}
@@ -296,7 +311,7 @@ public class VideoInfo {
 
 	// 修改自 https://www.zhihu.com/question/381784377/answer/1099438784
 	// 作者 @8192Bit
-	/*private static String avidToBvid(String avid) { //不带av两个字母
+	/*public static String avidToBvid(String avid) { //不带av两个字母
 	    try {
 	        String table = "fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF";
 
@@ -319,6 +334,12 @@ public class VideoInfo {
 	        return "";
 	    }
 	}*/
+	
+	public static String avidToBvid(String avid) throws WebReturnErrorCodeException, IOException{
+		WebModel web = URLget.BackWebWithMoreInfo(URLget.GET_INFO_URL+"aid="+avid);
+		return FindString.findValue(web.content, "bvid");
+		//return web.content;
+	}
 
 	
 }

@@ -160,7 +160,7 @@ public class MyInfoPage extends Page {
         	new Thread(new Runnable() {
                 public void run() {
                 	page_info_list.addElement(new PageInfo(FavFolderListPage.PageID,ml));
-                    new FavFolderListPage(page_info_list); //打开关于界面
+                    new FavFolderListPage(page_info_list); 
                 }
             }).start();
         }

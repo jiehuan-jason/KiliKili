@@ -78,7 +78,17 @@ public class FavFolderListPage extends Page implements CommandListener{
     }
 	
 	private void initInfoPage(){
-		
+		String id = ids[folders_list.getSelectedIndex()];
+    	PageInfo newpage = new PageInfo(FavListPage.PageID,ml);
+    	try {
+			newpage.setFavFolderInfo(new FavFolderInfo(id));;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			displayErrorAlert("FFL initInfo Error:"+e.getMessage());
+		}
+    	page_info_list.addElement(newpage);
+        new FavListPage(page_info_list);
 	}
 	
 	private void refreshPage() throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{

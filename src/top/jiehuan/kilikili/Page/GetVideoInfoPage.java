@@ -88,7 +88,8 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 		//若返回代码为错误代码，则显示未找到视频
 		if(!status){
 			System.out.println("GetVideoInfoPage:Back code error");
-			displayErrorAlert(video_info.getVideoContent());
+			displayErrorAlert("Back code error"+video_info.getVideoContent());
+			
 		}else{
 			
 		}
@@ -343,14 +344,14 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 				this.aid = video_info.getAID();
 			} catch (PageInfoEmptyException e1) {
 				// TODO Auto-generated catch block
-				displayErrorAlert(video_info.getVideoContent());
+				displayErrorAlert("PIEE:"+video_info.getVideoContent());
 			}
 			boolean status = video_info.getStatus();
 			System.out.println("GetVideoInfoPage:status = "+status);
 			//若返回代码为错误代码，则显示未找到视频
 			if(!status){
 				System.out.println("GetVideoInfoPage:Back code error");
-				displayErrorAlert(video_info.getVideoContent());
+				displayErrorAlert("GVIF BCE:"+video_info.getErrorMessage());
 			}
 			
 			

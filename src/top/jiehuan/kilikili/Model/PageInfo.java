@@ -15,6 +15,8 @@ public class PageInfo {
 	private boolean isSearchSet = false;
 	private String content = "";
 	private boolean isContentSet = false;
+	private FavFolderInfo favFolderInfo;
+	private boolean isFavFolderInfoSet = false;
 	
 	public PageInfo(short PageID, MainMIDlet ml){
 		this.pageID = PageID;
@@ -23,10 +25,23 @@ public class PageInfo {
 		isSearchSet = false;
 		isContentSet = false;
 		isPageSet = false;
+		isFavFolderInfoSet = false;
 	}
 	
 	public MainMIDlet getMainMIDletObject(){
 		return ml;
+	}
+	
+	public void setFavFolderInfo(FavFolderInfo favFolderInfo){
+		this.favFolderInfo = favFolderInfo;
+		isFavFolderInfoSet = true;
+	}
+	
+	public FavFolderInfo getFavFolderInfo() throws PageInfoEmptyException{
+		if(isFavFolderInfoSet)
+			return favFolderInfo;
+		else
+			throw new PageInfoEmptyException();
 	}
 	
 	public void setVideoInfo(String bvid) throws Exception{

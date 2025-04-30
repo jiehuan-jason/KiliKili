@@ -10,6 +10,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.List;
 
 import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.Model.PageInfo;
@@ -64,6 +65,19 @@ abstract public class Page implements CommandListener{
 	     alert.setCommandListener(new CommandListener() {
 	    	    public void commandAction(Command c, Displayable d) {
 	    	    	display.setCurrent(form);	
+	    	    }
+	    	});
+	     display.setCurrent(alert);	
+	 }
+	
+	protected void displayErrorAlertCanCancel(String error, final List list){
+		 Alert alert = new Alert("Error", error, null, AlertType.ERROR);
+	     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+	     Command ok=new Command("OK",Command.OK,1);
+	     alert.addCommand(ok);
+	     alert.setCommandListener(new CommandListener() {
+	    	    public void commandAction(Command c, Displayable d) {
+	    	    	display.setCurrent(list);	
 	    	    }
 	    	});
 	     display.setCurrent(alert);	
@@ -201,6 +215,14 @@ abstract public class Page implements CommandListener{
 	            }
 	        }).start();
 	        break;
+	    
+	    case FavListPage.PageID:
+	    new Thread(new Runnable() {
+            public void run() {
+                new FavListPage(page_info_list);
+            }
+        }).start();
+        break;
 	        
 	        
 	    default:

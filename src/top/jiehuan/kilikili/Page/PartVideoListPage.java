@@ -116,7 +116,7 @@ public class PartVideoListPage extends Page implements CommandListener{
 			newvideo.setBVID(video_info.getBVID(), videos_list.getSelectedIndex()+parts_base+1);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			displayErrorAlert(e.getMessage());
+			displayErrorAlert("PVLP goInfo Error"+e.getMessage());
 		}
     	newpage.setVideoInfo(newvideo);
     	page_info_list.addElement(newpage);

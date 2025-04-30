@@ -65,6 +65,7 @@ public class URLget {
 	public static final String GET_DYNAMIC_INFO_URL="https://api.bilibili.com/x/polymer/web-dynamic/v1/detail";
 	public static final String GET_FAV_FOLDER_INFO_URL="https://api.bilibili.com/x/v3/fav/folder/info";
 	public static final String GET_USER_ALL_FAV_FOLDERS_URL="https://api.bilibili.com/x/v3/fav/folder/created/list-all";
+	public static final String GET_FAV_LIST_URL="https://api.bilibili.com/x/v3/fav/resource/list";
 	
 	//BILIBILI Server Post
 	public static final String REFRESH_COOKIES_URL = "https://passport.bilibili.com/x/passport-login/web/cookie/refresh";
