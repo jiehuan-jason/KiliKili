@@ -29,7 +29,7 @@ public class AboutPage extends Page implements CommandListener {
 	ImageItem imageItem;
 	Command get_cookies;
 	
-	public static String version = "0.4.4";
+	public static String version = "1.0.1";
 	
 	public AboutPage(Vector page_list_info){
 		//初始化变量和界面
@@ -67,10 +67,11 @@ public class AboutPage extends Page implements CommandListener {
 					"dospy.wang:@jiehuan\n" +
 					"github:@jiehuan-jason\n" +
 					"网盘:jiehuan233.ysepan.com\n");
-			text = new StringItem("","软件版本：V0.4beta3\n" +
-					"更新日期：2025.4.x\n" +
+			text = new StringItem("","软件版本：V1.0alpha\n" +
+					"更新日期：2025.5.x\n" +
 					"更新内容：\n" +
-					"添加了点赞功能 添加了登录过期提醒\n" +
+					"添加了点赞收藏投币\n" +
+					"添加了收藏夹列表\n" +
 					"修复了部分bug\n");
 			thanks_list = new StringItem("","捐赠感谢列表（截至更新时，排名不分先后）：\n" +
 					"爱发电用户_898f2\n" +

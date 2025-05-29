@@ -14,7 +14,7 @@ import top.jiehuan.kilikili.Page.MainPage;
 
 public class MainMIDlet extends MIDlet{
 	
-	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
+	protected void destroyApp(boolean arg0) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -24,7 +24,7 @@ public class MainMIDlet extends MIDlet{
 
 	}
 
-	protected void startApp() throws MIDletStateChangeException {
+	protected void startApp(){
 		/*Vector page_info_list = new Vector();
 		PageInfo newpage = new PageInfo(MainPage.PageID,this);
 		newpage.setVideoInfo(TEST_BVID);
@@ -39,7 +39,7 @@ public class MainMIDlet extends MIDlet{
 	public void exitApp() {
         try {
 			destroyApp(false);
-		} catch (MIDletStateChangeException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		} // 销毁应用
         notifyDestroyed(); // 通知 MIDP 退出

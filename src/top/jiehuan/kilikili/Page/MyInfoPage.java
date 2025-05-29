@@ -65,8 +65,12 @@ public class MyInfoPage extends Page {
 				//String webpage = URLget.BackWeb(URLget.GET_PERSONAL_INFO_URL);
 				//displayInfoAlert(webpage);
 				String personal_info_content = URLget.BackWeb(URLget.GET_PERSONAL_INFO_URL);
+				System.out.println(token_utils.loadToken());
+				System.out.println(personal_info_content);
 				String name = FindString.findValue(personal_info_content, "uname");
 				String sign = FindString.findValue(personal_info_content, "sign");
+				if(name == null)
+					token_utils.deleteToken();
 				form = new Form(name);
 				personal_info = new StringItem("",name+"\n"+sign);
 			}catch(Exception e){
@@ -129,10 +133,23 @@ public class MyInfoPage extends Page {
 				String[] code = FindString.extractContentsInt(content.content,"\"code\"");
 				System.out.println("code:"+code[1]);
 				if(code[1].equals("0")){
-					displayInfoAlert("Login Successfully!Cookies:"+content.cookies, form);
+					System.out.println(content.cookies);
+					System.out.println(content.content);
+					String url = FindString.findValue(content.content, "url");
+					int index = url.indexOf("crossDomain?");
+					String query = "";
+					if (index != -1) {
+					    query = url.substring(index + "crossDomain?".length());
+					    query = URLget.decodeUnicode(query);
+					    System.out.println(query);
+					}
+					String cookies_append = FindString.replace(query, "&", "; ")+"; ";
+					cookies_append = FindString.replace(cookies_append, ",", "%2C");
+					displayInfoAlert("Login Successfully!Cookies:"+cookies_append+content.cookies, form);
 					CookiesUtils utils = new CookiesUtils();
-					utils.updateToken(content.cookies);
-					cookies=content.cookies;
+					utils.updateToken(cookies_append+content.cookies);
+					cookies=cookies_append+content.cookies;
+					
 					//new CookiesUtils("refresh_token").updateToken(FindString.findValue(content.content, "refresh_token"));
 					getBUVIDAndEnable();
 					//enable_content = enable_content+"\n"+content.content+"\n"+payload;

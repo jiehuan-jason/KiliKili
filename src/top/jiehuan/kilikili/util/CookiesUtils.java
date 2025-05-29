@@ -42,7 +42,7 @@ public class CookiesUtils {
         try {
             RecordEnumeration records = recordStore.enumerateRecords(null, null, false);
             return records.hasNextElement();  // 如果有记录，说明 token 存在
-        } catch (RecordStoreException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }

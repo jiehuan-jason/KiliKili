@@ -128,6 +128,7 @@ public class PartVideoListPage extends Page implements CommandListener{
 	 protected void initPageVars(){
 		 try {
 				parts = video_info.getVideoParts();
+				
 				if(parts == 1){
 					new Thread(new Runnable() {
 		                public void run() {

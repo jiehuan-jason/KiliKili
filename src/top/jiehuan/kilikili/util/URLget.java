@@ -73,7 +73,7 @@ public class URLget {
 	public static final String EXCLIMBWUZHI_URL = "https://api.bilibili.com/x/internal/gaia-gateway/ExClimbWuzhi";
 	//public static final String LIKE_URL = "https://api.bilibili.com/x/web-interface/archive/like"; //由于接口问题，此URL暂时不被使用
 	public static final String COIN_URL = "https://api.bilibili.com/x/web-interface/coin/add";
-	public static final String FAVORITE_URL = "https://api.bilibili.com/medialist/gateway/coll/resource/deal";
+	public static final String FAVORITE_URL = "https://api.bilibili.com/x/v3/fav/resource/deal";
 	public static final String LIKE_DYNAMIC_URL = "https://api.bilibili.com/x/dynamic/feed/dyn/thumb";
 	
 	
@@ -114,7 +114,7 @@ public class URLget {
 	    DataInputStream dis = null;
 	    InputStream inputStream = null;
 
-	    HttpsConnection https_connection = null;
+	    //HttpsConnection https_connection = null;
 	    HttpConnection connection = null;
 
 	    String content = "error";
@@ -124,7 +124,7 @@ public class URLget {
 	        System.out.println("before open connection, free memory is: " + Runtime.getRuntime().freeMemory());
 	        System.out.println("open the connection: " + url);
 
-	        if (url.startsWith("https")) {
+	        /*if (url.startsWith("https")) {
 	            https_connection = (HttpsConnection) Connector.open(url);
 	            https_connection.setRequestMethod(HttpsConnection.POST);
 	            if(content_type == 1)
@@ -156,7 +156,7 @@ public class URLget {
 	            } else {
 	                throw new WebReturnErrorCodeException(num);
 	            }
-	        } else {
+	        } else {*/
 	            connection = (HttpConnection) Connector.open(url);
 	            connection.setRequestMethod(HttpConnection.POST);
 	            if(content_type == 1)
@@ -165,6 +165,8 @@ public class URLget {
 	            	connection.setRequestProperty("Content-Type", "application/json");
 	            connection.setRequestProperty("Content-Length", String.valueOf(postData.length()));
 	            connection.setRequestProperty("Referer", "https://www.bilibili.com/");
+	            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0");
+	            connection.setRequestProperty("Cookie", cookies);
 
 	            // 发送POST数据
 	            OutputStream os = connection.openOutputStream();
@@ -176,13 +178,7 @@ public class URLget {
 	            System.out.println(num);
 	            web.code = num;
 	            
-	            try{
-	        		CookiesUtils cookies_util = new CookiesUtils();
-	        		if(cookies_util.isTokenStored())
-	        			connection.setRequestProperty("Cookie", cookies_util.loadToken());
-	        	}catch(Exception e){
-	        		//什么都不做
-	        	}
+	            
 
 	            if (num == 200) {
 	                String cookie = connection.getHeaderField("Set-Cookie");
@@ -195,14 +191,15 @@ public class URLget {
 	            } else {
 	                throw new WebReturnErrorCodeException(num);
 	            }
-	        }
+	        //}
 	    } catch (IOException e) {
 	        throw e;
 	    } finally {
 	        if (inputStream != null) inputStream.close();
 	        if (dis != null) dis.close();
-	        if (url.startsWith("https") && https_connection != null) https_connection.close();
-	        if (!url.startsWith("https") && connection != null) connection.close();
+	        //if (url.startsWith("https") && https_connection != null) https_connection.close();
+	        //if (!url.startsWith("https") && connection != null) 
+	        connection.close();
 	    }
 
 	    System.out.println("after post connection, free memory is: " + Runtime.getRuntime().freeMemory());
@@ -220,7 +217,7 @@ public class URLget {
 		WebModel web = new WebModel();
 		
         try{
-        	if(url.startsWith("https")){
+        	/*if(url.startsWith("https")){
         		int num=0;
 
     	        System.gc();
@@ -263,7 +260,7 @@ public class URLget {
 	            } else{
 	            	throw new WebReturnErrorCodeException(num);
 	            }
-        	}else{
+        	}else{*/
     	        int num=0;
     	        
     	        
@@ -274,6 +271,8 @@ public class URLget {
 	            connection = (HttpConnection) Connector.open(url);
 	            connection.setRequestMethod(HttpConnection.GET);
 	            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
+	            connection.setRequestProperty("Referer", "https://www.bilibili.com/");
+	            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0");
 	            try{
 	        		CookiesUtils cookies_util = new CookiesUtils();
 	        		if(cookies_util.isTokenStored())
@@ -304,7 +303,7 @@ public class URLget {
 	            } else{
 	            	throw new WebReturnErrorCodeException(num);
 	            }
-        	}
+        	//}
         }catch(IOException e){
         	throw e;
         }finally{
@@ -312,10 +311,10 @@ public class URLget {
 				inputStream.close();
 			if(dis!=null)
 				dis.close();
-        	if(url.startsWith("https")&&https_connection!=null)
+        	/*if(url.startsWith("https")&&https_connection!=null)
 	        	// 关闭连接
 				https_connection.close();
-        	else if(connection!=null)
+        	else if(connection!=null)*/
         		connection.close();
         }
         System.out.println("after open connection,free memory is:"+Runtime.getRuntime().freeMemory());
@@ -388,6 +387,35 @@ public class URLget {
 	        }
 	        return encoded.toString();
 	    }
+	    
+	    static public String urlEncodeWithoutCookiesChars(String text) {
+	        StringBuffer encoded = new StringBuffer();
+	        try {
+	            byte[] bytes = text.getBytes("UTF-8");
+	            for (int i = 0; i < bytes.length; i++) {
+	                int b = bytes[i] & 0xFF;
+	                if (b < 128 && b != '&' && b != '=' && b != ';') {
+	                    // ASCII 且不是 & 或 =，直接添加
+	                    encoded.append((char) b);
+	                } else if (b == '&' || b == '=' || b == ';') {
+	                    // 保留 & 和 =
+	                    encoded.append((char) b);
+	                } else {
+	                    // 其他字符转为 %XX
+	                    encoded.append("%");
+	                    String hex = Integer.toHexString(b);
+	                    if (hex.length() == 1) {
+	                        encoded.append("0");
+	                    }
+	                    encoded.append(hex.toUpperCase());
+	                }
+	            }
+	        } catch (java.io.UnsupportedEncodingException e) {
+	            e.printStackTrace();
+	        }
+	        return encoded.toString();
+	    }
+
 	    
 	    //Deepseek编写
 	    public static String decodeUnicode(String encodedUrl) {

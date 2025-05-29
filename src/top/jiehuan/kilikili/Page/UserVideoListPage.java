@@ -135,6 +135,8 @@ public class UserVideoListPage extends Page implements CommandListener {
 	}
 	
 	private void refreshPage(String aid) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
+		video_list=new List(video_info.getUserName()+lang_res.getValue("video_list"),List.IMPLICIT);
+		
 		System.out.println("start to get user video data");
 		String video_data;
 		video_data = getWeb(aid);

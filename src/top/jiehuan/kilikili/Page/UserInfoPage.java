@@ -81,7 +81,7 @@ public class UserInfoPage extends Page implements CommandListener {
                 	try {
                 		System.out.println("face_url is:"+face_url);
 						ml.platformRequest(face_url);
-                	} catch (ConnectionNotFoundException e) {
+                	} catch (Exception e) {
 						e.printStackTrace();
 					}
                 	
@@ -127,7 +127,7 @@ public class UserInfoPage extends Page implements CommandListener {
 		System.out.println("/level_img/lv"+level+".png");
 		try {
 			level_img = Image.createImage("/level_img/lv"+level+".png");
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			displayErrorAlert("UserInfoPage init level_img error:"+e.getMessage());
 		}

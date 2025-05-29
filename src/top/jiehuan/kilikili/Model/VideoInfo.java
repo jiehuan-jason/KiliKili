@@ -4,8 +4,13 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.microedition.rms.RecordStoreException;
+import javax.microedition.rms.RecordStoreFullException;
+import javax.microedition.rms.RecordStoreNotFoundException;
+
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
+import top.jiehuan.kilikili.util.CookiesUtils;
 import top.jiehuan.kilikili.util.FindString;
 import top.jiehuan.kilikili.util.URLget;
 
@@ -29,7 +34,6 @@ public class VideoInfo {
 	
 	public boolean isLike = false;
 	public boolean isCoin = false;
-	public boolean isFavorite = false;
 	
 	private int like;
 	private int view;
@@ -89,9 +93,18 @@ public class VideoInfo {
 		videos = Integer.parseInt(FindString.findValueInt(content, "videos"));
 		
 		
-		getVideoDynamicAndInitVars();
-		initUserDataInVideo();
 		
+		try {
+			if(new CookiesUtils().isTokenStored()){
+				initUserDataInVideo();
+				getVideoDynamicAndInitVars();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+			status = false;
+		}
 		System.out.println("getBasicVideoInfo successfully");
 		}
 	}
@@ -100,12 +113,11 @@ public class VideoInfo {
 		try{
 			WebModel web = URLget.BackWebWithMoreInfo(URLget.GET_VIDEO_LIKE_STATUS_URL+"?bvid="+bvid);
 			if(FindString.findValueInt(web.content, "data").equals("1")) isLike=true;
+			System.out.println(web.content);
 			
 			web = URLget.BackWebWithMoreInfo(URLget.GET_VIDEO_COIN_STATUS_URL+"?bvid="+bvid);
 			if(!FindString.findValueInt(web.content, "data").equals("0")) isCoin=true;
-			
-			web = URLget.BackWebWithMoreInfo(URLget.GET_VIDEO_FAVORITE_STATUS_URL+"?aid="+bvid);
-			if(FindString.findValueBool(web.content, "favoured").equals("true")) isFavorite=true;
+			System.out.println(web.content);
 			web = null;
 			status = true;
 		}catch(Exception e){
@@ -123,13 +135,10 @@ public class VideoInfo {
 		isCoin = status;
 	}
 	
-	public void setFavoriteStatus(boolean status){
-		isFavorite = status;
-	}
-	
 	private void getVideoDynamicAndInitVars(){
 		try{
 			WebModel web = URLget.BackWebWithMoreInfo(URLget.GET_DYNAMIC_INFO_URL+"?rid="+aid+"&type=8");
+			System.out.println(web.content);
 			dynamic_id = FindString.findValueInt(web.content, "id_str");
 			if(dynamic_id.startsWith("\""))
 				dynamic_id = dynamic_id.substring(1, dynamic_id.length()-1);

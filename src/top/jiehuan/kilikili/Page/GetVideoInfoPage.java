@@ -42,6 +42,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	String pic;
 	String mid;
 	String ctime;
+	String my_mid;
 	
 	public String bvid;
 	String aid;
@@ -54,6 +55,14 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	Command favorite; //收藏
 	String video_url;
 	String cid;
+	String errorMessage = "";
+	
+	String[] favFoldersID;
+	String[] favFoldersName;
+    private Vector favFoldersCommandList = new Vector();
+    private Vector favFoldersNameList = new Vector();
+	boolean[] isFav;
+	int favFoldersNum;
 	
 	
 	
@@ -88,7 +97,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 		//若返回代码为错误代码，则显示未找到视频
 		if(!status){
 			System.out.println("GetVideoInfoPage:Back code error");
-			displayErrorAlert("Back code error"+video_info.getVideoContent());
+			displayErrorAlert("Back code error"+video_info.getErrorMessage());
 			
 		}else{
 			
@@ -132,10 +141,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
                     	try {
                     		System.out.println("cover_url is:"+pic);
 							ml.platformRequest(new String(pic.getBytes("UTF-8"),"UTF-8"));
-						} catch (ConnectionNotFoundException e) {
-							e.printStackTrace();
-							displayErrorAlert(e.getMessage());
-						} catch (UnsupportedEncodingException e) {
+						} catch (Exception e) {
 							e.printStackTrace();
 							displayErrorAlert(e.getMessage());
 						}
@@ -166,7 +172,11 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	        }if (c==coin){
 	        	pressCoin();
 	        }if (c==favorite){
-	        	displayErrorAlertCanCancel("test", form);
+	        	try{
+	        		pressFavorite();
+	        	}catch(Exception e){
+	        		displayErrorAlert(e.getMessage());
+	        	}
 	        }
 	    }
 	 
@@ -222,7 +232,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	 //mode = 1 点赞
 	 //mode = 2 取消点赞
 	 private void postLikeRequestAndRefresh(int mode) throws InvalidRecordIDException, RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException, WebReturnErrorCodeException, IOException{
-		if(mode!=1||mode!=2){
+		if(mode!=1&&mode!=2){
 			displayErrorAlert("postLikeRequestAndRefresh函数参数错误");
 			return;
 		}
@@ -235,12 +245,13 @@ public class GetVideoInfoPage extends Page implements CommandListener{
  			//displayErrorAlertCanCancel(FindString.findValue(web.content, "message"), form);
  			displayErrorAlertCanCancel(web.content,form);
  		else{
- 			refresh();
+ 			
  			if(mode == 1){
  				video_info.setLikeStatus(true);
  				page_info.setVideoInfo(video_info);
  				page_info_list.removeElement(page_info_list.lastElement());
  				page_info_list.addElement(page_info);
+ 				refresh();
  				displayInfoAlert("点赞成功！", form);
  			}
  			else{
@@ -248,6 +259,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
  				page_info.setVideoInfo(video_info);
  				page_info_list.removeElement(page_info_list.lastElement());
  				page_info_list.addElement(page_info);
+ 				refresh();
  				displayInfoAlert("取消成功！", form);
  			}
  			
@@ -270,14 +282,14 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 
 	        alert.setCommandListener(new CommandListener() {
 	            public void commandAction(Command c, Displayable d) {
-	            	display.setCurrent(form);
+	            	
 	            	if (c == oneCoinCommand) {
 	            		postCoinRequest(1);
 	                }else if (c == twoCoinCommand) {
 	                	postCoinRequest(2);
 	                } else if (c == closeCommand) {
 	                    // 关闭按钮被按下，返回到之前的界面
-	                    
+	                	display.setCurrent(form);
 	                }
 	            }
 	        });
@@ -285,8 +297,8 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	 	}
 	 	
 	 	private void postCoinRequest(int num){
-	 		//if(num>2||num<=0)
-	 			//return;
+	 		if(num>2||num<=0)
+	 			return;
 	 		
 	 		
     		try{
@@ -298,6 +310,9 @@ public class GetVideoInfoPage extends Page implements CommandListener{
         		if(bili_code!=0)
         			displayErrorAlertCanCancel(FindString.findValue(web.content, "message"), form);
         		else{
+        			video_info.setCoinStatus(true);
+     				page_info_list.removeElement(page_info_list.lastElement());
+     				page_info_list.addElement(page_info);
         			refresh();
         			displayInfoAlert("投币成功！", form);
         		}
@@ -307,31 +322,94 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	 	}
 	 	
 	 	/*private void pressFavorite() throws InvalidRecordIDException, RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException, IOException, WebReturnErrorCodeException{
-	 		String cookiesString = new CookiesUtils().loadToken();
-    		String csrf = FindString.findValueInCookies(cookiesString, "bili_jct");
-    		
-    		if(video_info.isLike){
-    			WebModel web = URLget.BackWebAndCookiesPost(URLget.LIKE_URL,"bvid="+bvid+"&like=2&csrf="+csrf);
-        		int bili_code = URLget.getAPIBackCode(web.content);
-        		if(bili_code!=0)
-        			displayErrorAlert(FindString.findValue(web.content, "message"));
-        		else
-        			refresh();
-        			
-    		}else{
-    			WebModel web = URLget.BackWebAndCookiesPost(URLget.LIKE_URL,"bvid="+bvid+"&like=1&csrf="+csrf);
-        		int bili_code = URLget.getAPIBackCode(web.content);
-        		if(bili_code!=0)
-        			displayErrorAlert(bili_code+" "+FindString.findValue(web.content, "message"));
-        		else
-        			refresh();
-    		}
-    		
+	 		Alert alert = new Alert("收藏", "请使用下方命令选择收藏夹", null, AlertType.INFO);
+	        alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+	        final Command closeCommand = new Command("关闭", Command.EXIT, 0);
+	        alert.addCommand(closeCommand);
+	        favFoldersCommandList.addElement(closeCommand);
+	        favFoldersNameList.addElement("关闭");
+	        
+	        for (int i = 0; i < favFoldersNum; i++) {
+	            Command cmd = new Command(favFoldersName[i], Command.ITEM, 1);
+	            alert.addCommand(cmd);
+	            favFoldersCommandList.addElement(cmd);
+	            favFoldersNameList.addElement(favFoldersName[i]);
+	        }
+
+	        alert.setCommandListener(new CommandListener() {
+	            public void commandAction(Command c, Displayable d) {
+	            	display.setCurrent(form);
+	            	displayErrorAlertCanCancel(c.getLabel(), form);
+	            	
+	                for (int i = 0; i < favFoldersCommandList.size(); i++) {
+	                    if (c == (Command) favFoldersCommandList.elementAt(i)) {
+	                        String selectedName = (String) favFoldersNameList.elementAt(i);
+
+	                        if (selectedName.equals("关闭")) {
+	                        	display.setCurrent(form);
+	                        } else {
+	                            System.out.println("用户选择了: " + selectedName);
+		                        displayErrorAlertCanCancel(selectedName+" "+favFoldersID[i-1], form);
+	                            if(isFav[i-1])
+	                            	postFavRequest(favFoldersID[i-1], false);
+	                            else
+	                            	postFavRequest(favFoldersID[i-1], true);
+	                        }
+	                        break;
+	                    }
+	                }
+	            }
+	        });
+	        display.setCurrent(alert, form);			
 	 	}*/
+	 	private void pressFavorite(){
+	 		PageInfo favListPage = new PageInfo(FavFolderListPage.PageID,ml);
+	 		favListPage.setVideoInfo(video_info);
+	 		favListPage.setType(2);
+        	page_info_list.addElement(favListPage);
+        	for(int i=0;i<page_info_list.size();i++){
+        		PageInfo info = (PageInfo)(page_info_list.elementAt(i));
+        		System.out.println("page num in"+i+" is:"+info.pageID);
+        	}
+			new FavFolderListPage(page_info_list);
+	 	}
+	 	
+	 	//status = true 点赞
+	 	//status = false 取消点赞
+	 	private void postFavRequest(String favID, boolean status){
+	 		
+	 		
+    		try{
+    			String cookiesString = new CookiesUtils().loadToken();
+        		String csrf = FindString.findValueInCookies(cookiesString, "bili_jct");
+        		WebModel web = new WebModel();
+        		if(status)
+    	 			web = URLget.BackWebAndUserCookiesPost(URLget.FAVORITE_URL,"rid="+aid+"&type=2&add_media_ids="+favID+"&csrf="+csrf);
+        		else
+        			web = URLget.BackWebAndUserCookiesPost(URLget.FAVORITE_URL,"rid="+aid+"&type=2&del_media_ids="+favID+"&csrf="+csrf);
+        		
+        		int bili_code = URLget.getAPIBackCode(web.content);
+        		displayErrorAlertCanCancel(web.content, form);
+        		if(bili_code!=0){
+        			displayErrorAlertCanCancel(FindString.findValue(web.content, "message"), form);
+        			errorMessage = "rid="+aid+"&type=2&add_media_ids="+favID+"&csrf="+csrf;
+        			errorMessage = errorMessage+web.content;
+        			refresh();
+        		}
+        		else{
+        			displayErrorAlertCanCancel("rid="+aid+"&type=2&add_media_ids="+favID+"&csrf="+csrf+web.content, form);
+        			displayInfoAlert("收藏/取消成功！", form);
+        			refresh();
+        		}
+    	 	}catch(Exception e){
+    	 		displayErrorAlert(e.getMessage());
+    	 	}
+	 	}
 	 
 	 	
 	 	private void refresh(){
 	 		form=new Form(lang_res.getValue("videoDisplay"));
+	 		video_info.initUserDataInVideo();
 	 		initPageVars();
 			initDisplayVars();
 			display();
@@ -355,7 +433,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 			}
 			
 			
-			System.out.println("start initPageVars");
+			System.out.println("GetVideoInfoPage:start initPageVars");
 			desc = "\n"+lang_res.getValue("introduction")+video_info.getDescription();
 			cid = Long.toString(video_info.getCID());
 			pic = video_info.getCoverURL();
@@ -365,20 +443,43 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 			} catch(Exception e){
 				displayErrorAlert("GetVideoInfoPage initPageVars error"+e.getMessage());
 			}
+			
+			isFav = new boolean[30];
+			favFoldersNum = 0;
 			try{
 				is_login = new CookiesUtils().isTokenStored();
+				if(is_login){
+					WebModel web = URLget.BackWebWithMoreInfo(URLget.GET_PERSONAL_INFO_URL);
+					my_mid = FindString.findValueInt(web.content, "mid");
+					web = URLget.BackWebWithMoreInfo(URLget.GET_USER_ALL_FAV_FOLDERS_URL+"?up_mid="+my_mid+"&type=2&rid="+aid);
+					favFoldersID = FindString.extractContentsInt(web.content, "\"id\"");
+					String[] favStatus = FindString.extractContentsInt(web.content, "\"fav_state\"");
+					favFoldersName = FindString.extractContents(web.content, "\"title\"");
+					int i=0;
+					while(favStatus[i]!=null){
+						if(favStatus[i].equals("0")) isFav[i] = false;
+						else isFav[i] = true;
+						System.out.println(favFoldersID[i]);
+						System.out.println(favFoldersName[i]);
+						//favFoldersNameList.addElement(favFolders[i]);
+						i++;
+						favFoldersNum++;
+					}                                                       
+				}
 			}catch(Exception e){
 				displayErrorAlert(e.getMessage());
 			}
+			
+			
 		}
 		protected void initDisplayVars(){
-			System.out.println("start initDisplayVars");
+			System.out.println("GetVideoInfoPage:start initDisplayVars");
 			title=new StringItem(null, video_info.getTitle());
 			if(video_info.getVideoParts() != 1){
 				part_title = new StringItem(null, "P"+video_info.getPart()+" "+lang_res.getValue("part_title")+video_info.getPartTitle());
 			}
 			up_name=new StringItem(null,"\n"+lang_res.getValue("author")+video_info.getUserName());
-			info = new StringItem(null,"\n"+lang_res.getValue("view")+video_info.getView()+lang_res.getValue("ci")+"  "+lang_res.getValue("reply")+video_info.getReply()+lang_res.getValue("ci")+"  "+lang_res.getValue("coin")+video_info.getCoin()+lang_res.getValue("ge")+"  "+lang_res.getValue("share")+video_info.getShare()+lang_res.getValue("ci")+"  "+lang_res.getValue("like")+video_info.getLike()+lang_res.getValue("ci")+"  "+lang_res.getValue("favorite")+video_info.getFavorite()+lang_res.getValue("ci"));
+			info = new StringItem(null,"\n"+lang_res.getValue("view")+video_info.getView()+lang_res.getValue("ci")+"  "+lang_res.getValue("reply")+video_info.getReply()+lang_res.getValue("ci")+"  "+lang_res.getValue("coin")+video_info.getCoin()+lang_res.getValue("ge")+"  "+lang_res.getValue("share")+video_info.getShare()+lang_res.getValue("ci")+"  "+lang_res.getValue("like")+video_info.getLike()+lang_res.getValue("ci")+"  "+lang_res.getValue("favorite")+video_info.getFavorite()+lang_res.getValue("ci")+"\n"+errorMessage);
 			time = new StringItem(null,"\n"+lang_res.getValue("public_time")+":"+video_info.getFormatPubTime());
 			download=new Command(lang_res.getValue("download"),Command.ITEM,1);
 			initBackAndExitCommand();
@@ -389,10 +490,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 					like = new Command(lang_res.getValue("cancel")+lang_res.getValue("like"),Command.OK,3);
 				else
 					like = new Command(lang_res.getValue("like"),Command.OK,3);
-				if(video_info.isFavorite)
-					favorite = new Command(lang_res.getValue("cancel")+lang_res.getValue("favorite"),Command.OK,3);
-				else
-					favorite = new Command(lang_res.getValue("favorite"),Command.OK,3);
+				favorite = new Command(lang_res.getValue("favorite"),Command.OK,3);
 				coin = new Command(lang_res.getValue("coin"),Command.ITEM,3);
 			}
 

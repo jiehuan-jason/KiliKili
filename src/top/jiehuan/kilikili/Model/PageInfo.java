@@ -17,6 +17,8 @@ public class PageInfo {
 	private boolean isContentSet = false;
 	private FavFolderInfo favFolderInfo;
 	private boolean isFavFolderInfoSet = false;
+	private int type = 0;
+	private boolean isTypeSet = false;
 	
 	public PageInfo(short PageID, MainMIDlet ml){
 		this.pageID = PageID;
@@ -86,6 +88,18 @@ public class PageInfo {
 	}
 	public boolean getIsPageSet(){
 		return isPageSet;
+	}
+	
+	public void setType(int type){
+		isTypeSet = true;
+		this.type = type;
+	}
+	
+	public int getType(){
+		return type;
+	}
+	public boolean getIsTypeSet(){
+		return isTypeSet;
 	}
 	
 	public String getSearchKeyword() throws PageInfoEmptyException{

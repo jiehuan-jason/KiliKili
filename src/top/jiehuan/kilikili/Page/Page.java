@@ -95,6 +95,19 @@ abstract public class Page implements CommandListener{
 	    	});
 	     display.setCurrent(alert);	
 	 }
+	
+	protected void displayInfoAlert(String info, final List list){
+		 Alert alert = new Alert("Info", info, null, AlertType.INFO);
+	     alert.setTimeout(Alert.FOREVER); // 设置为永远显示，直到用户操作
+	     Command ok=new Command("OK",Command.OK,1);
+	     alert.addCommand(ok);
+	     alert.setCommandListener(new CommandListener() {
+	    	    public void commandAction(Command c, Displayable d) {
+	    	    	display.setCurrent(list);	
+	    	    }
+	    	});
+	     display.setCurrent(alert);	
+	 }
 	abstract protected void initPageVars();
 	abstract protected void initDisplayVars();
 	abstract protected void display();

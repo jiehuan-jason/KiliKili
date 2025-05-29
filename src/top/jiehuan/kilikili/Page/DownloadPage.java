@@ -71,7 +71,7 @@ public class DownloadPage extends Page implements CommandListener{
                     	try {
                     		System.out.println("video_url is:"+video_url);
 							ml.platformRequest(video_url);
-                    	} catch (ConnectionNotFoundException e) {
+                    	} catch (Exception e) {
 							e.printStackTrace();
 						}
                     	
@@ -112,7 +112,7 @@ public class DownloadPage extends Page implements CommandListener{
         	                        public void run() {
         	                            try {
         	                                ml.platformRequest(URLget.DOWNLOAD_TRANSCODING_VIDEO_URL + video_info.getCID() + "_240p.mp4");
-        	                            } catch (ConnectionNotFoundException e) {
+        	                            } catch (Exception e) {
         	                                e.printStackTrace();
         	                            }
         	                        }
