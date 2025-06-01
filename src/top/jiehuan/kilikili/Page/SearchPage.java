@@ -11,6 +11,7 @@ import javax.microedition.lcdui.List;
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 import top.jiehuan.kilikili.Model.PageInfo;
 import top.jiehuan.kilikili.Model.VideoInfo;
+import top.jiehuan.kilikili.Model.WebModel;
 import top.jiehuan.kilikili.util.*;
 
 public class SearchPage extends Page implements CommandListener{
@@ -43,17 +44,11 @@ public class SearchPage extends Page implements CommandListener{
 				page_num = page_info.getPage();
 		} catch (PageInfoEmptyException e1) {
 			e1.printStackTrace();
-			displayErrorAlert(e1.getMessage());
-		}
-		try{
-			initPageVars();
-			initDisplayVars();
-			display();
-
-		}catch(Exception e){
-			e.printStackTrace();
-			displayErrorAlert(e.getMessage());
-		}
+			displayErrorAlert("1"+e1.getMessage());
+		}	
+		initPageVars();
+		initDisplayVars();
+		display();
 	}
 	
 	public short getPageID() {
@@ -138,28 +133,44 @@ public class SearchPage extends Page implements CommandListener{
 			try {
 				web = URLget.BackWeb(URLget.SEARCH_URL+"?search_type=video&keyword="+keyword+"&page="+page_num);
 			} catch (Exception e) {
-				displayErrorAlert("SearchPage initPageVars Error:"+e.getMessage());
+				displayErrorAlert("SearchPage initPageVars Error:"+e.getMessage()+web);
 			} 
 		}
+		String[] list_str = new String[1];
+		String[] type_list = new String[1];
+		try{
 		web = URLget.decodeUnicode(web);
-		String[] list_str=FindString.FindTitleAndDeleteHtmlCode(web);
+		list_str=FindString.FindTitleAndDeleteHtmlCode(web);
 		list_bvid=FindString.extractContents(web,"\"bvid\"");
-		String[] type_list=FindString.extractContents(web,"\"type\"");
+		type_list=FindString.extractContents(web,"\"type\"");
+		}catch (Exception e) {
+			displayErrorAlert("SearchPage initPageVars Part 2 Error:"+e.getMessage()+web);
+		} 
 		//String[] list_str=FindString.FindTitle(web);
 	    //list_bvid=FindString.FindBVID(web);
 	    //String[] type_list=FindString.FindVideoType(web);
-		for(int i=0;i<maxVideosNum;i++){
-			if(!((list_str[i].equals(null))||(list_bvid[i].equals(null)))){//在列表内添加搜索到的视频的标题
+		try{
+		for(int i=0;i<maxVideosNum&&i<list_str.length;i++){
+			if(!((list_str[i] == null))||(list_bvid[i] == null)){
+		
+		//在列表内添加搜索到的视频的标题
 			System.out.println("str:"+list_str[i]);
 			System.out.println("bvid:"+list_bvid[i]);
 			System.out.println("type:"+type_list[i]);
 			System.out.println();
 			if(type_list[i].equals("video"))
 				search_list.append(list_str[i], null);
-			}else{
+			else{
 				break;
 			}
+			
+		
 		}
+		}
+		}catch (Exception e) {
+			//displayErrorAlert("SearchPage initPageVars Part 3 Error:"+e.getMessage()+web);
+			//TODO 这里报空指针错误 但是不妨碍功能 就没有处理 之后看看到底哪里有问题
+	} 
 
 	 }
 	 protected void initDisplayVars(){

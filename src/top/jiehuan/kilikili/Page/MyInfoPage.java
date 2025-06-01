@@ -176,7 +176,9 @@ public class MyInfoPage extends Page {
         }else if(c==fav_folder_list){
         	new Thread(new Runnable() {
                 public void run() {
-                	page_info_list.addElement(new PageInfo(FavFolderListPage.PageID,ml));
+                	PageInfo page = new PageInfo(FavFolderListPage.PageID,ml);
+                	page.setType(1);
+                	page_info_list.addElement(page);
                     new FavFolderListPage(page_info_list); 
                 }
             }).start();

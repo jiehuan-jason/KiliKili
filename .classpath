@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="res"/>
-	<classpathentry exported="true" kind="lib" path="D:/kemnnmod/kemnnmod/KEmulator.jar"/>
 	<classpathentry exported="true" kind="con" path="J2MELIB"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>

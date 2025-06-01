@@ -92,6 +92,7 @@ public class ReplyInfoPage extends Page{
 
 	public void commandAction(Command c, Displayable d) {
 		if (c == back) {
+			
 			goLastPage();
         }
         // 退出app
@@ -119,6 +120,7 @@ public class ReplyInfoPage extends Page{
 						newpage.setReplyModel(reply);
 						newpage.setVideoInfo(page_info.getVideoInfo());
 						newpage.setType(1);
+						newpage.setPage(1);
 					} catch (Exception e) {
 						displayErrorAlert(e.getMessage());
 					}

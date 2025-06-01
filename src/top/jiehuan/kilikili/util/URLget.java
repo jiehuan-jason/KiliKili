@@ -50,7 +50,7 @@ public class URLget {
 	
 	
 	//BiliBili Server
-	public static final String BILIBILI_MAIN_URL = "https://bilibili.com";
+	public static final String BILIBILI_MAIN_URL = "https://www.bilibili.com/";
 	
 	public static final String RCMD_URL = "https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd";
 	public static final String SEARCH_URL = "https://api.bilibili.com/x/web-interface/wbi/search/type";

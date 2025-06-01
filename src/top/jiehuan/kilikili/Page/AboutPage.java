@@ -68,10 +68,12 @@ public class AboutPage extends Page implements CommandListener {
 					"github:@jiehuan-jason\n" +
 					"网盘:jiehuan233.ysepan.com\n");
 			text = new StringItem("","软件版本：V1.0alpha\n" +
-					"更新日期：2025.5.x\n" +
+					"更新日期：2025.6.1\n" +
 					"更新内容：\n" +
 					"添加了点赞收藏投币\n" +
 					"添加了收藏夹列表\n" +
+					"添加了评论区查看和点赞\n" +
+					"替换了部分API为官方API" +
 					"修复了部分bug\n");
 			thanks_list = new StringItem("","捐赠感谢列表（截至更新时，排名不分先后）：\n" +
 					"爱发电用户_898f2\n" +

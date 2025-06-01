@@ -181,6 +181,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	        	try{
 	        		PageInfo newPage = new PageInfo(ReplyListPage.PageID,ml);
 	        		newPage.setVideoInfo(video_info);
+	        		newPage.setPage(1);
 	        		page_info_list.addElement(newPage);
 	        		new ReplyListPage(page_info_list);
 	        	}catch(Exception e){

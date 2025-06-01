@@ -1,9 +1,27 @@
 package top.jiehuan.kilikili.util;
 
+import java.util.Vector;
+
+
 public class FindString {
+    public static String[] removeTrailingNulls(String[] array) {
+        int count = 0;
+        for (int i=0;i<array.length;i++) {
+            if (array[i] == null) break;
+            count++;
+        }
+        String[] result = new String[count];
+        if(count != array.length-1)
+        	System.arraycopy(array, 0, result, 0, count+1);
+        else
+        	return array;
+        return result;
+    }
+	
 	// 循环查找字符串函数 需要手动在传入的keyword内加入双引号
 		 public static String[] extractContents(String input, String keyword) {
-			    String[] resultArray = new String[200];
+			 	System.gc();
+			    String[] resultArray = new String[100];
 		        int keywordLength = keyword.length()+1;
 		        int currentIndex = 0;
 		        int num=0;
@@ -34,7 +52,8 @@ public class FindString {
 		        return resultArray;
 		    }
 		 public static String[] extractContentsInt(String input, String keyword) {
-			    String[] resultArray = new String[200];
+			 	System.gc();
+			    String[] resultArray = new String[100];
 		        int currentIndex = 0;
 		        int num=0;
 		        //input="\""+input+"\"";
@@ -67,6 +86,70 @@ public class FindString {
 		            currentIndex = endQuote + 1;
 		        }
 		        return resultArray;
+		    }
+		 
+		 public static Vector extractContentsVector(String input, String keyword) {
+		        System.gc();
+		        Vector resultVector = new Vector();
+		        int keywordLength = keyword.length() + 1;
+		        int currentIndex = 0;
+
+		        // 循环查找字符串
+		        while ((currentIndex = input.indexOf(keyword, currentIndex)) != -1) {
+		            // 查找第一个双引号
+		            int startQuote = input.indexOf("\"", currentIndex + keywordLength);
+		            if (startQuote == -1) {
+		                break;  // 如果没有找到双引号，退出循环
+		            }
+
+		            // 查找第二个双引号
+		            int endQuote = input.indexOf("\"", startQuote + 1);
+		            if (endQuote == -1) {
+		                break;  // 如果没有找到结束双引号，退出循环
+		            }
+
+		            // 提取双引号内的内容
+		            String content = input.substring(startQuote + 1, endQuote);
+		            resultVector.addElement(content); // 将内容添加到 Vector
+
+		            // 更新currentIndex以查找下一个字符串
+		            currentIndex = endQuote + 1;
+		        }
+		        return resultVector;
+		    }
+		 public static Vector extractContentsIntVector(String input, String keyword) {
+		        System.gc();
+		        Vector resultVector = new Vector();
+		        int currentIndex = 0;
+
+		        // 循环查找字符串
+		        while ((currentIndex = input.indexOf(keyword, currentIndex)) != -1) {
+		            // 查找第一个冒号
+		            int startQuote = input.indexOf(":", currentIndex);
+		            if (startQuote == -1) {
+		                break;  // 如果没有找到冒号，退出循环
+		            }
+
+		            // 查找结束符号（逗号或右大括号）
+		            int endQuote = input.indexOf(",", startQuote + 1);
+		            if (endQuote == -1) {
+		                endQuote = input.indexOf("}", startQuote + 1);
+		                if (endQuote == -1) {
+		                    break;  // 如果没有找到结束符号，退出循环
+		                }
+		            }
+
+		            // 提取冒号和结束符号间的内容
+		            String content = input.substring(startQuote + 1, endQuote);
+		            if (content.endsWith("}")) {
+		                content = input.substring(startQuote + 1, endQuote - 1);
+		            }
+		            resultVector.addElement(content); // 将内容添加到 Vector
+
+		            // 更新currentIndex以查找下一个字符串
+		            currentIndex = endQuote + 1;
+		        }
+		        return resultVector;
 		    }
 		 public static String extractArraysAndDelete(String input, String keyword) {
 		        int currentIndex = 0;
