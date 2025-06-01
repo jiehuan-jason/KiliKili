@@ -8,8 +8,13 @@ public class ReplyModel {
 	private String uname;
 	private String mid;
 	private int count;
+	private boolean isLike = false;
 	
 	public ReplyModel(String oid, String root, String rpid, String content, String uname, String mid, int count){
+		this(oid, root, rpid, content, uname, mid, count, false);
+	}
+	
+	public ReplyModel(String oid, String root, String rpid, String content, String uname, String mid, int count, boolean isLike){
 		this.setOid(oid);
 		this.setRoot(root);
 		this.setRpid(rpid);
@@ -17,6 +22,7 @@ public class ReplyModel {
 		this.setUname(uname);
 		this.setMid(mid);
 		this.setCount(count);
+		this.setLike(isLike);
 	}
 	public ReplyModel() {
 		
@@ -62,6 +68,12 @@ public class ReplyModel {
 	}
 	public void setCount(int count) {
 		this.count = count;
+	}
+	public boolean isLike(){
+		return isLike;
+	}
+	public void setLike(boolean isLike){
+		this.isLike = isLike;
 	}
 
 }

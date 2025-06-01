@@ -8,6 +8,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
+import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
 import top.jiehuan.kilikili.Model.FavFolderInfo;
 import top.jiehuan.kilikili.Model.PageInfo;
@@ -31,11 +32,13 @@ public class ReplyListPage extends Page {
 	private int repliesCount;
 	private Vector replys; //ReplysList
 	private boolean nextPageStatus;
+	private int type;
+	private ReplyModel reply;
 	
 	public ReplyListPage(Vector page_info_list){
 		super(page_info_list);
 		replyList=new List(lang_res.getValue("reply_list"),List.IMPLICIT);
-		
+		type = page_info.getType();
 		
 		initPageVars();
 		initDisplayVars();
@@ -114,16 +117,17 @@ public class ReplyListPage extends Page {
      	PageInfo newpage = new PageInfo(ReplyInfoPage.PageID,ml);
      	newpage.setReplyModel(reply);
      	newpage.setMID(reply.getMid());
+     	newpage.setVideoInfo(video_info);
      	page_info_list.addElement(newpage);
      	System.out.println("ReplyListPage call ReplyInfoPage");
         new ReplyInfoPage(page_info_list);
 	 }
 	
 	private String[] deleteUselessMid(String[] source){
-		String[] results = new String[50];
+		String[] results = new String[100];
 		int j = 0;
 		int i = 0;
-		while(source[i+1]!=null){
+		while(source[i+1]!=null&&(i+1)<source.length){
 			if(source[i+1].startsWith("\""+source[i])){
 				results[j] = source[i];
 				j++;
@@ -134,11 +138,16 @@ public class ReplyListPage extends Page {
 	}
 	
 	
-	private void refreshPage(short page) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
+	private void refreshPage(short page) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException, PageInfoEmptyException{
 		replyList=new List(lang_res.getValue("reply_list"),List.IMPLICIT);
 		
 		WebModel jsonData;
-		jsonData = URLget.BackWebWithMoreInfo(URLget.GET_REPLY_LIST_URL+"?type=1&oid="+video_info.getAID()+"&sort=1&ps="+REPLIES_NUM+"&pn="+page);
+		if(type == 0){
+			jsonData = URLget.BackWebWithMoreInfo(URLget.GET_REPLY_LIST_URL+"?type=1&oid="+video_info.getAID()+"&sort=1&ps="+REPLIES_NUM+"&pn="+page);
+		}else{
+			reply = page_info.getReplyModel();
+			jsonData = URLget.BackWebWithMoreInfo(URLget.GET_SUB_REPLY_LIST_URL+"?type=1&oid="+video_info.getAID()+"&root="+reply.getRpid()+"&ps="+REPLIES_NUM+"&pn="+page);
+		}
 		String jsonContent = FindString.extractArraysAndDelete(jsonData.content,"\"members\"");
 		jsonData = null;
 		
@@ -150,6 +159,7 @@ public class ReplyListPage extends Page {
 		String[] unamesAll = FindString.extractContents(jsonContent,"\"uname\"");
 		String[] midsAll = deleteUselessMid(FindString.extractContentsInt(jsonContent,"\"mid\""));
 		String[] countsAll = FindString.extractContentsInt(jsonContent, "\"count\"");
+		String[] actionsAll = FindString.extractContentsInt(jsonContent, "\"action\"");
 		
 		repliesCount = Integer.parseInt(countsAll[0]);
 		
@@ -157,15 +167,34 @@ public class ReplyListPage extends Page {
 		
 		int j = 0;
 		System.out.println(rootsAll.length);
-		for(int i=0;i<rootsAll.length;i++){	
-			if(rootsAll[i]!=null){
-			System.out.println(rootsAll[i]+" "+rpidsAll[i]+" @"+unamesAll[i]+" "+midsAll[i]+": "+contentsAll[i+1]);
-			if(rootsAll[i].equals("0")){
-				replys.addElement(new ReplyModel(oidsAll[i], rootsAll[i], rpidsAll[i], contentsAll[i+1], unamesAll[i], midsAll[i], Integer.parseInt(countsAll[i+1])));
-				replyList.append("@"+unamesAll[i]+": "+contentsAll[i+1], null);
-				j++;
+		if(type == 0){
+			for(int i=0;i<rootsAll.length;i++){	
+				if(rootsAll[i]!=null){
+					System.out.println(rootsAll[i]+" "+rpidsAll[i]+" @"+unamesAll[i]+" "+midsAll[i]+": "+contentsAll[i+1]);
+					if(rootsAll[i].equals("0")){
+						if(actionsAll[i].equals("1"))
+							replys.addElement(new ReplyModel(oidsAll[i], rootsAll[i], rpidsAll[i], contentsAll[i+1], unamesAll[i], midsAll[i], Integer.parseInt(countsAll[i+1]),true));
+						else
+							replys.addElement(new ReplyModel(oidsAll[i], rootsAll[i], rpidsAll[i], contentsAll[i+1], unamesAll[i], midsAll[i], Integer.parseInt(countsAll[i+1])));
+						replyList.append("@"+unamesAll[i]+": "+contentsAll[i+1], null);
+						j++;
+					}
+				}else break;
 			}
-			}else break;
+		}else{
+			for(int i=0;i<rootsAll.length;i++){	
+				if(rootsAll[i]!=null){
+					System.out.println(rootsAll[i]+" "+rpidsAll[i]+" @"+unamesAll[i]+" "+midsAll[i]+": "+contentsAll[i+1]);
+					if(!rootsAll[i].equals("0")){
+						if(actionsAll[i].equals("1"))
+							replys.addElement(new ReplyModel(oidsAll[i], rootsAll[i], rpidsAll[i], contentsAll[i+1], unamesAll[i], midsAll[i], Integer.parseInt(countsAll[i+1]),true));
+						else
+							replys.addElement(new ReplyModel(oidsAll[i], rootsAll[i], rpidsAll[i], contentsAll[i+1], unamesAll[i], midsAll[i], Integer.parseInt(countsAll[i+1])));
+						replyList.append("@"+unamesAll[i]+": "+contentsAll[i+1], null);
+						j++;
+					}
+				}else break;
+			}
 		}
 		if(j<REPLIES_NUM)
 			nextPageStatus = false;
@@ -190,6 +219,8 @@ public class ReplyListPage extends Page {
 			refreshPage(page_num);
 		} catch (Exception e) {
 			displayErrorAlert("ReplyListPage initPageVars Error:"+e.getMessage());
+			System.out.println(e.getMessage());
+			e.printStackTrace();
 		} 
 	}
 	

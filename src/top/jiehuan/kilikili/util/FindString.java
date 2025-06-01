@@ -3,7 +3,7 @@ package top.jiehuan.kilikili.util;
 public class FindString {
 	// 循环查找字符串函数 需要手动在传入的keyword内加入双引号
 		 public static String[] extractContents(String input, String keyword) {
-			    String[] resultArray = new String[100];
+			    String[] resultArray = new String[200];
 		        int keywordLength = keyword.length()+1;
 		        int currentIndex = 0;
 		        int num=0;
@@ -34,20 +34,20 @@ public class FindString {
 		        return resultArray;
 		    }
 		 public static String[] extractContentsInt(String input, String keyword) {
-			    String[] resultArray = new String[100];
+			    String[] resultArray = new String[200];
 		        int currentIndex = 0;
 		        int num=0;
 		        //input="\""+input+"\"";
 
 		        // 循环查找字符串
 		        while ((currentIndex = input.indexOf(keyword, currentIndex)) != -1) {
-		            // 查找第一个双引号
+		            
 		            int startQuote = input.indexOf(":", currentIndex);
 		            if (startQuote == -1) {
 		                break;  // 如果没有找到，退出循环
 		            }
 
-		            // 查找第二个双引号
+		            
 		            int endQuote = input.indexOf(",", startQuote + 1);
 		            if (endQuote == -1) {
 		            	endQuote = input.indexOf("}", startQuote + 1);
@@ -56,9 +56,11 @@ public class FindString {
 		            }
 		            
 
-		            // 提取双引号内的内容
+		           
 		            String content = input.substring(startQuote + 1, endQuote);
-		            resultArray[num]=content;// 将内容存入数组
+		            if(content.endsWith("}"))
+		            	content = input.substring(startQuote + 1, endQuote - 1);
+		            resultArray[num]=content;
 		            num++;
 
 		            // 更新currentIndex以查找下一个字符串
