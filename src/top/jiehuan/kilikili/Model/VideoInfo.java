@@ -59,7 +59,6 @@ public class VideoInfo {
 			String content = URLget.BackWeb(URLget.GET_VIDEOS_PAGE_LIST_URL+"bvid="+bvid);
 			part_info = new PartInfo(bvid, pn, content);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 			status = false;
@@ -100,7 +99,6 @@ public class VideoInfo {
 				getVideoDynamicAndInitVars();
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 			status = false;

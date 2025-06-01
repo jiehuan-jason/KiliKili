@@ -38,23 +38,38 @@ public class UserInfoPage extends Page implements CommandListener {
 	private String fans;
 	private String attentions;
 	private String level;
+	private String mid;
+	
+	private int type;
 	
 	
 	public UserInfoPage(Vector page_info_list){
 		super(page_info_list);
 		this.page_info_list = page_info_list;
 		form=new Form(lang_res.getValue("user_info"));
+		type = page_info.getType();
 		
-		try{
-			video_info = page_info.getVideoInfo();
-		}catch(PageInfoEmptyException e){
-			displayErrorAlert("Page is Empty:"+e.getMessage());
+		
+		if(type == 0){
+			try{
+				video_info = page_info.getVideoInfo();
+			}catch(PageInfoEmptyException e){
+				displayErrorAlert("Page is Empty:"+e.getMessage());
+			}
+		}else{
+			try{
+				mid = page_info.getMID();
+			}catch(PageInfoEmptyException e){
+				displayErrorAlert("Page is Empty:"+e.getMessage());
+			}
 		}
 		
 		initPageVars();
 		initDisplayVars();
 		display();
 	}
+	
+	
 	
 	public short getPageID() {
         return PageID;
@@ -63,13 +78,7 @@ public class UserInfoPage extends Page implements CommandListener {
 	public void commandAction(Command c, Displayable d) {
 	 	// 返回上级界面
         if (c == back) {
-            new Thread(new Runnable() {
-                public void run() {
-                	System.out.println("page "+PageID+" search_word:"+video_info.getSearchKeyword());
-                	page_info_list.removeElementAt(page_info_list.size()-1);
-                	new GetVideoInfoPage(page_info_list);
-                }
-            }).start();
+        	goLastPage();
         }
         // 退出app
         else if(c==exit){
@@ -100,9 +109,15 @@ public class UserInfoPage extends Page implements CommandListener {
         }
     }
 	protected void initPageVars(){
-		System.out.println(video_info.getUserMID());
+		
 		try {
-			text = URLget.BackWeb(URLget.USER_INFO_URL+video_info.getUserMID());
+			if(type == 0){
+				System.out.println(video_info.getUserMID());
+				text = URLget.BackWeb(URLget.USER_INFO_URL+video_info.getUserMID());
+			}else{
+				System.out.println(mid);
+				text = URLget.BackWeb(URLget.USER_INFO_URL+mid);
+			}
 			name = FindString.findValue(text, "name");
 			sign = FindString.findValue(text, "sign");
 			fans = FindString.findValueInt(text, "fans");
@@ -128,7 +143,6 @@ public class UserInfoPage extends Page implements CommandListener {
 		try {
 			level_img = Image.createImage("/level_img/lv"+level+".png");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			displayErrorAlert("UserInfoPage init level_img error:"+e.getMessage());
 		}
 		showUserFace = new Command(lang_res.getValue("show_user_face"),Command.OK,1);

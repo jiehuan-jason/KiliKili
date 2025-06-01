@@ -50,8 +50,7 @@ public class PartVideoListPage extends Page implements CommandListener{
 	public void commandAction(Command c, Displayable d) {
 		 	// 返回主界面
 	        if (c == back) {
-	        	backMainPage();
-	        	//TODO 处理返回逻辑
+	        	goLastPage();
 	        }
 	        // 退出app
 	        else if(c==exit){
@@ -99,7 +98,6 @@ public class PartVideoListPage extends Page implements CommandListener{
         			initDisplayVars();
         			display();
         		} catch (Exception e) {
-        			// TODO Auto-generated catch block
         			e.printStackTrace();
         			displayErrorAlert(e.getMessage());
         		} 
@@ -115,7 +113,6 @@ public class PartVideoListPage extends Page implements CommandListener{
     	try {
 			newvideo.setBVID(video_info.getBVID(), videos_list.getSelectedIndex()+parts_base+1);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			displayErrorAlert("PVLP goInfo Error"+e.getMessage());
 		}
     	newpage.setVideoInfo(newvideo);
@@ -147,7 +144,6 @@ public class PartVideoListPage extends Page implements CommandListener{
 				pages = (parts - (parts%PARTS_IN_PAGE))/PARTS_IN_PAGE + 1;
 				
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				System.out.println(e.getMessage());
 				displayErrorAlert(e.getMessage());

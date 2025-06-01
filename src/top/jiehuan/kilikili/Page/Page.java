@@ -230,12 +230,28 @@ abstract public class Page implements CommandListener{
 	        break;
 	    
 	    case FavListPage.PageID:
-	    new Thread(new Runnable() {
-            public void run() {
-                new FavListPage(page_info_list);
-            }
-        }).start();
-        break;
+	    	new Thread(new Runnable() {
+	    		public void run() {
+	    			new FavListPage(page_info_list);
+	    		}
+	    	}).start();
+	    	break;
+        
+	    case ReplyListPage.PageID:
+	    	new Thread(new Runnable() {
+	            public void run() {
+	                new ReplyListPage(page_info_list);
+	            }
+	        }).start();
+	        break;
+	    
+	    case ReplyInfoPage.PageID:
+	    	new Thread(new Runnable() {
+	            public void run() {
+	                new ReplyInfoPage(page_info_list);
+	            }
+	        }).start();
+	        break;
 	        
 	        
 	    default:

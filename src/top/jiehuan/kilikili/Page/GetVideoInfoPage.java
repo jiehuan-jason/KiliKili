@@ -53,6 +53,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	Command like; //点赞
 	Command coin;
 	Command favorite; //收藏
+	Command reply;
 	String video_url;
 	String cid;
 	String errorMessage = "";
@@ -156,7 +157,6 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	                	try {
 							newpage.setVideoInfo(bvid);
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							displayErrorAlert(e.getMessage());
 						}
 	                	page_info_list.addElement(newpage);
@@ -174,6 +174,15 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	        }if (c==favorite){
 	        	try{
 	        		pressFavorite();
+	        	}catch(Exception e){
+	        		displayErrorAlert(e.getMessage());
+	        	}
+	        }if (c==reply){
+	        	try{
+	        		PageInfo newPage = new PageInfo(ReplyListPage.PageID,ml);
+	        		newPage.setVideoInfo(video_info);
+	        		page_info_list.addElement(newPage);
+	        		new ReplyListPage(page_info_list);
 	        	}catch(Exception e){
 	        		displayErrorAlert(e.getMessage());
 	        	}
@@ -421,7 +430,6 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 				this.bvid=page_info.getBVID();
 				this.aid = video_info.getAID();
 			} catch (PageInfoEmptyException e1) {
-				// TODO Auto-generated catch block
 				displayErrorAlert("PIEE:"+video_info.getVideoContent());
 			}
 			boolean status = video_info.getStatus();
@@ -491,7 +499,8 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 				else
 					like = new Command(lang_res.getValue("like"),Command.OK,3);
 				favorite = new Command(lang_res.getValue("favorite"),Command.OK,3);
-				coin = new Command(lang_res.getValue("coin"),Command.ITEM,3);
+				coin = new Command(lang_res.getValue("coin"),Command.OK,3);
+				reply = new Command(lang_res.getValue("reply_list"), Command.OK,3);
 			}
 
 		}
@@ -521,6 +530,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 				form.addCommand(like);
 				form.addCommand(coin);
 				form.addCommand(favorite);
+				form.addCommand(reply);
 			}
 			form.setCommandListener(this);
 			display.setCurrent(form);

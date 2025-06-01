@@ -30,42 +30,52 @@ public class URLget {
 	
 	//KiliKili Server
 	public static final String IP_ADDRESS="localhost";
-	public static final String DOWNLOAD_ADDRESS=IP_ADDRESS;
-	public static final String SEARCH_URL="http://"+IP_ADDRESS+":3000/search?keyword=";
-	public static final String USER_INFO_URL="http://"+IP_ADDRESS+":3000/user?mid=";
+	public static final String GET_USER_VIDEOS_URL="http://"+IP_ADDRESS+":3000/user/video?";
+	public static final String GET_CorrespondPath_TIMESTAMP_URL = "http://"+IP_ADDRESS+":3000/timestamp";
+	public static final String GET_UUID_URL = "http://"+IP_ADDRESS+":3000/uuid";
+	//public static final String SEARCH_URL="http://"+IP_ADDRESS+":3000/search?keyword=";
+	//public static final String USER_INFO_URL="http://"+IP_ADDRESS+":3000/user?mid=";
 	//public static final String RCMD_URL="http://"+IP_ADDRESS+":3232";
 	//public static final String GET_INFO_URL="http://"+IP_ADDRESS+":3000/view?";
 	//public static final String GET_VIDEO_DOWNLOAD_LINK_URL="http://"+IP_ADDRESS+":2121/api/playurl?";
-	public static final String GET_USER_VIDEOS_URL="http://"+IP_ADDRESS+":3000/user/video?";
-	public static final String GET_VIDEOS_PAGE_LIST_URL="http://"+IP_ADDRESS+":3000/list?";
+	//public static final String GET_VIDEOS_PAGE_LIST_URL="http://"+IP_ADDRESS+":3000/list?";
+	//public static final String GET_QRCODE_URL="http://"+IP_ADDRESS+":3232/login";
+	//public static final String GET_QRCODE_LOGIN_STATUS="http://"+IP_ADDRESS+":3232/lstatus?";
+	
+	//KiliKili Video Server
+	public static final String DOWNLOAD_ADDRESS=IP_ADDRESS;
 	public static final String SEND_TRANSCODING_REQUEST_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/download?";
 	public static final String GET_TRANSCODING_STATUS_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/status?";
 	public static final String DOWNLOAD_TRANSCODING_VIDEO_URL="http://"+DOWNLOAD_ADDRESS+":4000/api/output/";
-	//public static final String GET_QRCODE_URL="http://"+IP_ADDRESS+":3232/login";
-	//public static final String GET_QRCODE_LOGIN_STATUS="http://"+IP_ADDRESS+":3232/lstatus?";
-	public static final String GET_CorrespondPath_TIMESTAMP_URL = "http://"+DOWNLOAD_ADDRESS+":3000/timestamp";
-	public static final String GET_UUID_URL = "http://"+DOWNLOAD_ADDRESS+":3000/uuid";
+	
 	
 	//BiliBili Server
-	//public static String RCMD_URL = "http://localhost:3232/test";
-	public static final String RCMD_URL="https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd";
-	public static final String GET_INFO_URL="https://api.bilibili.com/x/web-interface/view?";
-	public static final String GET_VIDEO_DOWNLOAD_LINK_URL="https://api.bilibili.com/x/player/playurl?"; //&qn=6&platform=html5&high_quality=1
-	public static final String GET_QRCODE_URL="https://passport.bilibili.com/x/passport-login/web/qrcode/generate";
-	public static final String GET_QRCODE_LOGIN_STATUS="https://passport.bilibili.com/x/passport-login/web/qrcode/poll?";
+	public static final String BILIBILI_MAIN_URL = "https://bilibili.com";
+	
+	public static final String RCMD_URL = "https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd";
+	public static final String SEARCH_URL = "https://api.bilibili.com/x/web-interface/wbi/search/type";
+	public static final String USER_INFO_URL = "https://api.bilibili.com/x/web-interface/card?mid=";
+	public static final String GET_VIDEOS_PAGE_LIST_URL="https://api.bilibili.com/x/player/pagelist?";
+	public static final String GET_INFO_URL = "https://api.bilibili.com/x/web-interface/view?";
+	public static final String GET_VIDEO_DOWNLOAD_LINK_URL = "https://api.bilibili.com/x/player/playurl?"; //&qn=6&platform=html5&high_quality=1
+	public static final String GET_QRCODE_URL = "https://passport.bilibili.com/x/passport-login/web/qrcode/generate";
+	public static final String GET_QRCODE_LOGIN_STATUS = "https://passport.bilibili.com/x/passport-login/web/qrcode/poll?";
 	public static final String GET_PERSONAL_INFO_URL = "https://api.bilibili.com/x/member/web/account";
 	public static final String GET_LOGIN_COOKIES_STATUS_URL = "https://passport.bilibili.com/x/passport-login/web/cookie/info";
 	public static final String GET_CSRF_REFRESH_TOKEN_STATUTS_URL = "https://passport.bilibili.com/x/passport-login/web/cookie/info";
-	public static final String GET_REFRESH_CSRF_URL="https://www.bilibili.com/correspond/1/";
-	public static final String GET_VIDEO_LIKE_STATUS_URL="https://api.bilibili.com/x/web-interface/archive/has/like";
-	public static final String GET_VIDEO_FAVORITE_STATUS_URL="https://api.bilibili.com/x/v2/fav/video/favoured";
-	public static final String GET_VIDEO_COIN_STATUS_URL="https://api.bilibili.com/x/web-interface/archive/coins";
-	public static final String GET_BUVID3_URL="https://api.bilibili.com/x/frontend/finger/spi";
-	public static final String GET_BUVID_FP_URL="https://api.bilibili.com/x/frontend/finger/fpfmc";
-	public static final String GET_DYNAMIC_INFO_URL="https://api.bilibili.com/x/polymer/web-dynamic/v1/detail";
-	public static final String GET_FAV_FOLDER_INFO_URL="https://api.bilibili.com/x/v3/fav/folder/info";
-	public static final String GET_USER_ALL_FAV_FOLDERS_URL="https://api.bilibili.com/x/v3/fav/folder/created/list-all";
-	public static final String GET_FAV_LIST_URL="https://api.bilibili.com/x/v3/fav/resource/list";
+	public static final String GET_REFRESH_CSRF_URL = "https://www.bilibili.com/correspond/1/";
+	public static final String GET_VIDEO_LIKE_STATUS_URL = "https://api.bilibili.com/x/web-interface/archive/has/like";
+	public static final String GET_VIDEO_FAVORITE_STATUS_URL = "https://api.bilibili.com/x/v2/fav/video/favoured";
+	public static final String GET_VIDEO_COIN_STATUS_URL = "https://api.bilibili.com/x/web-interface/archive/coins";
+	public static final String GET_BUVID3_URL = "https://api.bilibili.com/x/frontend/finger/spi";
+	public static final String GET_BUVID_FP_URL = "https://api.bilibili.com/x/frontend/finger/fpfmc";
+	public static final String GET_DYNAMIC_INFO_URL = "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail";
+	public static final String GET_FAV_FOLDER_INFO_URL = "https://api.bilibili.com/x/v3/fav/folder/info";
+	public static final String GET_USER_ALL_FAV_FOLDERS_URL = "https://api.bilibili.com/x/v3/fav/folder/created/list-all";
+	public static final String GET_FAV_LIST_URL = "https://api.bilibili.com/x/v3/fav/resource/list";
+	public static final String GET_TO_VIEW_LIST_URL = "https://api.bilibili.com/x/v2/history/toview";
+	public static final String GET_REPLY_LIST_URL = "https://api.bilibili.com/x/v2/reply";
+	public static final String GET_SUB_REPLY_LIST_URL = "https://api.bilibili.com/x/v2/reply/reply";
 	
 	//BILIBILI Server Post
 	public static final String REFRESH_COOKIES_URL = "https://passport.bilibili.com/x/passport-login/web/cookie/refresh";
@@ -75,6 +85,8 @@ public class URLget {
 	public static final String COIN_URL = "https://api.bilibili.com/x/web-interface/coin/add";
 	public static final String FAVORITE_URL = "https://api.bilibili.com/x/v3/fav/resource/deal";
 	public static final String LIKE_DYNAMIC_URL = "https://api.bilibili.com/x/dynamic/feed/dyn/thumb";
+	public static final String TO_VIEW_ADD_URL = "https://api.bilibili.com/x/v2/history/toview/add";
+	public static final String TO_VIEW_DEL_URL = "https://api.bilibili.com/x/v2/history/toview/del";
 	
 	
 	
@@ -87,6 +99,7 @@ public class URLget {
 		}else{
 			return decodeUnicode(FindString.findValue(content,"url"));
 		}
+		
 	}
 	
 	//Data Example : username=test&password=123456

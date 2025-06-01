@@ -89,13 +89,14 @@ public class AboutPage extends Page implements CommandListener {
 			get_cookies = new Command("Cookies", Command.ITEM, 2);
 	 }
 	 protected void display(){
-		form.addCommand(back);
-		form.addCommand(exit);
+		
 		form.append(author);
 		form.append(text);
 		form.append(thanks_list);
 		form.append(imageItem);
+		form.addCommand(back);
 		form.addCommand(get_cookies);
+		form.addCommand(exit);
 		form.setCommandListener(this);
 		display.setCurrent(form);
 	 }

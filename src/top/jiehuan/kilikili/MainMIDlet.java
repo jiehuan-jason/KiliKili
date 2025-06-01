@@ -15,12 +15,10 @@ import top.jiehuan.kilikili.Page.MainPage;
 public class MainMIDlet extends MIDlet{
 	
 	protected void destroyApp(boolean arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	protected void pauseApp() {
-		// TODO Auto-generated method stub
 
 	}
 

@@ -42,7 +42,6 @@ public class SearchPage extends Page implements CommandListener{
 			if(page_info.getIsPageSet())
 				page_num = page_info.getPage();
 		} catch (PageInfoEmptyException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			displayErrorAlert(e1.getMessage());
 		}
@@ -120,7 +119,6 @@ public class SearchPage extends Page implements CommandListener{
          			initPageVars();
          			display();
          		 } catch (Exception e) {
-         			// TODO Auto-generated catch block
          			e.printStackTrace();
          			displayErrorAlert(e.getMessage());
          		 } 
@@ -138,11 +136,12 @@ public class SearchPage extends Page implements CommandListener{
 			}
 		else {
 			try {
-				web = URLget.BackWeb(URLget.SEARCH_URL+keyword+"&page="+page_num);
+				web = URLget.BackWeb(URLget.SEARCH_URL+"?search_type=video&keyword="+keyword+"&page="+page_num);
 			} catch (Exception e) {
 				displayErrorAlert("SearchPage initPageVars Error:"+e.getMessage());
 			} 
 		}
+		web = URLget.decodeUnicode(web);
 		String[] list_str=FindString.FindTitleAndDeleteHtmlCode(web);
 		list_bvid=FindString.extractContents(web,"\"bvid\"");
 		String[] type_list=FindString.extractContents(web,"\"type\"");
@@ -191,7 +190,6 @@ public class SearchPage extends Page implements CommandListener{
      	try {
 			newpage.setVideoInfo(bvid);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			displayErrorAlert(e.getMessage());
 		}

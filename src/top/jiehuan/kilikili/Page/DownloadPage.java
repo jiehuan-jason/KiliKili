@@ -148,7 +148,6 @@ public class DownloadPage extends Page implements CommandListener{
 		try {
 			this.video_url=page_info.getVideoInfo().getVideoURL();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			displayErrorAlert("获取错误");
 		}

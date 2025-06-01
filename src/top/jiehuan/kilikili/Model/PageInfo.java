@@ -18,7 +18,10 @@ public class PageInfo {
 	private FavFolderInfo favFolderInfo;
 	private boolean isFavFolderInfoSet = false;
 	private int type = 0;
-	private boolean isTypeSet = false;
+	private ReplyModel replyModel;
+	private boolean isReplyModelSet = false;
+	private String mid = "";
+	private boolean isMIDSet = false;
 	
 	public PageInfo(short PageID, MainMIDlet ml){
 		this.pageID = PageID;
@@ -91,15 +94,11 @@ public class PageInfo {
 	}
 	
 	public void setType(int type){
-		isTypeSet = true;
 		this.type = type;
 	}
 	
 	public int getType(){
 		return type;
-	}
-	public boolean getIsTypeSet(){
-		return isTypeSet;
 	}
 	
 	public String getSearchKeyword() throws PageInfoEmptyException{
@@ -128,7 +127,32 @@ public class PageInfo {
 	public boolean getIsContentSet(){
 		return isContentSet;
 	}
+
+	public ReplyModel getReplyModel() throws PageInfoEmptyException {
+		if(isReplyModelSet)
+			return replyModel;
+		else
+			throw new PageInfoEmptyException();
+	}
+
+	public void setReplyModel(ReplyModel replyModel) {
+		isReplyModelSet = true;
+		this.replyModel = replyModel;
+	}
+	public void setMID(String mid){
+		isMIDSet = true;
+		this.mid = mid;
+	}
 	
+	public String getMID() throws PageInfoEmptyException{
+		if(isMIDSet)
+			return mid;
+		else
+			throw new PageInfoEmptyException();
+	}
+	public boolean getIsMIDSet(){
+		return isMIDSet;
+	}
 
 	
 	/*public void displayErrorAlert(String error, Form form){
@@ -140,7 +164,7 @@ public class PageInfo {
             	new Thread(new Runnable() {
                     public void run() {
                     	try {
-							//TODO 增加Page父类 统一调用back()方法
+							
                     	} catch (ConnectionNotFoundException e) {
 							e.printStackTrace();
 						}

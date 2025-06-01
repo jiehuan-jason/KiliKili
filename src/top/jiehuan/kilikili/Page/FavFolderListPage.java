@@ -99,7 +99,6 @@ public class FavFolderListPage extends Page implements CommandListener{
     	try {
 			newpage.setFavFolderInfo(new FavFolderInfo(id));;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			displayErrorAlert("FFL initInfo Error:"+e.getMessage());
 		}

@@ -66,6 +66,31 @@ public class FindString {
 		        }
 		        return resultArray;
 		    }
+		 public static String extractArraysAndDelete(String input, String keyword) {
+		        int currentIndex = 0;
+		        //input="\""+input+"\"";
+
+		        // 循环查找字符串
+		        while ((currentIndex = input.indexOf(keyword, currentIndex)) != -1) {
+		            int startQuote = input.indexOf("[", currentIndex);
+		            if (startQuote == -1) {
+		                break;  // 如果没有找到，退出循环
+		            }
+
+		            int endQuote = input.indexOf("]", startQuote + 1);
+		            if(endQuote==-1)
+		            	endQuote = startQuote+100;
+		            //由于未知的问题，这一段必须删除，所以不匹配回中括号
+		            
+		            
+
+		            input = removeRange(input, startQuote + 1, endQuote);
+
+		            // 更新currentIndex以查找下一个数组
+		            currentIndex = endQuote + 1;
+		        }
+		        return input;
+		    }
 		 public static String[] FindTitleAndDeleteHtmlCode(String input) {
 			 	String keyword="\"title\"";
 			    String[] resultArray = new String[40];
@@ -263,5 +288,11 @@ public class FindString {
 			    result.append(original); // 添加剩余部分
 
 			    return result.toString();
+			}
+			public static String removeRange(String input, int start, int end) {
+			    if (input == null || start < 0 || end > input.length() || start >= end) {
+			        return input;
+			    }
+			    return input.substring(0, start) + input.substring(end);
 			}
 }

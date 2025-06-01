@@ -90,7 +90,6 @@ public class UserVideoListPage extends Page implements CommandListener {
         		refreshPage(last_aid.lastElement().toString());
 				display();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				displayErrorAlert(e.getMessage());
 			} 
@@ -101,7 +100,6 @@ public class UserVideoListPage extends Page implements CommandListener {
 				refreshPage(last_aid.lastElement().toString());
 				display();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				displayErrorAlert(e.getMessage());
 			} 
@@ -126,7 +124,6 @@ public class UserVideoListPage extends Page implements CommandListener {
     	try {
 			newpage.setVideoInfo(bvid);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			displayErrorAlert(e.getMessage());
 		}
@@ -168,7 +165,6 @@ public class UserVideoListPage extends Page implements CommandListener {
 		try {
 			refreshPage("");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			displayErrorAlert("UserVideoListPage initPageVars Error:"+e.getMessage());
 		} 
 	}

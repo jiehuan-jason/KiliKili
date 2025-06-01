@@ -63,7 +63,6 @@ public class MainPage extends Page implements CommandListener{
                     	try {
 							newpage.setVideoInfo(bvid);
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							displayErrorAlert(e.getMessage());
 						}
                     	page_info_list.addElement(newpage);
@@ -78,7 +77,6 @@ public class MainPage extends Page implements CommandListener{
                     	try {
 							newpage.setVideoInfo(bvid);
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							displayErrorAlert(e.getMessage());
 						}
                     	page_info_list.addElement(newpage);
@@ -187,6 +185,9 @@ public class MainPage extends Page implements CommandListener{
 				displayErrorAlertCanCancel(URLget.getAPIBackCode(web.content)+"",form);
 				util.deleteToken();
 			}
+		}else{
+			WebModel web = URLget.BackWebWithMoreInfo(URLget.BILIBILI_MAIN_URL);
+			util.saveToken(web.cookies);
 		}
 			
 	}

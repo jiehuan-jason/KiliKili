@@ -63,7 +63,6 @@ public class RecommendPage extends Page implements CommandListener {
                 		System.out.println("cover_url is:"+cover_info.getCoverURL());
 						ml.platformRequest(new String(cover_info.getCoverURL().getBytes("UTF-8"),"UTF-8"));
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						displayErrorAlert(e.getMessage());
 					}
                 	
@@ -128,7 +127,6 @@ public class RecommendPage extends Page implements CommandListener {
         			initPageVars();
         			display();
         		 } catch (Exception e) {
-        			// TODO Auto-generated catch block
         			e.printStackTrace();
         			displayErrorAlert(e.getMessage());
         		 } 

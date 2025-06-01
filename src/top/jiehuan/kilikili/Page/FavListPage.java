@@ -85,7 +85,6 @@ public class FavListPage extends Page implements CommandListener {
         		refreshPage(page_num);
 				display();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				displayErrorAlert(e.getMessage());
 			} 
@@ -96,7 +95,6 @@ public class FavListPage extends Page implements CommandListener {
 				refreshPage(page_num);
 				display();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				displayErrorAlert(e.getMessage());
 			} 
@@ -125,7 +123,6 @@ public class FavListPage extends Page implements CommandListener {
     	try {
 			goToVideoListPage(avid);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			displayErrorAlert(avid+" "+e.getClass().toString()+" "+e.getMessage());
 		}
@@ -139,7 +136,6 @@ public class FavListPage extends Page implements CommandListener {
      		//displayErrorAlert(avid+" "+bvid);
 			newpage.setVideoInfo(bvid);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			displayErrorAlert(avid+bvid+" "+e.getClass().toString()+" "+e.getMessage());
 			
@@ -194,7 +190,6 @@ public class FavListPage extends Page implements CommandListener {
 			favFolderInfo = page_info.getFavFolderInfo();
 			refreshPage(page_num);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			displayErrorAlert("FavListPage initPageVars Error:"+e.getMessage());
 		} 
 	}
