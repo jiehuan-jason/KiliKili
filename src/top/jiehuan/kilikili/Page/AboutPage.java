@@ -52,7 +52,7 @@ public class AboutPage extends Page implements CommandListener {
 					cookies = new CookiesUtils().loadToken();
 					displayInfoAlert(cookies, form);
 				} catch (Exception e) {
-					displayErrorAlert(e.getMessage());
+					displayErrorAlert(e.getClass().getName()+e.getMessage());
 				} 
 	        	
 	        }

@@ -11,7 +11,6 @@ import javax.microedition.lcdui.List;
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
 import top.jiehuan.kilikili.Model.FavFolderInfo;
-import top.jiehuan.kilikili.Model.PageInfo;
 import top.jiehuan.kilikili.Model.VideoInfo;
 import top.jiehuan.kilikili.Model.WebModel;
 import top.jiehuan.kilikili.util.*;
@@ -121,28 +120,24 @@ public class FavListPage extends Page implements CommandListener {
 		
 		String avid = avids[video_list.getSelectedIndex()];
     	try {
-			goToVideoListPage(avid);
+    		goToVideoListPageByAVID(avid);
 		} catch (Exception e) {
 			e.printStackTrace();
 			displayErrorAlert(avid+" "+e.getClass().toString()+" "+e.getMessage());
 		}
 	}
 	
-	private void goToVideoListPage(String avid){
-     	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,ml);
+	private void goToVideoListPageByAVID(String avid){
      	String bvid = "";
      	try {
      		bvid = VideoInfo.avidToBvid(avid);
      		//displayErrorAlert(avid+" "+bvid);
-			newpage.setVideoInfo(bvid);
+			goToVideoListPage(bvid);
 		} catch (Exception e) {
 			e.printStackTrace();
 			displayErrorAlert(avid+bvid+" "+e.getClass().toString()+" "+e.getMessage());
 			
 		}
-     	page_info_list.addElement(newpage);
-     	System.out.println("FavListPage call GetVideoInfoPage");
-        new PartVideoListPage(page_info_list);
 	 }
 	
 	private void refreshPage(short page) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{

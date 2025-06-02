@@ -43,6 +43,7 @@ public class MyInfoPage extends Page {
 	//String enable_content = "";
 	
 	CookiesUtils token_utils;
+	boolean isLogin;
 
 	public MyInfoPage(Vector page_info_list) {
 		super(page_info_list);
@@ -55,11 +56,12 @@ public class MyInfoPage extends Page {
 	protected void initPageVars() {
 		try {
 			token_utils = new CookiesUtils();
+			isLogin = new CookiesUtils("isLogin").isTokenStored();
 		} catch (Exception e) {
 			e.printStackTrace();
 			displayErrorAlert(e.getMessage());
 		} 
-		if(token_utils.isTokenStored()){
+		if(isLogin){
 			try{
 				//displayInfoAlert("你已经登录！cookies:"+token_utils.loadToken());
 				//String webpage = URLget.BackWeb(URLget.GET_PERSONAL_INFO_URL);
@@ -101,7 +103,7 @@ public class MyInfoPage extends Page {
 	}
 
 	protected void display() {
-		if(!token_utils.isTokenStored()){
+		if(!isLogin){
 			form.append(tips);
 			form.append(imageItem);
 			form.addCommand(refresh);
@@ -149,7 +151,8 @@ public class MyInfoPage extends Page {
 					CookiesUtils utils = new CookiesUtils();
 					utils.updateToken(cookies_append+content.cookies);
 					cookies=cookies_append+content.cookies;
-					
+					utils = new CookiesUtils("isLogin");
+					utils.saveBooleanToken(true);
 					//new CookiesUtils("refresh_token").updateToken(FindString.findValue(content.content, "refresh_token"));
 					getBUVIDAndEnable();
 					//enable_content = enable_content+"\n"+content.content+"\n"+payload;

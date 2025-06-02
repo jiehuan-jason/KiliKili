@@ -20,6 +20,10 @@ public class CookiesUtils {
         byte[] tokenBytes = token.getBytes();  // 将 Token 转为字节数组
         recordStore.addRecord(tokenBytes, 0, tokenBytes.length);  // 保存到 RMS
     }
+	public void saveBooleanToken(boolean token) throws RecordStoreNotOpenException, RecordStoreFullException, RecordStoreException{
+		byte[] tokenBytes = new byte[] { (byte) (token ? 1 : 0) };  
+	    recordStore.addRecord(tokenBytes, 0, tokenBytes.length);
+	}
 	public void updateToken(String newToken) throws RecordStoreNotOpenException, RecordStoreFullException, RecordStoreException {
             // 检查是否已存在 Token
             if (isTokenStored()) {

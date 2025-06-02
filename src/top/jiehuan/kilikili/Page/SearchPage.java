@@ -9,9 +9,7 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.List;
 
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
-import top.jiehuan.kilikili.Model.PageInfo;
 import top.jiehuan.kilikili.Model.VideoInfo;
-import top.jiehuan.kilikili.Model.WebModel;
 import top.jiehuan.kilikili.util.*;
 
 public class SearchPage extends Page implements CommandListener{
@@ -136,12 +134,15 @@ public class SearchPage extends Page implements CommandListener{
 				displayErrorAlert("SearchPage initPageVars Error:"+e.getMessage()+web);
 			} 
 		}
+		System.out.println(web);
 		String[] list_str = new String[1];
 		String[] type_list = new String[1];
+		String[] bvidListAll = new String[1];
+		list_bvid = new String[maxVideosNum];
 		try{
 		web = URLget.decodeUnicode(web);
 		list_str=FindString.FindTitleAndDeleteHtmlCode(web);
-		list_bvid=FindString.extractContents(web,"\"bvid\"");
+		bvidListAll=FindString.extractContents(web,"\"bvid\"");
 		type_list=FindString.extractContents(web,"\"type\"");
 		}catch (Exception e) {
 			displayErrorAlert("SearchPage initPageVars Part 2 Error:"+e.getMessage()+web);
@@ -150,20 +151,20 @@ public class SearchPage extends Page implements CommandListener{
 	    //list_bvid=FindString.FindBVID(web);
 	    //String[] type_list=FindString.FindVideoType(web);
 		try{
+		int j=0;
 		for(int i=0;i<maxVideosNum&&i<list_str.length;i++){
-			if(!((list_str[i] == null))||(list_bvid[i] == null)){
+			if(!((list_str[i] == null))){
 		
 		//在列表内添加搜索到的视频的标题
 			System.out.println("str:"+list_str[i]);
-			System.out.println("bvid:"+list_bvid[i]);
+			System.out.println("bvid:"+bvidListAll[i]);
 			System.out.println("type:"+type_list[i]);
 			System.out.println();
-			if(type_list[i].equals("video"))
+			if(type_list[i].equals("video")){
 				search_list.append(list_str[i], null);
-			else{
-				break;
+				list_bvid[j]= bvidListAll[i];
+				j++;
 			}
-			
 		
 		}
 		}
@@ -197,16 +198,9 @@ public class SearchPage extends Page implements CommandListener{
 	 private void goToVideoListPage(){
 		String bvid = list_bvid[search_list.getSelectedIndex()];
      	System.out.println(bvid);
-     	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,ml);
-     	try {
-			newpage.setVideoInfo(bvid);
-		} catch (Exception e) {
-			e.printStackTrace();
-			displayErrorAlert(e.getMessage());
-		}
-     	page_info_list.addElement(newpage);
-     	System.out.println("SearchPage call GetVideoInfoPage");
-        new PartVideoListPage(page_info_list);
+     	
+     	super.goToVideoListPage(bvid);
+     	
 	 }
 
 }

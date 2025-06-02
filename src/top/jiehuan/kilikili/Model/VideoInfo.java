@@ -4,10 +4,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.microedition.rms.RecordStoreException;
-import javax.microedition.rms.RecordStoreFullException;
-import javax.microedition.rms.RecordStoreNotFoundException;
-
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
 import top.jiehuan.kilikili.util.CookiesUtils;
@@ -53,7 +49,7 @@ public class VideoInfo {
 		initPartInfo(bvid, pn);
 		getBasicVideoInfo();
 	}
-	
+
 	private void initPartInfo(String bvid, int pn) throws Exception{
 		try {
 			String content = URLget.BackWeb(URLget.GET_VIDEOS_PAGE_LIST_URL+"bvid="+bvid);
@@ -178,6 +174,7 @@ public class VideoInfo {
 	}
 	
 	public int getVideoParts(){
+		System.out.println("parts:"+videos);
 		return videos;
 	}
 	

@@ -11,7 +11,6 @@ import javax.microedition.lcdui.List;
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
-import top.jiehuan.kilikili.Model.PageInfo;
 import top.jiehuan.kilikili.Model.VideoInfo;
 import top.jiehuan.kilikili.util.*;
 
@@ -120,15 +119,7 @@ public class UserVideoListPage extends Page implements CommandListener {
 	
 	private void initInfoPage(){
 		String bvid = bvids[video_list.getSelectedIndex()];
-    	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID,ml);
-    	try {
-			newpage.setVideoInfo(bvid);
-		} catch (Exception e) {
-			e.printStackTrace();
-			displayErrorAlert(e.getMessage());
-		}
-    	page_info_list.addElement(newpage);
-        new GetVideoInfoPage(page_info_list);
+    	super.goToVideoListPage(bvid);
 	}
 	
 	private void refreshPage(String aid) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{

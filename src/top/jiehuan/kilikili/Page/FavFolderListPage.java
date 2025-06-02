@@ -7,17 +7,12 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
-import javax.microedition.rms.InvalidRecordIDException;
-import javax.microedition.rms.RecordStoreException;
-import javax.microedition.rms.RecordStoreFullException;
-import javax.microedition.rms.RecordStoreNotFoundException;
 
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
 import top.jiehuan.kilikili.Model.FavFolderInfo;
 import top.jiehuan.kilikili.Model.PageInfo;
-import top.jiehuan.kilikili.Model.VideoInfo;
 import top.jiehuan.kilikili.Model.WebModel;
 import top.jiehuan.kilikili.util.CookiesUtils;
 import top.jiehuan.kilikili.util.FindString;

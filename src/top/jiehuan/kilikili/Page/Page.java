@@ -274,4 +274,28 @@ abstract public class Page implements CommandListener{
             }
         }).start();
 	}
+	
+	public void goToVideoListPage(String bvid){
+     	try {
+     		VideoInfo newVideo = new VideoInfo(bvid);
+     		int parts = newVideo.getVideoParts();
+			//newpage.setVideoInfo(newVideo);
+     		PageInfo newpage;
+         	if(parts == 1)
+         		newpage = new PageInfo(GetVideoInfoPage.PageID,ml);
+         	else
+         		newpage = new PageInfo(PartVideoListPage.PageID,ml);
+         	newpage.setVideoInfo(newVideo);
+         	page_info_list.addElement(newpage);
+         	System.out.println("SearchPage call GetVideoInfoPage/PartVideoListPage");
+         	if(parts == 1)
+         		new GetVideoInfoPage(page_info_list);
+         	else
+         		new PartVideoListPage(page_info_list);
+		} catch (Exception e) {
+			e.printStackTrace();
+			displayErrorAlert(e.getMessage());
+		}
+     	
+	 }
 }

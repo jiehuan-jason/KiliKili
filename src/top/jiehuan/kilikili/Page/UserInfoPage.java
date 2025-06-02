@@ -1,9 +1,7 @@
 package top.jiehuan.kilikili.Page;
 
-import java.io.IOException;
 import java.util.Vector;
 
-import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -118,6 +116,7 @@ public class UserInfoPage extends Page implements CommandListener {
 				System.out.println(mid);
 				text = URLget.BackWeb(URLget.USER_INFO_URL+mid);
 			}
+			
 			name = FindString.findValue(text, "name");
 			sign = FindString.findValue(text, "sign");
 			fans = FindString.findValueInt(text, "fans");

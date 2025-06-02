@@ -126,7 +126,7 @@ public class PartVideoListPage extends Page implements CommandListener{
 		 try {
 				parts = video_info.getVideoParts();
 				
-				if(parts == 1){
+				/*if(parts == 1){
 					new Thread(new Runnable() {
 		                public void run() {
 		                	PageInfo newpage = new PageInfo(GetVideoInfoPage.PageID,ml);
@@ -140,7 +140,7 @@ public class PartVideoListPage extends Page implements CommandListener{
 							new GetVideoInfoPage(page_info_list);
 		                }
 		            }).start();
-				}
+				}*/
 				pages = (parts - (parts%PARTS_IN_PAGE))/PARTS_IN_PAGE + 1;
 				
 			} catch (Exception e) {

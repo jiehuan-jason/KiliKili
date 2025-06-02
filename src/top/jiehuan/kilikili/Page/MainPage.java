@@ -12,7 +12,6 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
-import javax.microedition.rms.InvalidRecordIDException;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotFoundException;
@@ -21,9 +20,7 @@ import top.jiehuan.kilikili.MainMIDlet;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
 import top.jiehuan.kilikili.Model.PageInfo;
 import top.jiehuan.kilikili.Model.WebModel;
-import top.jiehuan.kilikili.util.CookieDateParser;
 import top.jiehuan.kilikili.util.CookiesUtils;
-import top.jiehuan.kilikili.util.FindString;
 import top.jiehuan.kilikili.util.URLget;
 
 public class MainPage extends Page implements CommandListener{
@@ -39,6 +36,8 @@ public class MainPage extends Page implements CommandListener{
 	Command back;
 	Command mine;
 	
+	boolean isLogin;
+	
 	public MainPage(MainMIDlet ml){
 		super(ml);
 		
@@ -47,13 +46,15 @@ public class MainPage extends Page implements CommandListener{
 		try{
 			getTheCookiesExpiresAndCompare();
 		}catch(Exception e){
-			displayErrorAlert(e.getMessage());
+			//TODO NullPointerException 不影响使用 之后再排查
+			//displayErrorAlert(1+e.getClass().getName());
 		}
 		display();
 	}
 	
 	public void commandAction(Command c, Displayable d) {
         if (c == go) //前往视频信息页面
+        	//TODO 把go和search合为一体
         {
         	if(tf.getString().length()==12&&tf.getString().startsWith("BV")){
         		new Thread(new Runnable() {
@@ -63,7 +64,7 @@ public class MainPage extends Page implements CommandListener{
                     	try {
 							newpage.setVideoInfo(bvid);
 						} catch (Exception e) {
-							displayErrorAlert(e.getMessage());
+							displayErrorAlert(2+e.getMessage());
 						}
                     	page_info_list.addElement(newpage);
                         new PartVideoListPage(page_info_list);
@@ -77,7 +78,7 @@ public class MainPage extends Page implements CommandListener{
                     	try {
 							newpage.setVideoInfo(bvid);
 						} catch (Exception e) {
-							displayErrorAlert(e.getMessage());
+							displayErrorAlert(3+e.getMessage());
 						}
                     	page_info_list.addElement(newpage);
                         new PartVideoListPage(page_info_list);
@@ -106,11 +107,12 @@ public class MainPage extends Page implements CommandListener{
                 }
             }).start();
         }else if(c==search){
+        	
         	if(tf.getString().equals(""))
-        		displayErrorAlert("输入不能为空");
+        		displayErrorAlertCanCancel("输入不能为空", form);
         	else
-        	new Thread(new Runnable() {
-                public void run() {
+        		new Thread(new Runnable() {
+        			public void run() {
                 	System.out.println("search button");
                 	System.out.println("keyword:"+tf.getString());
                 	PageInfo newpage = new PageInfo(SearchPage.PageID,ml);
@@ -118,8 +120,8 @@ public class MainPage extends Page implements CommandListener{
                 	page_info_list.addElement(newpage);
                 	System.out.println("go to SearchPage");
                     new SearchPage(page_info_list); //打开搜索界面
-                }
-            }).start();
+        			}
+        		}).start();
         }else if(c==back){
         	display.setCurrent(form);
         }else if(c==mine){
@@ -178,16 +180,22 @@ public class MainPage extends Page implements CommandListener{
 			util.deleteToken();
 			displayErrorAlert("你的登录已过期，请重新登录！");
 		}*/
-		CookiesUtils util = new CookiesUtils();
-		if(util.isTokenStored()){
+		CookiesUtils util = new CookiesUtils("isLogin");
+		isLogin = util.isTokenStored();
+		util = new CookiesUtils();
+		if(isLogin){
 			WebModel web = URLget.BackWebWithMoreInfo(URLget.GET_PERSONAL_INFO_URL);
 			if(URLget.getAPIBackCode(web.content) != 0){
-				displayErrorAlertCanCancel(URLget.getAPIBackCode(web.content)+"",form);
+				//displayErrorAlertCanCancel(URLget.getAPIBackCode(web.content)+"",form);
 				util.deleteToken();
 			}
 		}else{
-			WebModel web = URLget.BackWebWithMoreInfo(URLget.BILIBILI_MAIN_URL);
-			util.saveToken(web.cookies);
+			if(!new CookiesUtils().isTokenStored()){
+				WebModel web = URLget.BackWebWithMoreInfo(URLget.BILIBILI_MAIN_URL, "", 2);
+				//displayErrorAlertCanCancel(web.content, form);
+				displayErrorAlertCanCancel(web.cookies, form);
+				util.saveToken(web.cookies);
+			}
 		}
 			
 	}

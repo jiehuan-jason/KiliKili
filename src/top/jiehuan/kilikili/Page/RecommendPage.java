@@ -5,7 +5,6 @@ import java.util.Vector;
 import javax.microedition.lcdui.*;
 
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
-import top.jiehuan.kilikili.Model.PageInfo;
 import top.jiehuan.kilikili.Model.VideoInfo;
 import top.jiehuan.kilikili.util.*;
 
@@ -91,15 +90,7 @@ public class RecommendPage extends Page implements CommandListener {
         }else if(c==go){
         	new Thread(new Runnable() {
                 public void run() {
-                	String bvid = bvids[rcmd_list.getSelectedIndex()];
-                	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,ml);
-                	try {
-						newpage.setVideoInfo(bvid);
-					} catch (Exception e) {
-						displayErrorAlert(e.getMessage());
-					}
-                	page_info_list.addElement(newpage);
-                    new PartVideoListPage(page_info_list);
+                	goInfoPage();
                 }
             }).start();
         }else if (d == rcmd_list) {
@@ -136,14 +127,7 @@ public class RecommendPage extends Page implements CommandListener {
 	
 	private void goInfoPage(){
 		String bvid = bvids[rcmd_list.getSelectedIndex()];
-    	PageInfo newpage = new PageInfo(PartVideoListPage.PageID,ml);
-    	try {
-			newpage.setVideoInfo(bvid);
-		} catch (Exception e) {
-			displayErrorAlert(e.getMessage());
-		}
-    	page_info_list.addElement(newpage);
-        new PartVideoListPage(page_info_list);
+    	super.goToVideoListPage(bvid);
 	}
 	
 	protected void initPageVars(){
@@ -191,7 +175,7 @@ public class RecommendPage extends Page implements CommandListener {
 		rcmd_list.addCommand(go);
 		rcmd_list.setSelectCommand(go);
 		try {
-			if(new CookiesUtils().isTokenStored())
+			if(new CookiesUtils("isLogin").isTokenStored())
 				rcmd_list.addCommand(refresh);
 		} catch (Exception e) {
 			displayErrorAlert(e.getMessage());

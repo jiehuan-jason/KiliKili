@@ -50,7 +50,7 @@ public class URLget {
 	
 	
 	//BiliBili Server
-	public static final String BILIBILI_MAIN_URL = "https://www.bilibili.com/";
+	public static final String BILIBILI_MAIN_URL = "https://bilibili.com";
 	
 	public static final String RCMD_URL = "https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd";
 	public static final String SEARCH_URL = "https://api.bilibili.com/x/web-interface/wbi/search/type";
@@ -221,61 +221,27 @@ public class URLget {
 	}
 
 	public static WebModel BackWebWithMoreInfo(String url)throws WebReturnErrorCodeException, IOException{
+		try{
+    		CookiesUtils cookies_util = new CookiesUtils();
+    		if(cookies_util.isTokenStored())
+    			return BackWebWithMoreInfo(url, cookies_util.loadToken(), 1);
+    	}catch(Exception e){
+    		//什么都不做
+    	}
+		return BackWebWithMoreInfo(url, "", 1);
+	}
+	
+	public static WebModel BackWebWithMoreInfo(String url, String cookies, int type)throws WebReturnErrorCodeException, IOException{
 		DataInputStream dis =null;
         InputStream inputStream = null;
 
 		HttpConnection connection = null;
-		HttpsConnection https_connection=null;
+		//HttpsConnection https_connection=null;
 		
 		WebModel web = new WebModel();
 		
         try{
-        	/*if(url.startsWith("https")){
-        		int num=0;
-
-    	        System.gc();
-	        	System.out.println("before open connection,free memory is:"+Runtime.getRuntime().freeMemory());
-	        	System.out.println("open the connection :"+url);
-	            // 打开连接 设置请求方式和请求类型
-	        	https_connection = (HttpsConnection) Connector.open(url);
-	        	https_connection.setRequestMethod(HttpsConnection.GET);
-	        	https_connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
-	        	try{
-	        		CookiesUtils cookies_util = new CookiesUtils();
-	        		if(cookies_util.isTokenStored())
-	        			https_connection.setRequestProperty("Cookie", cookies_util.loadToken());
-	        	}catch(Exception e){
-	        		//什么都不做
-	        	}
-	        	
-	        	
-	            // 连接
-	            num = https_connection.getResponseCode();
-	            
-	            // 输出返回的网页代码
-	            System.out.println("get now");
-	            System.out.println(num);
-	            web.code = num;
-	            
-	            
-	            if(num==200){
-	            	try{
-	            		String cookie = https_connection.getHeaderField("Set-Cookie");
-		                if (cookie != null) {
-		                    web.cookies = cookie;
-		                    System.out.println("Stored cookie: " + cookie);
-		                }
-	            		web.content = getInfoFromHttpsConnection(https_connection);
-	            	}catch(IOException e1){
-	            		e1.printStackTrace();
-	            		throw e1;
-	            	}
-	            } else{
-	            	throw new WebReturnErrorCodeException(num);
-	            }
-        	}else{*/
     	        int num=0;
-    	        
     	        
     	        System.gc();
 	        	System.out.println("before open connection,free memory is:"+Runtime.getRuntime().freeMemory());
@@ -284,22 +250,19 @@ public class URLget {
 	            connection = (HttpConnection) Connector.open(url);
 	            connection.setRequestMethod(HttpConnection.GET);
 	            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8"); 
-	            connection.setRequestProperty("Referer", "https://www.bilibili.com/");
+	            if(type == 1)
+	            	connection.setRequestProperty("Referer", "https://www.bilibili.com/");
 	            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0");
-	            try{
-	        		CookiesUtils cookies_util = new CookiesUtils();
-	        		if(cookies_util.isTokenStored())
-	        			connection.setRequestProperty("Cookie", cookies_util.loadToken());
-	        	}catch(Exception e){
-	        		//什么都不做
-	        	}
+	            connection.setRequestProperty("Cookie", cookies);
+	        	
 	            // 连接
 	            num = connection.getResponseCode();
 	            
 	            // 输出返回的网页代码
 	            System.out.println("get now");
-	            System.out.println(num);
+	            System.out.println("Num:"+num);
 	            web.code = num;
+	            System.out.println(connection.getHeaderField("Set-Cookie"));
 	            
 	            if(num==200){
 	            	try{
@@ -313,9 +276,23 @@ public class URLget {
 	            		e1.printStackTrace();
 	            		throw e1;
 	            	}
-	            } else{
+	            }else if(num == 301 || num == 302){
+	            	/*String location = connection.getHeaderField("Location");
+	            	String cookiesNew = connection.getHeaderField("Set-Cookie");
+	                if (location != null) {
+	                	return BackWebWithMoreInfo(location, cookiesNew);
+	                }*/
+	            	String cookie = connection.getHeaderField("Set-Cookie");
+	                if (cookie != null) {
+	                    web.cookies = cookie;
+	                    System.out.println("Stored cookie: " + cookie);
+	                }
+	            }
+	            else{
 	            	throw new WebReturnErrorCodeException(num);
 	            }
+	            
+	           
         	//}
         }catch(IOException e){
         	throw e;
@@ -346,11 +323,11 @@ public class URLget {
 		 return getInfoFromConnection(dis,connectionLength);
 	 }
 	 
-	 private static String getInfoFromHttpsConnection(HttpsConnection connection) throws UnsupportedEncodingException, IOException{
+	/* private static String getInfoFromHttpsConnection(HttpsConnection connection) throws UnsupportedEncodingException, IOException{
 		 DataInputStream dis =connection.openDataInputStream();
 		 int connectionLength = (int)connection.getLength();
 		 return getInfoFromConnection(dis,connectionLength);
-	 }
+	 }*/
 	 
 	 private static String getInfoFromConnection(DataInputStream dis, int connectionLength) 
 		        throws IOException {

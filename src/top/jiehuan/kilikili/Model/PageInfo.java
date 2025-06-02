@@ -32,7 +32,7 @@ public class PageInfo {
 		isPageSet = false;
 		isFavFolderInfoSet = false;
 	}
-	
+
 	public MainMIDlet getMainMIDletObject(){
 		return ml;
 	}

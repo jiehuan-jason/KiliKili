@@ -1,10 +1,8 @@
 package top.jiehuan.kilikili.Page;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
-import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
@@ -18,7 +16,6 @@ import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 
-import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.PageInfoEmptyException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
 import top.jiehuan.kilikili.Model.PageInfo;
@@ -60,8 +57,6 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	
 	String[] favFoldersID;
 	String[] favFoldersName;
-    private Vector favFoldersCommandList = new Vector();
-    private Vector favFoldersNameList = new Vector();
 	boolean[] isFav;
 	int favFoldersNum;
 	
@@ -386,7 +381,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	 	
 	 	//status = true 点赞
 	 	//status = false 取消点赞
-	 	private void postFavRequest(String favID, boolean status){
+	 	/*private void postFavRequest(String favID, boolean status){
 	 		
 	 		
     		try{
@@ -414,7 +409,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
     	 	}catch(Exception e){
     	 		displayErrorAlert(e.getMessage());
     	 	}
-	 	}
+	 	}*/
 	 
 	 	
 	 	private void refresh(){
@@ -456,7 +451,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 			isFav = new boolean[30];
 			favFoldersNum = 0;
 			try{
-				is_login = new CookiesUtils().isTokenStored();
+				is_login = new CookiesUtils("isLogin").isTokenStored();
 				if(is_login){
 					WebModel web = URLget.BackWebWithMoreInfo(URLget.GET_PERSONAL_INFO_URL);
 					my_mid = FindString.findValueInt(web.content, "mid");
