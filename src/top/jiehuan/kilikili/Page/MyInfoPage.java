@@ -168,6 +168,7 @@ public class MyInfoPage extends Page {
         }else if(c==delete){
         	try{
         		new CookiesUtils().deleteToken();
+        		new CookiesUtils("isLogin").deleteToken();
         		backMainPage();
         	}catch(Exception e){
         		//TODO

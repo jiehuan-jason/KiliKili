@@ -172,7 +172,7 @@ public class ReplyListPage extends Page {
 		System.gc();
 		System.out.println("free memory is:"+Runtime.getRuntime().freeMemory());
 		
-		if(rootsAll.size()==0){
+		if(rootsAll.size()==0 && type == 0){
 			displayErrorAlertCanCancel("已经是最后一页了",replyList);
 			page_num--;
         	page_info.setPage(page_num);
@@ -228,7 +228,7 @@ public class ReplyListPage extends Page {
 				replys.addElement(new ReplyModel(video_info.getAID(), (String) rootsAll.elementAt(0), (String) rpidsAll.elementAt(0), (String) contentsAll.elementAt(1), (String) unamesAll.elementAt(0), (String) midsAll.elementAt(0), Integer.parseInt((String) countsAll.elementAt(1))));
 			replyList.append("@"+unamesAll.elementAt(0)+": "+contentsAll.elementAt(1), null);
 		}*/
-		if(page == repliesCount)
+		if(page == repliesCount && type == 1)
 			nextPageStatus = false;
 		}
 		rpidsAll = null;

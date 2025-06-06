@@ -277,15 +277,12 @@ public class URLget {
 	            		throw e1;
 	            	}
 	            }else if(num == 301 || num == 302){
-	            	/*String location = connection.getHeaderField("Location");
+	            	String location = connection.getHeaderField("Location");
 	            	String cookiesNew = connection.getHeaderField("Set-Cookie");
+	            	if(cookiesNew == null)
+	            		cookiesNew = "";
 	                if (location != null) {
-	                	return BackWebWithMoreInfo(location, cookiesNew);
-	                }*/
-	            	String cookie = connection.getHeaderField("Set-Cookie");
-	                if (cookie != null) {
-	                    web.cookies = cookie;
-	                    System.out.println("Stored cookie: " + cookie);
+	                	return BackWebWithMoreInfo(location, cookiesNew, 2);
 	                }
 	            }
 	            else{

@@ -129,7 +129,7 @@ public class SearchPage extends Page implements CommandListener{
 			}
 		else {
 			try {
-				web = URLget.BackWeb(URLget.SEARCH_URL+"?search_type=video&keyword="+keyword+"&page="+page_num);
+				web = URLget.BackWebWithMoreInfo(URLget.SEARCH_URL+"?search_type=video&keyword="+keyword+"&page="+page_num).content;
 			} catch (Exception e) {
 				displayErrorAlert("SearchPage initPageVars Error:"+e.getMessage()+web);
 			} 
@@ -139,6 +139,8 @@ public class SearchPage extends Page implements CommandListener{
 		String[] type_list = new String[1];
 		String[] bvidListAll = new String[1];
 		list_bvid = new String[maxVideosNum];
+		//search_list.append("test",null);
+		//search_list.append(web, null);
 		try{
 		web = URLget.decodeUnicode(web);
 		list_str=FindString.FindTitleAndDeleteHtmlCode(web);

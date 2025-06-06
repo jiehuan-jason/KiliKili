@@ -110,6 +110,8 @@ public class MainPage extends Page implements CommandListener{
         	
         	if(tf.getString().equals(""))
         		displayErrorAlertCanCancel("输入不能为空", form);
+        	else if(!isLogin)
+        		displayErrorAlertCanCancel("请登陆后再搜索", form);
         	else
         		new Thread(new Runnable() {
         			public void run() {
@@ -193,7 +195,7 @@ public class MainPage extends Page implements CommandListener{
 			if(!new CookiesUtils().isTokenStored()){
 				WebModel web = URLget.BackWebWithMoreInfo(URLget.BILIBILI_MAIN_URL, "", 2);
 				//displayErrorAlertCanCancel(web.content, form);
-				displayErrorAlertCanCancel(web.cookies, form);
+				//displayErrorAlertCanCancel(web.code+web.cookies+web.content, form);
 				util.saveToken(web.cookies);
 			}
 		}

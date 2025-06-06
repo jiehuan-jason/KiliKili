@@ -133,7 +133,7 @@ public class UserInfoPage extends Page implements CommandListener {
 		form=null;
 		form=new Form(name+lang_res.getValue("user_info"));
 		nameitem=new StringItem("",name+"  ");
-		signitem=new StringItem("","\n"+lang_res.getValue("introduction"));
+		signitem=new StringItem("","\n"+lang_res.getValue("introduction")+"\n");
 		
 		fansitem=new StringItem("",lang_res.getValue("fans")+fans+"\n");
 		attentionsitem=new StringItem("",lang_res.getValue("attentions")+attentions+"\n");
