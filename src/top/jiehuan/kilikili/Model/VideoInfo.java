@@ -65,6 +65,7 @@ public class VideoInfo {
 	
 	private void getBasicVideoInfo(){
 		content = getVideoContent();
+		//content = FindString.formatEscapeCharacters(content);
 		if(!status){
 			System.out.println("VideoInfo content is error");
 		}else{
@@ -72,7 +73,7 @@ public class VideoInfo {
 		aid=FindString.findValueInt(content, "aid");
 		user_mid=FindString.findValueInt(content, "mid");
 		cover_url=FindString.findValue(content, "pic");
-		title=FindString.findValue(content,"title");
+		title=FindString.formatEscapeCharacters(FindString.findValue(content,"title"));
 		//cid=FindString.findValueInt(content, "cid");
 		user_name=FindString.findValue(content, "name");
 		pubtime=FindString.findValueInt(content, "pubdate");
@@ -278,6 +279,8 @@ public class VideoInfo {
 	public String getSearchKeyword(){
 		return search_keyword;
 	}
+	
+	
 	
 	private String formatDate(Date date, long utcOffset) {
         // 获取 UTC 时间
