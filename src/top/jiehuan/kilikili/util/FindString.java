@@ -19,6 +19,10 @@ public class FindString {
 
 		            // 查找第二个双引号
 		            int endQuote = input.indexOf("\"", startQuote + 1);
+		            while (input.charAt(endQuote - 1) == '\\' && endQuote != -1){
+		            	currentIndex = endQuote + 1;
+		            	endQuote = input.indexOf("\"", currentIndex + 1);
+		            }
 		            if (endQuote == -1) {
 		                break;  // 如果没有找到结束双引号，退出循环
 		            }
@@ -196,6 +200,10 @@ public class FindString {
 
 			    // 找到第二个双引号的位置
 			    int secondQuoteIndex = jsonString.indexOf("\"", firstQuoteIndex + 1);
+			    while (jsonString.charAt(secondQuoteIndex - 1) == '\\' && secondQuoteIndex != -1){
+			    	titleIndex = secondQuoteIndex + 1;
+	            	secondQuoteIndex = jsonString.indexOf("\"", titleIndex + 1);
+	            }
 			    if (secondQuoteIndex == -1) {
 			        System.out.println("No Find Second");
 			        return null; // 如果没有找到第二个双引号，返回 null
@@ -248,5 +256,9 @@ public class FindString {
 			    result.append(original); // 添加剩余部分
 
 			    return result.toString();
+			}
+			
+			public static String formatEscapeCharacters(String content){
+				return replace(content, "\\\"", "\"");
 			}
 }

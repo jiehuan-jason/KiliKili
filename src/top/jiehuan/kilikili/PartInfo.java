@@ -11,13 +11,15 @@ public class PartInfo {
 	public PartInfo(String bvid, int page, String content){
 		this.bvid = bvid;
 		this.page = page;
+		//content = FindString.formatEscapeCharacters(content);
+		//System.out.println("PartInfo:"+content);
 		getPartInfo(content);
 	}
 	
 	private void getPartInfo(String content){
 		String[] cids = FindString.extractContentsInt(content,"\"cid\"");
 		String[] p_titles = FindString.extractContents(content,"\"part\"");
-		cid = cids[page-1];
+		cid = FindString.formatEscapeCharacters(cids[page-1]);
 		part_title = p_titles[page-1];
 	}
 	
