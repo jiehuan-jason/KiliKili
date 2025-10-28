@@ -253,6 +253,13 @@ abstract public class Page implements CommandListener{
 	        }).start();
 	        break;
 	        
+	    case HistoryListPage.PageID:
+	    	new Thread(new Runnable() {
+	            public void run() {
+	                new HistoryListPage(page_info_list);
+	            }
+	        }).start();
+	        break;
 	        
 	    default:
 	        new Thread(new Runnable() {

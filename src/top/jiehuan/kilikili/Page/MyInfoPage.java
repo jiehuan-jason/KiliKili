@@ -35,6 +35,7 @@ public class MyInfoPage extends Page {
 	Command token_status;
 	Command token_refresh;
 	Command fav_folder_list;
+	Command historyListPage;
 	StringItem tips;
 	StringItem personal_info;
 	
@@ -100,6 +101,7 @@ public class MyInfoPage extends Page {
 		//token_status = new Command("Token Status", Command.ITEM, 2);
 		//token_refresh = new Command("Refresh Token", Command.ITEM, 2);
 		fav_folder_list = new Command(lang_res.getValue("fav_folder_list"),Command.ITEM,1);
+		historyListPage = new Command(lang_res.getValue("history_list"),Command.ITEM,1);
 	}
 
 	protected void display() {
@@ -111,6 +113,7 @@ public class MyInfoPage extends Page {
 		else {
 			form.append(personal_info);
 			form.addCommand(fav_folder_list);
+			form.addCommand(historyListPage);
 			form.addCommand(delete);
 			//form.append(new StringItem("","\n"+enable_content));
 			//form.addCommand(token_status);
@@ -184,6 +187,15 @@ public class MyInfoPage extends Page {
                 	page.setType(1);
                 	page_info_list.addElement(page);
                     new FavFolderListPage(page_info_list); 
+                }
+            }).start();
+        }else if(c==historyListPage){
+        	new Thread(new Runnable() {
+                public void run() {
+                	PageInfo page = new PageInfo(HistoryListPage.PageID,ml);
+                	page.setType(1);
+                	page_info_list.addElement(page);
+                    new HistoryListPage(page_info_list); 
                 }
             }).start();
         }
