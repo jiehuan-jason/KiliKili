@@ -90,15 +90,16 @@ public class FavFolderListPage extends Page implements CommandListener{
 	
 	private void initInfoPage(){
 		String id = ids[folders_list.getSelectedIndex()];
-    	PageInfo newpage = new PageInfo(FavListPage.PageID,ml);
+    	PageInfo newPage = new PageInfo(SimpleListPage.PageID,ml);
+    	newPage.setType(2);
     	try {
-			newpage.setFavFolderInfo(new FavFolderInfo(id));;
+    		newPage.setFavFolderInfo(new FavFolderInfo(id));;
 		} catch (Exception e) {
 			e.printStackTrace();
 			displayErrorAlert("FFL initInfo Error:"+e.getMessage());
 		}
-    	page_info_list.addElement(newpage);
-        new FavListPage(page_info_list);
+    	page_info_list.addElement(newPage);
+        new SimpleListPage(page_info_list);
 	}
 	
 	private void postFav(){
@@ -115,7 +116,7 @@ public class FavFolderListPage extends Page implements CommandListener{
 		if(bili_code!=0)
 			displayErrorAlertCanCancel(FindString.findValue(web.content, "message"), folders_list);
 		else{
-			displayInfoAlert("收藏成功！", folders_list);
+			displayInfoAlert("收藏/取消成功！", folders_list);
 			page_info_list.removeElementAt(page_info_list.size()-1);
         	back(page_info_list);
 	}

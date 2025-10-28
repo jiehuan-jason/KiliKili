@@ -102,8 +102,10 @@ public class MainPage extends Page implements CommandListener{
         }else if(c==rcmd){
         	new Thread(new Runnable() {
                 public void run() {
-                	page_info_list.addElement(new PageInfo(RecommendPage.PageID,ml));
-                    new RecommendPage(page_info_list); //打开推荐界面
+                	PageInfo newPage = new PageInfo(SimpleListPage.PageID,ml);
+                	newPage.setType(0);
+                	page_info_list.addElement(newPage);
+                    new SimpleListPage(page_info_list); //打开推荐界面
                 }
             }).start();
         }else if(c==search){
@@ -115,13 +117,14 @@ public class MainPage extends Page implements CommandListener{
         	else
         		new Thread(new Runnable() {
         			public void run() {
-                	System.out.println("search button");
-                	System.out.println("keyword:"+tf.getString());
-                	PageInfo newpage = new PageInfo(SearchPage.PageID,ml);
-                	newpage.setSearchInfo(tf.getString(), 1);
-                	page_info_list.addElement(newpage);
-                	System.out.println("go to SearchPage");
-                    new SearchPage(page_info_list); //打开搜索界面
+        				System.out.println("search button");
+        				System.out.println("keyword:"+tf.getString());
+        				PageInfo newPage = new PageInfo(SimpleListPage.PageID,ml);
+        				newPage.setType(1);
+                		newPage.setSearchInfo(tf.getString(), 1);
+                		page_info_list.addElement(newPage);
+                		System.out.println("go to SearchPage");
+                		new SimpleListPage(page_info_list); //打开搜索界面
         			}
         		}).start();
         }else if(c==back){

@@ -89,6 +89,7 @@ public class URLget {
 	public static final String TO_VIEW_ADD_URL = "https://api.bilibili.com/x/v2/history/toview/add";
 	public static final String TO_VIEW_DEL_URL = "https://api.bilibili.com/x/v2/history/toview/del";
 	public static final String LIKE_REPLY_URL = "https://api.bilibili.com/x/v2/reply/action";
+	public static final String HEARTBEAT_URL = "https://api.bilibili.com/x/click-interface/web/heartbeat";
 	
 	
 	public static String BackVideoLink(String bvid,String cid) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{

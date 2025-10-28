@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.microedition.rms.InvalidRecordIDException;
+import javax.microedition.rms.RecordStoreException;
+
 import top.jiehuan.kilikili.Exception.ErrorVideoStatusException;
 import top.jiehuan.kilikili.Exception.WebReturnErrorCodeException;
 import top.jiehuan.kilikili.util.CookiesUtils;
@@ -122,6 +125,10 @@ public class VideoInfo {
 		}
 	}
 	
+	public void postHeartbeat() throws InvalidRecordIDException, WebReturnErrorCodeException, IOException, RecordStoreException{
+		URLget.BackWebAndUserCookiesPost(URLget.HEARTBEAT_URL, "aid="+aid);
+	}
+	
 	public void setLikeStatus(boolean status){
 		isLike = status;
 	}
@@ -236,7 +243,7 @@ public class VideoInfo {
 	
 	public String getFormatPubTime(){
 		Date date = new Date(getPubTime()*1000);
-		return formatDate(date,8);
+		return FindString.formatDate(date,8);
 	}
 	
 	public boolean getStatus(){
@@ -282,30 +289,7 @@ public class VideoInfo {
 	
 	
 	
-	private String formatDate(Date date, long utcOffset) {
-        // 获取 UTC 时间
-        long utcTime = date.getTime() + (utcOffset * 3600 * 1000);
 
-        // 创建一个新的 Date 对象，表示 UTC+8 的时间
-        Date localDate = new Date(utcTime);
-        
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(localDate);
-
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH)+1;
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int min = calendar.get(Calendar.MINUTE);
-        //int sec = calendar.get(Calendar.SECOND);
-        
-        if(min<10){
-	        return year+"-"+month+"-"+day+" "+hour+":0"+min;
-        }
-
-        // 格式化为字符串
-        return year+"-"+month+"-"+day+" "+hour+":"+min;
-    }
 	
 	
 	// 作者 @8192Bit
@@ -342,11 +326,7 @@ public class VideoInfo {
 	    }
 	}*/
 	
-	public static String avidToBvid(String avid) throws WebReturnErrorCodeException, IOException{
-		WebModel web = URLget.BackWebWithMoreInfo(URLget.GET_INFO_URL+"aid="+avid);
-		return FindString.findValue(web.content, "bvid");
-		//return web.content;
-	}
+	
 
 	
 }

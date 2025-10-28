@@ -59,7 +59,7 @@ public class HistoryListPage extends Page implements CommandListener {
         	new Thread(new Runnable() {
                 public void run() {
                 	try {
-                		VideoInfo cover_info= new VideoInfo(VideoInfo.avidToBvid(avids[video_list.getSelectedIndex()+1]));
+                		VideoInfo cover_info= new VideoInfo(VideoUtils.avidToBvid(avids[video_list.getSelectedIndex()+1]));
                 		System.out.println("cover_url is:"+cover_info.getCoverURL());
 						ml.platformRequest(new String(cover_info.getCoverURL().getBytes("UTF-8"),"UTF-8"));
 					} catch (Exception e) {
@@ -128,7 +128,7 @@ public class HistoryListPage extends Page implements CommandListener {
 	private void goToVideoListPageByAVID(String avid){
      	String bvid = "";
      	try {
-     		bvid = VideoInfo.avidToBvid(avid);
+     		bvid = VideoUtils.avidToBvid(avid);
      		//displayErrorAlert(avid+" "+bvid);
 			goToVideoListPage(bvid);
 		} catch (Exception e) {

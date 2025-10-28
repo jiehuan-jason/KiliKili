@@ -149,18 +149,10 @@ abstract public class Page implements CommandListener{
 	 * */
 	private void back(short page, final Vector page_info_list){
 		switch (page) {
-	    case RecommendPage.PageID:
+	    case SimpleListPage.PageID:
 	        new Thread(new Runnable() {
 	            public void run() {
-	                new RecommendPage(page_info_list);
-	            }
-	        }).start();
-	        break;
-
-	    case SearchPage.PageID:
-	        new Thread(new Runnable() {
-	            public void run() {
-	                new SearchPage(page_info_list);
+	                new SimpleListPage(page_info_list);
 	            }
 	        }).start();
 	        break;
@@ -228,14 +220,6 @@ abstract public class Page implements CommandListener{
 	            }
 	        }).start();
 	        break;
-	    
-	    case FavListPage.PageID:
-	    	new Thread(new Runnable() {
-	    		public void run() {
-	    			new FavListPage(page_info_list);
-	    		}
-	    	}).start();
-	    	break;
         
 	    case ReplyListPage.PageID:
 	    	new Thread(new Runnable() {

@@ -1,5 +1,7 @@
 package top.jiehuan.kilikili.util;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Vector;
 
 
@@ -393,4 +395,29 @@ public class FindString {
 			public static String formatEscapeCharacters(String content){
 				return replace(content, "\\\"", "\"");
 			}
+			
+			public static String formatDate(Date date, long utcOffset) {
+		        // 获取 UTC 时间
+		        long utcTime = date.getTime() + (utcOffset * 3600 * 1000);
+
+		        // 创建一个新的 Date 对象，表示 UTC+8 的时间
+		        Date localDate = new Date(utcTime);
+		        
+		        Calendar calendar = Calendar.getInstance();
+		        calendar.setTime(localDate);
+
+		        int year = calendar.get(Calendar.YEAR);
+		        int month = calendar.get(Calendar.MONTH)+1;
+		        int day = calendar.get(Calendar.DAY_OF_MONTH);
+		        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+		        int min = calendar.get(Calendar.MINUTE);
+		        //int sec = calendar.get(Calendar.SECOND);
+		        
+		        if(min<10){
+			        return year+"-"+month+"-"+day+" "+hour+":0"+min;
+		        }
+
+		        // 格式化为字符串
+		        return year+"-"+month+"-"+day+" "+hour+":"+min;
+		    }
 }

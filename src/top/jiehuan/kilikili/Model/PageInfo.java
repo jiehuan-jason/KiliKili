@@ -81,6 +81,11 @@ public class PageInfo {
 		search_keyword = keyword;
 	}
 	
+	public void setKeyword(String keyword){
+		isSearchSet = true;
+		search_keyword = keyword;
+	}
+	
 	public void setPage(int page){
 		isPageSet = true;
 		this.page = page;
