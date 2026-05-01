@@ -25,6 +25,7 @@ public class SimpleListPage extends Page implements CommandListener{
 	private Command refresh;
 	private String[] bvidList;
 	private String[] avidList;
+	private String[] tagList;
 	private boolean[] isVideoInvalid;
 	
 	static int maxVideosNum = 15;
@@ -37,7 +38,7 @@ public class SimpleListPage extends Page implements CommandListener{
 	private int page_num = 1;
 	private String listName;
 
-	private int type = 0; // 0 = RCMD; 1 = SEARCH; 2 = FAV
+	private int type = 0; // 0 = RCMD; 1 = SEARCH; 2 = FAV ; 3 = TAGS
 	
 	public SimpleListPage(Vector page_info_list){
 		//初始化变量和界面
@@ -62,6 +63,8 @@ public class SimpleListPage extends Page implements CommandListener{
 		}	
 		}else if(type == 2){
 			listName = lang_res.getValue("fav_list");
+		}else if(type == 3){
+			listName = "Tags";
 		}
 
 		//init the list
@@ -121,12 +124,16 @@ public class SimpleListPage extends Page implements CommandListener{
                 	}
             	}).start();
         	}else if(c==go){
-	        	new Thread(new Runnable() {
-	                public void run() {
-	                	//跳转内容在此method处理
-	                	goToVideoListPage();
-	                }
-	            }).start();
+        		if(type != 3){
+    	        	new Thread(new Runnable() {
+    	                public void run() {
+    	                	//跳转内容在此method处理
+    	                	goToVideoListPage();
+    	                }
+    	            }).start();
+            	}else{
+            		//TODO search the tag
+            	}
 	        }else if(c == last_page){
 	        	page_num--;
 	        	System.out.println("now page is "+page_num);
@@ -174,8 +181,18 @@ public class SimpleListPage extends Page implements CommandListener{
 	 }
 
 	 protected void initPageVars(){
+		 if(type==3){
+			 try {
+				video_info = page_info.getVideoInfo();
+			} catch (PageInfoEmptyException e) {
+				// TODO Auto-generated catch block
+				displayErrorAlert("SimpleListPage initPageVars Error:"+e.getMessage());
+			}
+		 }
+		 
 		avidList = new String[maxVideosNum];
 		isVideoInvalid = new boolean[maxVideosNum];
+		tagList = new String[15];
 
 		for(int i=0;i<maxVideosNum;i++)
 			isVideoInvalid[i] = false;
@@ -203,6 +220,8 @@ public class SimpleListPage extends Page implements CommandListener{
 					web = URLget.BackWebWithMoreInfo(URLget.SEARCH_URL+"?search_type=video&keyword="+keyword+"&page="+page_num).content;
 				else if(type == 2)
 					web = URLget.BackWebWithMoreInfo(URLget.GET_FAV_LIST_URL+"?media_id="+favFolderInfo.getID()+"&ps="+maxVideosNum+"&pn="+page_num).content;
+				else if(type == 3)
+					web = URLget.BackWebWithMoreInfo(URLget.GET_TAGS_LIST_URL+"?bvid="+video_info.getBVID()).content;
 			} catch (Exception e) {
 				displayErrorAlert("SimpleListPage initPageVars Error:"+e.getMessage()+web);
 			} 
@@ -230,6 +249,8 @@ public class SimpleListPage extends Page implements CommandListener{
 			}else if(type == 2){
 				titles=FindString.extractContents(web,"\"title\"");
 				avidList=FindString.extractContentsInt(web,"\"id\""); //第一个ID是收藏夹的id，所以使用时要+1
+			}else if(type == 3){
+				tagList = FindString.extractContents(web, "\"tag_name\"");
 			}
 			
 		}catch (Exception e) {
@@ -239,39 +260,47 @@ public class SimpleListPage extends Page implements CommandListener{
 		//String[] titles=FindString.FindTitle(web);
 	    //bvidList=FindString.FindBVID(web);
 	    //String[] typeList=FindString.FindVideoType(web);
+		if(type != 3){
 
-	    //添加到list
-		try{
-			int j=0;
-			for(int i=0;i<maxVideosNum&&i<titles.length;i++){
-				if(!(titles[i] == null||bvidListAll[i] == null)){
-		
-				System.out.println("str:"+titles[i]);
-				System.out.println("bvid:"+bvidListAll[i]);
-				if(type == 0){
-					list.append(titles[i], null);
-				}
-				else if(type == 1){
-					if(typeList[i].equals("video")){
+		    //添加到list
+			try{
+				int j=0;
+				for(int i=0;i<maxVideosNum&&i<titles.length;i++){
+					if(!(titles[i] == null||bvidListAll[i] == null)){
+			
+					System.out.println("str:"+titles[i]);
+					System.out.println("bvid:"+bvidListAll[i]);
+					if(type == 0){
 						list.append(titles[i], null);
-						bvidList[j]= bvidListAll[i];
-						j++;
 					}
+					else if(type == 1){
+						if(typeList[i].equals("video")){
+							list.append(titles[i], null);
+							bvidList[j]= bvidListAll[i];
+							j++;
+						}
+					}
+					else if(type == 2){
+						list.append(titles[i+1], null);
+						this.avidList[i] = avidList[i+1];
+						video_counts++;
+						if(titles[i+1].equals("已失效视频"))
+							isVideoInvalid[i] = true;
+					}
+			
 				}
-				else if(type == 2){
-					list.append(titles[i+1], null);
-					this.avidList[i] = avidList[i+1];
-					video_counts++;
-					if(titles[i+1].equals("已失效视频"))
-						isVideoInvalid[i] = true;
-				}
-		
+			}
+			}catch (Exception e) {
+				//displayErrorAlert("SimpleListPage initPageVars Part 3 Error:"+e.getMessage()+web);
+				//TODO 这里报空指针错误 但是不妨碍功能 就没有处理 之后看看到底哪里有问题
+			} 
+		}else{
+			for(int i=0; i<tagList.length; i++){
+				if(tagList[i]!=null)
+					list.append(tagList[i], null);
+				else break;
 			}
 		}
-		}catch (Exception e) {
-			//displayErrorAlert("SimpleListPage initPageVars Part 3 Error:"+e.getMessage()+web);
-			//TODO 这里报空指针错误 但是不妨碍功能 就没有处理 之后看看到底哪里有问题
-		} 
 
 		// set the next page status. Only Fav.
 		if(type == 2){
@@ -318,11 +347,12 @@ public class SimpleListPage extends Page implements CommandListener{
 		if(type == 2)
 			if(nextPageStatus)
 				list.addCommand(next_page);
-		else
+		else if(type != 3)
 			if(page_num<=20)
 				list.addCommand(next_page);
 		
-		list.addCommand(view_cover);
+		if(type == 0 || type == 1 || type == 2)
+			list.addCommand(view_cover);
 		list.addCommand(exit);
 		
 		list.setCommandListener(this);

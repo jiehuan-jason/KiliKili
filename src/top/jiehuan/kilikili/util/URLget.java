@@ -77,6 +77,7 @@ public class URLget {
 	public static final String GET_REPLY_LIST_URL = "https://api.bilibili.com/x/v2/reply";
 	public static final String GET_SUB_REPLY_LIST_URL = "https://api.bilibili.com/x/v2/reply/reply";
 	public static final String GET_HISTORY_LIST_URL = "https://api.bilibili.com/x/v2/history";
+	public static final String GET_TAGS_LIST_URL = "https://api.bilibili.com/x/web-interface/view/detail/tag";
 	
 	//BILIBILI Server Post
 	public static final String REFRESH_COOKIES_URL = "https://passport.bilibili.com/x/passport-login/web/cookie/refresh";

@@ -52,6 +52,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	Command coin;
 	Command favorite; //收藏
 	Command reply;
+	Command tags;
 	String video_url;
 	String cid;
 	String errorMessage = "";
@@ -113,11 +114,11 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	        	goLastPage();
 	        }
 	        //退出app
-	        if(c==exit){
+	        else if(c==exit){
 	        	ml.exitApp();
 	        }
 	        //下载视频
-	        if(c==download){
+	        else if(c==download){
 	        	new Thread(new Runnable() {
                     public void run() {
                     	PageInfo newpage = new PageInfo(DownloadPage.PageID,ml);
@@ -133,7 +134,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	            }).start();
 	        }
 	        // 显示视频封面
-	        if(c==view_cover){
+	        else if(c==view_cover){
 	        	new Thread(new Runnable() {
                     public void run() {
                     	try {
@@ -146,7 +147,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
                     	
                     }
 	            }).start();
-	        }if (c == author_info) {
+	        }else if (c == author_info) {
 	            new Thread(new Runnable() {
 	                public void run() {
 	                	PageInfo newpage = new PageInfo(UserInfoPage.PageID,ml);
@@ -160,7 +161,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	                	new UserInfoPage(page_info_list);
 	                }
 	            }).start();
-	        }if (c==like){
+	        }else if (c==like){
 	        	
 	        	try{
 	        		boolean status = utils.pressLike();
@@ -177,9 +178,9 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	        	}catch(Exception e){
 	        		displayErrorAlert(e.getMessage());
 	        	}
-	        }if (c==coin){
+	        }else if (c==coin){
 	        	pressCoin();
-	        }if (c==favorite){
+	        }else if (c==favorite){
 	        	try{
 	        		
 	        		utils.pressFavorite(page_info_list);
@@ -187,7 +188,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	        	}catch(Exception e){
 	        		displayErrorAlert(e.getMessage());
 	        	}
-	        }if (c==reply){
+	        }else if (c==reply){
 	        	try{
 	        		PageInfo newPage = new PageInfo(ReplyListPage.PageID,ml);
 	        		newPage.setVideoInfo(video_info);
@@ -197,6 +198,20 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	        	}catch(Exception e){
 	        		displayErrorAlert(e.getMessage());
 	        	}
+	        }else if (c==tags){
+	        	new Thread(new Runnable() {
+	                public void run() {
+	        	try{
+	        		PageInfo newPage = new PageInfo(SimpleListPage.PageID,ml);
+	        		newPage.setVideoInfo(video_info);
+	        		newPage.setType(3);
+	        		page_info_list.addElement(newPage);
+	        		new SimpleListPage(page_info_list);
+	        	}catch(Exception e){
+	        		displayErrorAlert(e.getMessage());
+	        	}
+	          }
+	         }).start();
 	        }
 	    }
 	 
@@ -330,6 +345,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 			initBackAndExitCommand();
 			view_cover=new Command(lang_res.getValue("cover"),Command.ITEM,2);
 			author_info=new Command(lang_res.getValue("authorInfo"),Command.ITEM,2);
+			tags = new Command("Tags",Command.ITEM,1);
 			if(is_login){
 				if(video_info.isLike)
 					like = new Command(lang_res.getValue("cancel")+lang_res.getValue("like"),Command.OK,3);
@@ -359,6 +375,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 			
 			form.append(info);
 			form.addCommand(back);
+			form.addCommand(tags);
 			form.addCommand(author_info);
 			form.addCommand(download);
 			form.addCommand(view_cover);
