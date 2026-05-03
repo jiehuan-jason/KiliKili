@@ -45,6 +45,7 @@ public class MainPage extends Page implements CommandListener{
 		initDisplayVars();
 		try{
 			getTheCookiesExpiresAndCompare();
+			isLoginStatusExpired();
 		}catch(Exception e){
 			//TODO NullPointerException 不影响使用 之后再排查
 			//displayErrorAlert(1+e.getClass().getName());
@@ -143,6 +144,8 @@ public class MainPage extends Page implements CommandListener{
 		page_info = new PageInfo(PageID,ml);
 		page_info_list = new Vector();
 		page_info_list.addElement(page_info);
+		
+		
 	}
 	
 	protected void initDisplayVars(){
@@ -202,6 +205,20 @@ public class MainPage extends Page implements CommandListener{
 				util.saveToken(web.cookies);
 			}
 		}
+			
+	}
+	
+	private void isLoginStatusExpired() throws WebReturnErrorCodeException, IOException, RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException{
+			
+			WebModel personalInfo = URLget.BackWebWithMoreInfo(URLget.GET_PERSONAL_INFO_URL);
+			String personal_info_content = personalInfo.content;
+			CookiesUtils token_utils = new CookiesUtils();
+			if(URLget.getAPIBackCode(personal_info_content)!=0){
+				token_utils.deleteToken();
+				CookiesUtils utils = new CookiesUtils("isLogin");
+				utils.saveBooleanToken(false);
+				isLogin = false;
+			}
 			
 	}
 	

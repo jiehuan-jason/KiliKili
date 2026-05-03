@@ -126,7 +126,14 @@ public class VideoInfo {
 	}
 	
 	public void postHeartbeat() throws InvalidRecordIDException, WebReturnErrorCodeException, IOException, RecordStoreException{
-		URLget.BackWebAndUserCookiesPost(URLget.HEARTBEAT_URL, "aid="+aid);
+		URLget.BackWebAndUserCookiesPost(URLget.HEARTBEAT_URL, "aid="+aid+"&cid="+getCID());
+	}
+	
+	public String getOnlineTotal() throws WebReturnErrorCodeException, IOException{
+		String info = URLget.BackWebWithMoreInfo(URLget.GET_ONLINE_TOTAL_URL+"?bvid="+bvid+"&cid="+getCID()).content;
+		String num = FindString.findValue(info, "total");
+		info = null;
+		return num;
 	}
 	
 	public void setLikeStatus(boolean status){
@@ -286,6 +293,7 @@ public class VideoInfo {
 	public String getSearchKeyword(){
 		return search_keyword;
 	}
+	
 	
 	
 	

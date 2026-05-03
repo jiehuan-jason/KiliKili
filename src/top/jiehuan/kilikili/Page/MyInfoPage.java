@@ -67,15 +67,24 @@ public class MyInfoPage extends Page {
 				//displayInfoAlert("你已经登录！cookies:"+token_utils.loadToken());
 				//String webpage = URLget.BackWeb(URLget.GET_PERSONAL_INFO_URL);
 				//displayInfoAlert(webpage);
-				String personal_info_content = URLget.BackWeb(URLget.GET_PERSONAL_INFO_URL);
-				System.out.println(token_utils.loadToken());
-				System.out.println(personal_info_content);
-				String name = FindString.findValue(personal_info_content, "uname");
-				String sign = FindString.findValue(personal_info_content, "sign");
-				if(name == null)
+				WebModel personalInfo = URLget.BackWebWithMoreInfo(URLget.GET_PERSONAL_INFO_URL);
+				String personal_info_content = personalInfo.content;
+				if(URLget.getAPIBackCode(personal_info_content)!=0){
 					token_utils.deleteToken();
-				form = new Form(name);
-				personal_info = new StringItem("",name+"\n"+sign);
+					CookiesUtils utils = new CookiesUtils("isLogin");
+					utils.saveBooleanToken(false);
+					isLogin = false;
+					initGuestVars();
+				}
+				else{
+					System.out.println(token_utils.loadToken());
+					System.out.println(personal_info_content);
+					String name = FindString.findValue(personal_info_content, "uname");
+					String sign = FindString.findValue(personal_info_content, "sign");
+				
+					form = new Form(name);
+					personal_info = new StringItem("",name+"\n"+sign);
+				}
 			}catch(Exception e){
 				e.printStackTrace();
 				displayErrorAlert(e.getMessage());
@@ -83,15 +92,19 @@ public class MyInfoPage extends Page {
 			
 		}else{
 			try {
-				info = getQRCodeURLandKey();
-				qrcode = TextToQRcodeImage.encode(info[0]);
-				imageItem = new ImageItem("Login QRCode", qrcode, ImageItem.LAYOUT_CENTER, "Login QRCode");
-				tips = new StringItem("","\n扫码后请点击刷新命令");
+				initGuestVars();
 			} catch (Exception e) {
 				e.printStackTrace();
 				displayErrorAlert(e.getMessage());
 			} 
 		}
+	}
+	
+	private void initGuestVars() throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
+		info = getQRCodeURLandKey();
+		qrcode = TextToQRcodeImage.encode(info[0]);
+		imageItem = new ImageItem("Login QRCode", qrcode, ImageItem.LAYOUT_CENTER, "Login QRCode");
+		tips = new StringItem("","\n扫码后请点击刷新命令");
 	}
 
 	protected void initDisplayVars() {

@@ -40,7 +40,8 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	String pic;
 	String mid;
 	String ctime;
-	String my_mid;
+	String onlineTotal;
+	//String my_mid;
 	
 	public String bvid;
 	String aid;
@@ -59,8 +60,8 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 	
 	String[] favFoldersID;
 	String[] favFoldersName;
-	boolean[] isFav;
-	int favFoldersNum;
+	//boolean[] isFav;
+	//int favFoldersNum;
 	
 	
 	
@@ -298,18 +299,21 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 			pic = video_info.getCoverURL();
 			mid = Long.toString(video_info.getUserMID());
 			try {
+				onlineTotal = video_info.getOnlineTotal();
 				video_url=URLget.BackVideoLink(bvid, cid);
 				video_info.postHeartbeat();
 			} catch(Exception e){
 				displayErrorAlert("GetVideoInfoPage initPageVars error"+e.getMessage());
 			}
 			
-			isFav = new boolean[30];
-			favFoldersNum = 0;
+			//下面这段注释掉的代码 目前无法知晓到底是用来干什么的 所以让他留在这吧（
+			
+			//isFav = new boolean[30];
+			//favFoldersNum = 0;
 			try{
 				is_login = new CookiesUtils("isLogin").isTokenStored();
 				if(is_login){
-					WebModel web = URLget.BackWebWithMoreInfo(URLget.GET_PERSONAL_INFO_URL);
+					/*WebModel web = URLget.BackWebWithMoreInfo(URLget.GET_PERSONAL_INFO_URL);
 					my_mid = FindString.findValueInt(web.content, "mid");
 					web = URLget.BackWebWithMoreInfo(URLget.GET_USER_ALL_FAV_FOLDERS_URL+"?up_mid="+my_mid+"&type=2&rid="+aid);
 					favFoldersID = FindString.extractContentsInt(web.content, "\"id\"");
@@ -324,7 +328,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 						//favFoldersNameList.addElement(favFolders[i]);
 						i++;
 						favFoldersNum++;
-					}                                                       
+					}                     */                                  
 				}
 			}catch(Exception e){
 				displayErrorAlert(e.getMessage());
@@ -339,7 +343,7 @@ public class GetVideoInfoPage extends Page implements CommandListener{
 				part_title = new StringItem(null, "P"+video_info.getPart()+" "+lang_res.getValue("part_title")+video_info.getPartTitle());
 			}
 			up_name=new StringItem(null,"\n"+lang_res.getValue("author")+video_info.getUserName());
-			info = new StringItem(null,"\n"+lang_res.getValue("view")+video_info.getView()+lang_res.getValue("ci")+"  "+lang_res.getValue("reply")+video_info.getReply()+lang_res.getValue("ci")+"  "+lang_res.getValue("coin")+video_info.getCoin()+lang_res.getValue("ge")+"  "+lang_res.getValue("share")+video_info.getShare()+lang_res.getValue("ci")+"  "+lang_res.getValue("like")+video_info.getLike()+lang_res.getValue("ci")+"  "+lang_res.getValue("favorite")+video_info.getFavorite()+lang_res.getValue("ci")+"\n"+errorMessage);
+			info = new StringItem(null,"\n\n"+lang_res.getValue("onlineStatus")+":"+onlineTotal+"\n"+lang_res.getValue("view")+video_info.getView()+lang_res.getValue("ci")+"  "+lang_res.getValue("reply")+video_info.getReply()+lang_res.getValue("ci")+"  "+lang_res.getValue("coin")+video_info.getCoin()+lang_res.getValue("ge")+"  "+lang_res.getValue("share")+video_info.getShare()+lang_res.getValue("ci")+"  "+lang_res.getValue("like")+video_info.getLike()+lang_res.getValue("ci")+"  "+lang_res.getValue("favorite")+video_info.getFavorite()+lang_res.getValue("ci")+"\n"+errorMessage);
 			time = new StringItem(null,"\n"+lang_res.getValue("public_time")+":"+video_info.getFormatPubTime());
 			download=new Command(lang_res.getValue("download"),Command.ITEM,1);
 			initBackAndExitCommand();

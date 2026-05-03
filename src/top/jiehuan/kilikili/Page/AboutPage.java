@@ -29,7 +29,7 @@ public class AboutPage extends Page implements CommandListener {
 	ImageItem imageItem;
 	Command get_cookies;
 	
-	public static String version = "1.0.2";
+	public static String version = "1.0.3";
 	
 	public AboutPage(Vector page_list_info){
 		//初始化变量和界面
@@ -68,10 +68,12 @@ public class AboutPage extends Page implements CommandListener {
 					"github: @jiehuan-jason\n" +
 					"网盘: jiehuan233.ysepan.com\n"
 					+ "个人主页: www.kinsler.top\n");
-			text = new StringItem("","软件版本：V1.0beta1\n" +
-					"更新日期：2025.6.6\n" +
+			text = new StringItem("","软件版本：V1.0beta2\n" +
+					"更新日期：2026.5.1\n" +
 					"更新内容：\n" +
-					"修复了部分bug\n");
+					"添加了历史记录*（此功能目前还存在一些问题，通过kilikili访问的可能不会显示，待解决）\n"
+					+ "tag显示功能\n"
+					+ "修复了一些bug\n");
 			thanks_list = new StringItem("","捐赠感谢列表（截至更新时，排名不分先后）：\n" +
 					"爱发电用户_898f2\n" +
 					"爱发电用户_wnJK\n" +
@@ -79,6 +81,10 @@ public class AboutPage extends Page implements CommandListener {
 					"爱发电用户_kMRv\n" +
 					"jjbvfggggjj\n" +
 					"皓哥\n" +
+					"中兴通讯\n" +
+					"iphone888\n" +
+					"HentaiNeko\n" +
+					"爱发电用户_912b4\n" +
 					"欢迎用智能手机/PC访问 https://afdian.com/a/jiehuan233 赞助本项目\n" +
 					"扫描二维码访问项目dospy论坛地址\n");
 			initBackAndExitCommand();

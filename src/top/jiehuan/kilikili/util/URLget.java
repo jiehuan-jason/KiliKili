@@ -78,6 +78,7 @@ public class URLget {
 	public static final String GET_SUB_REPLY_LIST_URL = "https://api.bilibili.com/x/v2/reply/reply";
 	public static final String GET_HISTORY_LIST_URL = "https://api.bilibili.com/x/v2/history";
 	public static final String GET_TAGS_LIST_URL = "https://api.bilibili.com/x/web-interface/view/detail/tag";
+	public static final String GET_ONLINE_TOTAL_URL = "https://api.bilibili.com/x/player/online/total";
 	
 	//BILIBILI Server Post
 	public static final String REFRESH_COOKIES_URL = "https://passport.bilibili.com/x/passport-login/web/cookie/refresh";
@@ -91,6 +92,7 @@ public class URLget {
 	public static final String TO_VIEW_DEL_URL = "https://api.bilibili.com/x/v2/history/toview/del";
 	public static final String LIKE_REPLY_URL = "https://api.bilibili.com/x/v2/reply/action";
 	public static final String HEARTBEAT_URL = "https://api.bilibili.com/x/click-interface/web/heartbeat";
+	
 	
 	
 	public static String BackVideoLink(String bvid,String cid) throws WebReturnErrorCodeException, IOException, ErrorVideoStatusException{
