@@ -9,6 +9,7 @@
 * [SocialSisterYi/bilibili-API-collect: 哔哩哔哩-API收集整理【不断更新中....】](https://github.com/SocialSisterYi/bilibili-API-collect)
 * [有关bilibili免登录获取高画质mp4直链的研究 - 赵苦瓜のBlog](https://blog.jixiaob.cn/?post=113)
 * [jiehuan-jason/QRCode-Lib-J2ME](https://github.com/jiehuan-jason/QRCode-Lib-J2ME)
+* [KEmulator nnmod](https://nnproject.cc/kem/)
 
 希望各位给出建议，可以在dospy论坛上找到我：[jiehuan的个人资料 - DOSPY论坛 诺亚方舟号 - 塞班论坛|固件下载|hmd诺基亚安卓|智能手机|数码科技 -](https://www.dospy.wang/space-uid-45511.html)
 或者给我发邮件：jiehuan233[AT]outlook.com jiehuan233[AT]gmail.com
@@ -99,6 +100,6 @@ UC影音正常播放图像和声音；自带播放器只有音频
 
 ## 开发环境部署
 
-采用的JAVA版本为JDK1.8_202，采用的IDE是Eclipse，版本为Kepler R，配合EclipseME1.7.9使用，模拟器采用的是WTK2.2和S60 FP2 SDK中的模拟器，具体开发环境的安装和配置请参阅[Windows系统搭建塞班Java开发环境教程 - 塞班论坛 (独立讨论区) - DOSPY论坛 诺亚方舟号 - 塞班论坛|固件下载|hmd诺基亚安卓|智能手机|数码科技 -](https://www.dospy.wang/thread-15819-1-1.html)
+采用的JAVA版本为JDK1.8_202，采用的IDE是Eclipse，版本为Kepler R，配合EclipseME1.7.9使用，模拟器采用的是KEmulator nnmod。模拟器需要进入项目properties添加KEmulator.jar到Java Build Path/Libraries，并在Order and Export中把该项目上移至第三位。打包时请移除该jar。具体开发环境的安装和配置请参阅[Windows系统搭建塞班Java开发环境教程 - 塞班论坛 (独立讨论区) - DOSPY论坛 诺亚方舟号 - 塞班论坛|固件下载|hmd诺基亚安卓|智能手机|数码科技 -](https://www.dospy.wang/thread-15819-1-1.html)
 
 该教程中的eclipse版本与本项目采用的不同，本项目的Eclipse下载地址为[[Kepler R | Eclipse Packages](https://www.eclipse.org/downloads/packages/release/kepler/r)中的Eclipse IDE for Java Developers
